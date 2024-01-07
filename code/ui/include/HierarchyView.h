@@ -1,0 +1,34 @@
+#pragma once
+#ifndef __HIERARCHY_VIEW_H__
+#define __HIERARCHY_VIEW_H__
+
+#include "glad/glad.h"
+#include "glfw3.h"
+
+#include "imgui.h"
+#include "imgui_internal.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+#include "Fluid.h"
+#include "Container.h"
+#include "Iteration.h"
+#include "Manager.h"
+
+namespace FluidSimulation {
+
+	class HierarchyView {
+
+	private:
+		GLFWwindow* window;
+		ImVec2 pos;
+
+	public:
+		HierarchyView();
+		HierarchyView(GLFWwindow* window);
+		void display2d();
+		void display3d();
+	};
+}
+
+#endif

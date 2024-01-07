@@ -1,0 +1,269 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						2,
+						3,
+						5,
+						6,
+						9
+					],
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0
+					]
+				},
+				{
+					"build" : "third_party/imgui",
+					"jsonFile" : "directory-third_party.imgui-Debug-73f0d61fb9eb46b5dc32.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "third_party/imgui",
+					"targetIndexes" : 
+					[
+						3
+					]
+				},
+				{
+					"build" : "third_party/glad",
+					"jsonFile" : "directory-third_party.glad-Debug-0123c5b1b35f13de2384.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "third_party/glad",
+					"targetIndexes" : 
+					[
+						2
+					]
+				},
+				{
+					"build" : "third_party/glm",
+					"childIndexes" : 
+					[
+						4
+					],
+					"jsonFile" : "directory-third_party.glm-Debug-c6a2a1eb287ba6240828.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "third_party/glm"
+				},
+				{
+					"build" : "third_party/glm/glm",
+					"jsonFile" : "directory-third_party.glm.glm-Debug-89d485164ddb30c4f8eb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.2"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 1,
+					"source" : "third_party/glm/glm"
+				},
+				{
+					"build" : "common",
+					"jsonFile" : "directory-common-Debug-df8a23303754f0cfc2e1.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "common",
+					"targetIndexes" : 
+					[
+						1
+					]
+				},
+				{
+					"build" : "fluid2d",
+					"childIndexes" : 
+					[
+						7,
+						8
+					],
+					"jsonFile" : "directory-fluid2d-Debug-1775c79ad8e3656ef307.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "fluid2d"
+				},
+				{
+					"build" : "fluid2d/SPH",
+					"jsonFile" : "directory-fluid2d.SPH-Debug-d8d67a3fa83512e473b0.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 0,
+					"source" : "fluid2d/SPH",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "fluid2d/MAC",
+					"jsonFile" : "directory-fluid2d.MAC-Debug-0a9372cf61baed5416ff.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 6,
+					"projectIndex" : 0,
+					"source" : "fluid2d/MAC",
+					"targetIndexes" : 
+					[
+						4
+					]
+				},
+				{
+					"build" : "ui",
+					"jsonFile" : "directory-ui-Debug-2a6e294cdf0513704cdb.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.8"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 0,
+					"source" : "ui",
+					"targetIndexes" : 
+					[
+						6
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0,
+						1,
+						2,
+						5,
+						6,
+						7,
+						8,
+						9
+					],
+					"name" : "FluidSimulationSystem",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3,
+						4
+					],
+					"name" : "glm",
+					"parentIndex" : 0
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "FluidSimulationSystem::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-FluidSimulationSystem-Debug-e11523da361ef0246fe3.json",
+					"name" : "FluidSimulationSystem",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "common::@bfc844598bd03e848b3c",
+					"jsonFile" : "target-common-Debug-4027e4c0448fe8544dc4.json",
+					"name" : "common",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "glad::@400044bae19587d17a2e",
+					"jsonFile" : "target-glad-Debug-e7ce6b997a7d8d5f939b.json",
+					"name" : "glad",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "imgui::@0bd0160a8608684c225b",
+					"jsonFile" : "target-imgui-Debug-bcfbd36b4ceb72943e48.json",
+					"name" : "imgui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 8,
+					"id" : "mac2d::@df567dafde055b0b50d5",
+					"jsonFile" : "target-mac2d-Debug-3f5c682f74655eac7b4b.json",
+					"name" : "mac2d",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 7,
+					"id" : "sph2d::@00f28d8fbdf396a43e94",
+					"jsonFile" : "target-sph2d-Debug-df1957a6fa94215403cf.json",
+					"name" : "sph2d",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 9,
+					"id" : "ui::@19b8bf288843bf358763",
+					"jsonFile" : "target-ui-Debug-906beffae601a2e1153b.json",
+					"name" : "ui",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug",
+		"source" : "D:/CG/Fluid-Simulation-System/code"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 5
+	}
+}
