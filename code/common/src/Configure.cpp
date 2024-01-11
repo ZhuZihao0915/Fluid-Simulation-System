@@ -40,4 +40,4 @@ namespace SPH3D {
 
 std::vector<Glb::Component*> methodComponents;
 
-std::string shaderPath = "D:/CG/Fluid-Simulation-System/code/resources/shaders";
+std::string shaderPath = "../../../../code/resources/shaders";

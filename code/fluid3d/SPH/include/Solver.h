@@ -15,7 +15,7 @@ namespace FluidSimulation {
             explicit Solver(ParticalSystem3d& ps);
             ~Solver();
 
-            void Iterate();
+            void solve();
 
         private:
 

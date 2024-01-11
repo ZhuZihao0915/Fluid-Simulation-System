@@ -20,6 +20,8 @@
 #include "Material.h"
 #include "ShadowMap.h"
 
+#include "Configure.h"
+
 namespace FluidSimulation {
 
     namespace SPH3d {

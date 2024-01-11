@@ -1,8 +1,8 @@
-# Install script for directory: D:/CG/Fluid-Simulation-System/code
+# Install script for directory: E:/CG/Fluid-Simulation-System/code
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "D:/CG/Fluid-Simulation-System/code/out/install/x64-Debug")
+  set(CMAKE_INSTALL_PREFIX "E:/CG/Fluid-Simulation-System/code/out/install/x64-Debug")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,12 +34,12 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/third_party/imgui/cmake_install.cmake")
-  include("D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/third_party/glad/cmake_install.cmake")
-  include("D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/third_party/glm/cmake_install.cmake")
-  include("D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/common/cmake_install.cmake")
-  include("D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/fluid2d/cmake_install.cmake")
-  include("D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/ui/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/third_party/imgui/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/third_party/glad/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/third_party/glm/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/common/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/fluid2d/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/ui/cmake_install.cmake")
 
 endif()
 
@@ -51,5 +51,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "D:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

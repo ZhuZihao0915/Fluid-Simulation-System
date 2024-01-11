@@ -93,15 +93,15 @@ namespace FluidSimulation {
             return h * mBlockNum.x * mBlockNum.y + r * mBlockNum.x + c;
         }
 
-        void ParticalSystem3d::UpdateData() {
-            // 按block排序
+        void ParticalSystem3d::updateBlockInfo() {
+            // 按blockId的顺序，对粒子进行排序
             std::sort(mParticalInfos.begin(), mParticalInfos.end(),
                 [=](ParticalInfo3d& first, ParticalInfo3d& second) {
                     return first.blockId < second.blockId;
                 }
             );
 
-            // 计算block区间
+            // 更新每个block在排序后的粒子数组中的起始和结束索引
             mBlockExtens = std::vector<glm::uvec2>(mBlockNum.x * mBlockNum.y * mBlockNum.z, glm::uvec2(0, 0));
             int curBlockId = 0;
             int left = 0;

@@ -1,8 +1,8 @@
-# Install script for directory: D:/CG/Fluid-Simulation-System/code/third_party/glm
+# Install script for directory: E:/CG/Fluid-Simulation-System/code/third_party/glm
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "D:/CG/Fluid-Simulation-System/code/out/install/x64-Release")
+  set(CMAKE_INSTALL_PREFIX "E:/CG/Fluid-Simulation-System/code/out/install/x64-Release")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -34,7 +34,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("D:/CG/Fluid-Simulation-System/code/out/build/x64-Release/third_party/glm/glm/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/third_party/glm/glm/cmake_install.cmake")
 
 endif()
 

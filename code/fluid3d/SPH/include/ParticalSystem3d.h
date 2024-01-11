@@ -36,7 +36,7 @@ namespace FluidSimulation {
             void SetContainerSize(glm::vec3 corner, glm::vec3 size);
             int32_t AddFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace);
             uint32_t GetBlockIdByPosition(glm::vec3 position);
-            void UpdateData();
+            void updateBlockInfo();
         public:
             // 粒子参数
             float mSupportRadius = SPH3D::supportRadius;    // 支撑半径
