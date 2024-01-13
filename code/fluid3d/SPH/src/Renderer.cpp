@@ -24,60 +24,60 @@ namespace FluidSimulation {
             std::vector<std::string> computeShaderpaths = {
                 std::string("../code/Fluid3d/Shaders/ComputeParticals.comp"),
             };
-            mComputeParticals->BuildFromFiles(computeShaderpaths);
-            mComputeParticals->Use();
-            glUniform1i(glGetUniformLocation(mComputeParticals->GetId(), "kernelBuffer"), 1);
-            mComputeParticals->UnUse();
+            mComputeParticals->buildFromFiles(computeShaderpaths);
+            mComputeParticals->use();
+            glUniform1i(glGetUniformLocation(mComputeParticals->getId(), "kernelBuffer"), 1);
+            mComputeParticals->unUse();
             */
 
             mScreenQuad = new Glb::Shader();
             std::string screenQuadVertPath = shaderPath + "/ScreenQuad.vert";
             std::string screenQuadFragPath = shaderPath + "/ScreenQuad.frag";
-            mScreenQuad->BuildFromFile(screenQuadVertPath, screenQuadFragPath);
-            mScreenQuad->Use();
-            glUniform1i(glGetUniformLocation(mScreenQuad->GetId(), "tex"), 0);
-            mScreenQuad->UnUse();
+            mScreenQuad->buildFromFile(screenQuadVertPath, screenQuadFragPath);
+            mScreenQuad->use();
+            glUniform1i(glGetUniformLocation(mScreenQuad->getId(), "tex"), 0);
+            mScreenQuad->unUse();
 
             mDrawColor3d = new Glb::Shader();
             std::string drawColorVertPath = shaderPath + "/DrawColor3d.vert";
             std::string drawColorFragPath = shaderPath + "/DrawColor3d.frag";
-            mDrawColor3d->BuildFromFile(drawColorVertPath, drawColorFragPath);
+            mDrawColor3d->buildFromFile(drawColorVertPath, drawColorFragPath);
 
             mPointSpriteZValue = new Glb::Shader();
             std::string pointSpriteZValueVertPath = shaderPath + "/PointSprite.vert";
             std::string pointSpriteZValueGeomPath = shaderPath + "/PointSprite.geom";
             std::string pointSpriteZValueFragPath = shaderPath + "/PointSpriteZValue.frag";
-            mPointSpriteZValue->BuildFromFile(pointSpriteZValueVertPath, pointSpriteZValueFragPath, pointSpriteZValueGeomPath);
-            mPointSpriteZValue->Use();
-            mPointSpriteZValue->SetFloat("zFar", Para3d::zFar);
-            mPointSpriteZValue->SetFloat("zNear", Para3d::zNear);
-            mPointSpriteZValue->UnUse();
+            mPointSpriteZValue->buildFromFile(pointSpriteZValueVertPath, pointSpriteZValueFragPath, pointSpriteZValueGeomPath);
+            mPointSpriteZValue->use();
+            mPointSpriteZValue->setFloat("zFar", Para3d::zFar);
+            mPointSpriteZValue->setFloat("zNear", Para3d::zNear);
+            mPointSpriteZValue->unUse();
 
             mPointSpriteThickness = new Glb::Shader();
             std::string pointSpriteThicknessVertPath = shaderPath + "/PointSprite.vert";
             std::string pointSpriteThicknessGeomPath = shaderPath + "/PointSprite.geom";
             std::string pointSpriteThicknessFragPath = shaderPath + "/PointSpriteThickness.frag";
-            mPointSpriteThickness->BuildFromFile(pointSpriteThicknessVertPath, pointSpriteThicknessFragPath, pointSpriteThicknessGeomPath);
+            mPointSpriteThickness->buildFromFile(pointSpriteThicknessVertPath, pointSpriteThicknessFragPath, pointSpriteThicknessGeomPath);
 
             mDrawFluidColor = new Glb::Shader();
             std::string drawFluidColorVertPath = shaderPath + "/DrawFluidColor.vert";
             std::string drawFluidColorFragPath = shaderPath + "/DrawFluidColor.frag";
-            mDrawFluidColor->BuildFromFile(drawFluidColorVertPath, drawFluidColorFragPath);
-            mDrawFluidColor->Use();
-            mDrawFluidColor->SetFloat("zFar", Para3d::zFar);
-            mDrawFluidColor->SetFloat("zNear", Para3d::zNear);
-            mDrawFluidColor->SetFloat("eta", 1.0 / Para3d::IOR);
-            mDrawFluidColor->SetVec3("f0", Para3d::F0);
-            mDrawFluidColor->SetVec4("cameraIntrinsic", Glb::ProjToIntrinsic(mCamera.GetProjection(), mWindowWidth, mWindowHeight));
-            mDrawFluidColor->SetVec3("fluidColor", Para3d::FLUID_COLOR);
-            mDrawFluidColor->SetVec3("shadowColor", Para3d::SHADOW_COLOR);
-            mDrawFluidColor->SetFloat("thicknessFactor", Para3d::THICKNESS_FACTOR);
-            mDrawFluidColor->UnUse();
+            mDrawFluidColor->buildFromFile(drawFluidColorVertPath, drawFluidColorFragPath);
+            mDrawFluidColor->use();
+            mDrawFluidColor->setFloat("zFar", Para3d::zFar);
+            mDrawFluidColor->setFloat("zNear", Para3d::zNear);
+            mDrawFluidColor->setFloat("eta", 1.0 / Para3d::IOR);
+            mDrawFluidColor->setVec3("f0", Para3d::F0);
+            mDrawFluidColor->setVec4("cameraIntrinsic", Glb::ProjToIntrinsic(mCamera.GetProjection(), mWindowWidth, mWindowHeight));
+            mDrawFluidColor->setVec3("fluidColor", Para3d::FLUID_COLOR);
+            mDrawFluidColor->setVec3("shadowColor", Para3d::SHADOW_COLOR);
+            mDrawFluidColor->setFloat("thicknessFactor", Para3d::THICKNESS_FACTOR);
+            mDrawFluidColor->unUse();
 
             mDrawModel = new Glb::Shader();
             std::string drawModelVertPath = shaderPath + "/DrawModel.vert";
             std::string drawModelFragPath = shaderPath + "/DrawModel.frag";
-            mDrawModel->BuildFromFile(drawModelVertPath, drawModelFragPath);
+            mDrawModel->buildFromFile(drawModelVertPath, drawModelFragPath);
         }
 
         void Renderer::GenerateFrameBuffers() {

@@ -57,10 +57,10 @@ namespace Glb {
     void SkyBox::BuildShader() {
         std::string vertPath = shaderPath + "/SkyBox.vert";
         std::string fragPath = shaderPath + "/SkyBox.frag";
-        mShader->BuildFromFile(vertPath, fragPath);
-        mShader->Use();
-        mShader->SetInt("skybox", 0);
-        mShader->UnUse();
+        mShader->buildFromFile(vertPath, fragPath);
+        mShader->use();
+        mShader->setInt("skybox", 0);
+        mShader->unUse();
     }
 
     void SkyBox::Draw(GLFWwindow* window, GLuint nullVao, glm::mat4 view, glm::mat4 proj) {
@@ -68,21 +68,21 @@ namespace Glb {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LEQUAL);
         
-        mShader->Use();
+        mShader->use();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_CUBE_MAP, mId);
-        mShader->SetMat4("view", glm::mat4(glm::mat3(view)));
-        mShader->SetMat4("projection", proj);
+        mShader->setMat4("view", glm::mat4(glm::mat3(view)));
+        mShader->setMat4("projection", proj);
         glBindVertexArray(nullVao);
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
-        mShader->UnUse();
+        mShader->unUse();
 
         glDepthMask(GL_TRUE);
         glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
     }
 
-    GLuint SkyBox::GetId() {
+    GLuint SkyBox::getId() {
         return mId;
     }
 

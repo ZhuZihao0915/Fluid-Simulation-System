@@ -12,7 +12,7 @@ namespace Glb {
     
     }
 
-    int32_t ComputeShader::BuildFromFile(std::string& compPath) {
+    int32_t ComputeShader::buildFromFile(std::string& compPath) {
         std::string shaderCode;
         std::ifstream shaderFile;
         std::stringstream shaderStream;
@@ -63,7 +63,7 @@ namespace Glb {
         return 0;
     }
 
-    int32_t ComputeShader::BuildFromFiles(std::vector<std::string>& compPaths) {
+    int32_t ComputeShader::buildFromFiles(std::vector<std::string>& compPaths) {
         std::vector<GLuint> computeShaders(compPaths.size());
         for (int i = 0; i < compPaths.size(); i++) {
             std::string shaderCode;
@@ -120,80 +120,80 @@ namespace Glb {
         std::cout << "compute shader build files success mName:" << mName << std::endl;
     }
 
-    void ComputeShader::Use() {
+    void ComputeShader::use() {
         glUseProgram(mId);
     }
 
-    void ComputeShader::UnUse() {
+    void ComputeShader::unUse() {
         glUseProgram(0);
     }
 
-    GLuint ComputeShader::GetId() {
+    GLuint ComputeShader::getId() {
         return mId;
     }
 
-    void ComputeShader::SetBool(const std::string& name, bool value)
+    void ComputeShader::setBool(const std::string& name, bool value)
     {
         glUniform1i(glGetUniformLocation(mId, name.c_str()), (int)value);
     }
 
-    void ComputeShader::SetInt(const std::string& name, int value)
+    void ComputeShader::setInt(const std::string& name, int value)
     {
         glUniform1i(glGetUniformLocation(mId, name.c_str()), value);
     }
 
-    void ComputeShader::SetUInt(const std::string& name, uint32_t value) {
+    void ComputeShader::setUInt(const std::string& name, uint32_t value) {
         glUniform1ui(glGetUniformLocation(mId, name.c_str()), value);
     }
 
-    void ComputeShader::SetFloat(const std::string& name, float value)
+    void ComputeShader::setFloat(const std::string& name, float value)
     {
         glUniform1f(glGetUniformLocation(mId, name.c_str()), value);
     }
 
-    void ComputeShader::SetVec2(const std::string& name, const glm::vec2& value)
+    void ComputeShader::setVec2(const std::string& name, const glm::vec2& value)
     {
         glUniform2fv(glGetUniformLocation(mId, name.c_str()), 1, &value[0]);
     }
-    void ComputeShader::SetVec2(const std::string& name, float x, float y)
+    void ComputeShader::setVec2(const std::string& name, float x, float y)
     {
         glUniform2f(glGetUniformLocation(mId, name.c_str()), x, y);
     }
 
-    void ComputeShader::SetVec3(const std::string& name, const glm::vec3& value)
+    void ComputeShader::setVec3(const std::string& name, const glm::vec3& value)
     {
         glUniform3fv(glGetUniformLocation(mId, name.c_str()), 1, &value[0]);
     }
 
-    void ComputeShader::SetVec3(const std::string& name, float x, float y, float z)
+    void ComputeShader::setVec3(const std::string& name, float x, float y, float z)
     {
         glUniform3f(glGetUniformLocation(mId, name.c_str()), x, y, z);
     }
 
-    void ComputeShader::SetUVec3(const std::string& name, const glm::uvec3& value) {
+    void ComputeShader::setUVec3(const std::string& name, const glm::uvec3& value) {
         glUniform3uiv(glGetUniformLocation(mId, name.c_str()), 1, &value[0]);
     }
 
-    void ComputeShader::SetVec4(const std::string& name, const glm::vec4& value)
+    void ComputeShader::setVec4(const std::string& name, const glm::vec4& value)
     {
         glUniform4fv(glGetUniformLocation(mId, name.c_str()), 1, &value[0]);
     }
-    void ComputeShader::SetVec4(const std::string& name, float x, float y, float z, float w)
+    void ComputeShader::setVec4(const std::string& name, float x, float y, float z, float w)
     {
         glUniform4f(glGetUniformLocation(mId, name.c_str()), x, y, z, w);
     }
 
-    void ComputeShader::SetMat2(const std::string& name, const glm::mat2& mat)
+    void ComputeShader::setMat2(const std::string& name, const glm::mat2& mat)
     {
         glUniformMatrix2fv(glGetUniformLocation(mId, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
 
-    void ComputeShader::SetMat3(const std::string& name, const glm::mat3& mat)
+    void ComputeShader::setMat3(const std::string& name, const glm::mat3& mat)
     {
         glUniformMatrix3fv(glGetUniformLocation(mId, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }
 
-    void ComputeShader::SetMat4(const std::string& name, const glm::mat4& mat)
+    void ComputeShader::setMat4(const std::string& name, const glm::mat4& mat)
     {
         glUniformMatrix4fv(glGetUniformLocation(mId, name.c_str()), 1, GL_FALSE, &mat[0][0]);
     }

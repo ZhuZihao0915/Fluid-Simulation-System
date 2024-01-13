@@ -25,12 +25,12 @@ namespace Glb {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, mTexDepthFilter);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mBufferKernelIndexs5x5);
-        mBlurZ->Use();
-        mBlurZ->SetInt("indexesSize", 25);
-        mBlurZ->SetFloat("sigma1", mSigma1);
-        mBlurZ->SetFloat("sigma2", mSigma2);
+        mBlurZ->use();
+        mBlurZ->setInt("indexesSize", 25);
+        mBlurZ->setFloat("sigma1", mSigma1);
+        mBlurZ->setFloat("sigma2", mSigma2);
         for (int i = 0; i < 5; i++) {
-            mBlurZ->SetInt("filterInterval", std::pow(2, i));
+            mBlurZ->setInt("filterInterval", std::pow(2, i));
             glBindImageTexture(0, bufferA, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
             glBindImageTexture(1, bufferB, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32F);
             glDispatchCompute(imageSize.x / 32 + 1, imageSize.y / 32 + 1, 1);
@@ -39,8 +39,8 @@ namespace Glb {
         }
 
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, mBufferKernelIndexs9x9);
-        mBlurZ->SetInt("indexesSize", 81);
-        mBlurZ->SetInt("filterInterval", 1);
+        mBlurZ->setInt("indexesSize", 81);
+        mBlurZ->setInt("filterInterval", 1);
         glBindImageTexture(0, bufferA, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
         glBindImageTexture(1, bufferB, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_R32F);
         glDispatchCompute(imageSize.x / 32 + 1, imageSize.y / 32 + 1, 1);
@@ -65,7 +65,7 @@ namespace Glb {
     void DepthFilter::BuildShader() {
         mBlurZ = new Glb::ComputeShader("BlurZ");
         std::string blurZPath = shaderPath + "/BlurZ.comp";
-        mBlurZ->BuildFromFile(blurZPath);
+        mBlurZ->buildFromFile(blurZPath);
     }
 
     void DepthFilter::Uploadbuffers() {

@@ -46,10 +46,10 @@ namespace Glb {
         glClearColor(0.5f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        mPointSpriteZValue->Use();
+        mPointSpriteZValue->use();
         glBindVertexArray(vaoParticals);
         glDrawArrays(GL_POINTS, 0, particalNum);
-        mPointSpriteZValue->UnUse();
+        mPointSpriteZValue->unUse();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         // 平滑深度图
@@ -74,14 +74,14 @@ namespace Glb {
         glBindImageTexture(0, mZBufferB, 0, GL_FALSE, 0, GL_READ_ONLY, GL_R32F);
         glBindVertexArray(vaoNull);
 
-        mCausticMap->Use();
-        mCausticMap->SetMat4("model", model);
+        mCausticMap->use();
+        mCausticMap->setMat4("model", model);
         for (int i = 0; i < Glb::ORIGIN_COLORS.size(); i++) {
-            mCausticMap->SetFloat("eta", 1.0 / (mIor + SPH3D::IOR_BIAS * float(i - 1)));
-            mCausticMap->SetVec3("photonColor", Glb::ORIGIN_COLORS[i] * SPH3D::CAUSTIC_FACTOR);
+            mCausticMap->setFloat("eta", 1.0 / (mIor + SPH3D::IOR_BIAS * float(i - 1)));
+            mCausticMap->setVec3("photonColor", Glb::ORIGIN_COLORS[i] * SPH3D::CAUSTIC_FACTOR);
             glDrawArrays(GL_POINTS, 0, mWidth * mHeight);
         }
-        mCausticMap->UnUse();
+        mCausticMap->unUse();
 
         glBindVertexArray(0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -102,30 +102,30 @@ namespace Glb {
         std::string pointSpriteZValueVertPath = shaderPath + "/ PointSprite.vert";
         std::string pointSpriteZValueGeomPath = shaderPath + "/PointSprite.geom";
         std::string pointSpriteZValueFragPath = shaderPath + "/PointSpriteZValue.frag";
-        mPointSpriteZValue->BuildFromFile(pointSpriteZValueVertPath, pointSpriteZValueFragPath, pointSpriteZValueGeomPath);
-        mPointSpriteZValue->Use();
-        mPointSpriteZValue->SetMat4("view", mLightView);
-        mPointSpriteZValue->SetMat4("projection", mLightProjection);
-        mPointSpriteZValue->SetFloat("particalRadius", SPH3D::particalDiameter);
-        mPointSpriteZValue->SetVec3("cameraUp", mLightViewUp);
-        mPointSpriteZValue->SetVec3("cameraRight", mLightViewRight);
-        mPointSpriteZValue->SetVec3("cameraFront", mLightViewFront);
-        mPointSpriteZValue->SetFloat("zFar", SPH3D::zFar);
-        mPointSpriteZValue->SetFloat("zNear", SPH3D::zNear);
-        mPointSpriteZValue->UnUse();
+        mPointSpriteZValue->buildFromFile(pointSpriteZValueVertPath, pointSpriteZValueFragPath, pointSpriteZValueGeomPath);
+        mPointSpriteZValue->use();
+        mPointSpriteZValue->setMat4("view", mLightView);
+        mPointSpriteZValue->setMat4("projection", mLightProjection);
+        mPointSpriteZValue->setFloat("particalRadius", SPH3D::particalDiameter);
+        mPointSpriteZValue->setVec3("cameraUp", mLightViewUp);
+        mPointSpriteZValue->setVec3("cameraRight", mLightViewRight);
+        mPointSpriteZValue->setVec3("cameraFront", mLightViewFront);
+        mPointSpriteZValue->setFloat("zFar", SPH3D::zFar);
+        mPointSpriteZValue->setFloat("zNear", SPH3D::zNear);
+        mPointSpriteZValue->unUse();
 
         mCausticMap = new Glb::Shader();
         std::string causticMapVertPath = shaderPath + "/CausticMap.vert";
         std::string causticMapFragPath = shaderPath + "/CausticMap.frag";
-        mCausticMap->BuildFromFile(causticMapVertPath, causticMapFragPath);
-        mCausticMap->Use();
-        mCausticMap->SetMat4("lightView", mLightView);
-        mCausticMap->SetMat4("lightProjection", mLightProjection);
-        mCausticMap->SetMat4("lightToWorld", glm::inverse(mLightView));
-        mCausticMap->SetMat4("lightToWorldRot", glm::mat4(glm::mat3(glm::inverse(mLightView))));
-        mCausticMap->SetInt("imageWidth", mWidth);
-        mCausticMap->SetInt("imageHeight", mHeight);
-        mCausticMap->UnUse();
+        mCausticMap->buildFromFile(causticMapVertPath, causticMapFragPath);
+        mCausticMap->use();
+        mCausticMap->setMat4("lightView", mLightView);
+        mCausticMap->setMat4("lightProjection", mLightProjection);
+        mCausticMap->setMat4("lightToWorld", glm::inverse(mLightView));
+        mCausticMap->setMat4("lightToWorldRot", glm::mat4(glm::mat3(glm::inverse(mLightView))));
+        mCausticMap->setInt("imageWidth", mWidth);
+        mCausticMap->setInt("imageHeight", mHeight);
+        mCausticMap->unUse();
     }
 
     void ShadowMap::CreateBuffers(int32_t w, int32_t h) {
@@ -186,8 +186,8 @@ namespace Glb {
     }
 
     void ShadowMap::InitIntrinsic() {
-        mCausticMap->Use();
-        mCausticMap->SetVec4("lightIntrinsic", Glb::ProjToIntrinsic(mLightProjection, mWidth, mHeight));
-        mCausticMap->UnUse();
+        mCausticMap->use();
+        mCausticMap->setVec4("lightIntrinsic", Glb::ProjToIntrinsic(mLightProjection, mWidth, mHeight));
+        mCausticMap->unUse();
     }
 }

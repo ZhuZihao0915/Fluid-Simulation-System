@@ -27,7 +27,7 @@ namespace Glb {
 
         void Draw(GLFWwindow* window, GLuint nullVao, glm::mat4 view, glm::mat4 proj);
 
-        GLuint GetId();
+        GLuint getId();
 
     private:
         GLuint mId = 0;
