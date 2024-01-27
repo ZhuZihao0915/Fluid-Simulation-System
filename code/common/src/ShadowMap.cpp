@@ -39,7 +39,7 @@ namespace Glb {
         delete mPointSpriteZValue;
     }
 
-    void ShadowMap::Update(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter) {
+    void ShadowMap::draw(GLuint vaoParticals, int32_t particalNum, DepthFilter* depthFilter) {
         // 渲染深度图
         glViewport(0, 0, mWidth, mHeight);
         glBindFramebuffer(GL_FRAMEBUFFER, mFbo);

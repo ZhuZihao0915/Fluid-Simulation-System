@@ -18,23 +18,30 @@ namespace FluidSimulation {
                 ps = NULL;
             }
 
+            // 
+            renderer = new Renderer;
+            renderer->Init();
 
-            ps.SetContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.6, 0.6, 0.6));
-            ps.AddFluidBlock(glm::vec3(0.05, 0.35, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8);
-            ps.AddFluidBlock(glm::vec3(0.35, 0.05, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8);
-            //ps.AddFluidBlock(glm::vec3(0.2, 0.2, 0.25), glm::vec3(0.2, 0.2, 0.3), glm::vec3(0.0, 0.0, 0.0), 0.01 * 0.8);
+            ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.6, 0.6, 0.6));
+            ps->addFluidBlock(glm::vec3(0.05, 0.35, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8);
+            ps->addFluidBlock(glm::vec3(0.35, 0.05, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8);
+            //ps.sddFluidBlock(glm::vec3(0.2, 0.2, 0.25), glm::vec3(0.2, 0.2, 0.3), glm::vec3(0.0, 0.0, 0.0), 0.01 * 0.8);
 
             // 对粒子排序，并组建block结构
-            ps.updateBlockInfo();
-            std::cout << "partical num = " << ps.mParticalInfos.size() << std::endl;
+            ps->updateBlockInfo();
+            std::cout << "partical num = " << ps->mParticalInfos.size() << std::endl;
             
-            // 
-            renderer.Init();
-            renderer.UploadUniforms(ps);
+            solver = new Solver(*ps);
 
         }
 
         void Sph3dComponent::simulate() {
+            for (int i = 0; i < SPH3D::substep; i++) {
+                ps->updateBlockInfo();
+                solver->solve();
+            }
+            renderer->load(*ps);
+            renderer->draw();
             
         }
 

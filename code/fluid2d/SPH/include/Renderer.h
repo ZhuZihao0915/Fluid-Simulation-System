@@ -23,7 +23,7 @@ namespace FluidSimulation {
 
             int32_t Init();
 
-            void Update();
+            void draw();
 
             int32_t Destroy();
 
@@ -57,7 +57,7 @@ namespace FluidSimulation {
             GLuint mPositionBuffer = 0;
             GLuint mDensityBuffer = 0;
 
-            GLuint mFboSdf = 0;
+            GLuint fbo = 0;
             GLuint mTextureSdf = 0;
             GLuint mRboSdf = 0;
 

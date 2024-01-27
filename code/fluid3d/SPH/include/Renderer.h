@@ -15,12 +15,35 @@
 
 #include "Camera.h"
 #include "SkyBox.h"
+#include "Global.h"
 
 #include "DepthFilter.h"
 #include "Material.h"
 #include "ShadowMap.h"
 
 #include "Configure.h"
+
+
+const glm::vec3 vertexes[] = {
+    glm::vec3(0.0, 0.0, 0.0),
+    glm::vec3(1.0, 0.0, 0.0),
+    glm::vec3(0.0, 1.0, 0.0),
+    glm::vec3(0.0, 0.0, 1.0)
+};
+
+const GLuint indices[] = {
+    0, 1, 0, 2, 0, 3
+};
+
+std::vector<float_t> floorVertices = {
+    // vertex           texCoord
+     1.0f,  1.0f, 0.0f, 1.0, 1.0,
+    -1.0f,  1.0f, 0.0f, 0.0, 1.0,
+    -1.0f, -1.0f, 0.0f, 0.0, 0.0,
+     1.0f,  1.0f, 0.0f, 1.0, 1.0,
+    -1.0f, -1.0f, 0.0f, 0.0, 0.0,
+     1.0f, -1.0f, 0.0f, 1.0, 0.0,
+};
 
 namespace FluidSimulation {
 
@@ -33,14 +56,16 @@ namespace FluidSimulation {
 
             int32_t Init();
 
+            GLuint getRenderedTexture();
+
             // 上传、读取数据
             void UploadUniforms(ParticalSystem3d& ps);
             void UploadParticalInfo(ParticalSystem3d& ps);
             void DumpParticalInfo(ParticalSystem3d& ps);
 
             // 求解、渲染
-            void SolveParticals();
-            void Update();
+            void load(ParticalSystem3d& ps);
+            void draw();
 
             // window
             bool ShouldClose();
@@ -85,19 +110,20 @@ namespace FluidSimulation {
             bool mPauseFlag = false;
 
             // shaders
-            Glb::Shader* mScreenQuad = nullptr;
             Glb::Shader* mDrawColor3d = nullptr;
-            Glb::ComputeShader* mComputeParticals = nullptr;
+            /*Glb::Shader* mScreenQuad = nullptr;
             Glb::Shader* mPointSpriteZValue = nullptr;
             Glb::Shader* mPointSpriteThickness = nullptr;
             Glb::Shader* mDrawFluidColor = nullptr;
-            Glb::Shader* mDrawModel = nullptr;
+            Glb::Shader* mDrawModel = nullptr;*/
+
+            GLuint fbo = 0;
+            GLuint rbo = 0;
 
             // fbo
             GLuint mFboDepth = 0;
             GLuint mTexZBuffer = 0;
             GLuint mRboDepthBuffer = 0;
-
             GLuint mFboThickness = 0;
             GLuint mTexThicknessBuffer = 0;
 
@@ -114,6 +140,7 @@ namespace FluidSimulation {
             GLuint mBufferFloor = 0;
 
             // texures
+            GLuint textureID = 0;
             GLuint mTestTexture = 0;
             GLuint mTexKernelBuffer = 0;
             GLuint mTexZBlurTempBuffer = 0;
@@ -122,7 +149,7 @@ namespace FluidSimulation {
             Glb::SkyBox* mSkyBox = nullptr;
 
             // Materials
-            Material* mSlabWhite = nullptr;
+            // Material* mSlabWhite = nullptr;
 
             // time statistics
             int32_t mParticalNum = 0;
@@ -131,9 +158,9 @@ namespace FluidSimulation {
             float_t frameCount = 0.0f;
 
             // shadow map
-            Glb::PointLight mLight;
+            /*Glb::PointLight mLight;
             Glb::ShadowMap* mShadowMap;
-            Glb::DepthFilter* mDepthFilter;
+            Glb::DepthFilter* mDepthFilter;*/
 
             glm::vec3 mExternelAccleration = { 0.0, 0.0, 0.0 };
         };

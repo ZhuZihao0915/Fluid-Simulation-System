@@ -5,29 +5,28 @@
 #include "ParticalSystem3d.h"
 #include "WCubicSpline.h"
 
-#include "Iteration.h"
 
 namespace FluidSimulation {
 
     namespace SPH3d {
         class Solver {
         public:
-            explicit Solver(ParticalSystem3d& ps);
+            Solver(ParticalSystem3d& ps);
             ~Solver();
 
             void solve();
 
         private:
 
-            void EulerIntegration();
-            void ComputeDensityAndPress();
-            void ComputeAccleration();
-            void BoundaryCondition();
-            void CalculateBlockId();
+            void eulerIntegration();
+            void computeDensityAndPress();
+            void computeAccleration();
+            void boundaryCondition();
+            void calculateBlockId();
 
         private:
             ParticalSystem3d& mPs;
-            Glb::WCubicSpline2d mW;
+            Glb::WCubicSpline3d mW;
 
         };
     }

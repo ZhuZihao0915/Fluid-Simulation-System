@@ -39,11 +39,11 @@ namespace FluidSimulation {
         void Sph2dComponent::simulate() {
             for (int i = 0; i < Iteration::GetInstance().GetSubstep(); i++) {
                 ps->searchNeighbors();
-                solver->Iterate();
+                solver->solve();
             }
 
             renderer->LoadVertexes(*ps);
-            renderer->Update();
+            renderer->draw();
         }
 
         GLuint Sph2dComponent::getRenderedTexture()

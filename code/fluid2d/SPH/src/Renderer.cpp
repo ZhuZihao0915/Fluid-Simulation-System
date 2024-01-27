@@ -29,6 +29,7 @@ namespace FluidSimulation {
             mParticalShader = new Glb::Shader();
             mParticalShader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
 
+            /*
             std::string ballVertShaderPath = shaderPath + "/DrawSdf.vert";
             std::string ballGeomShaderPath = shaderPath + "/DrawSdf.geom";
             std::string ballFragShaderPath = shaderPath + "/DrawSdf.frag";
@@ -42,6 +43,7 @@ namespace FluidSimulation {
 
             glUseProgram(mMilkShader->getId());
             glUniform1i(glGetUniformLocation(mMilkShader->getId(), "textureSdf"), 0);
+            */
 
             GLenum error = glGetError();
             if (error != GL_NO_ERROR) {
@@ -56,15 +58,10 @@ namespace FluidSimulation {
             glGenBuffers(1, &mDensityBuffer);
 
             // generate frame buffer object
-            glGenFramebuffers(1, &mFboSdf);
+            glGenFramebuffers(1, &fbo);
             // make it active
-            glBindFramebuffer(GL_FRAMEBUFFER, mFboSdf);
-
-
-            error = glGetError();
-            if (error != GL_NO_ERROR) {
-                std::cerr << "OpenGL error: " << error << std::endl;
-            }
+            // start fbo
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
             // generate textures
             glGenTextures(1, &mTextureSdf);
@@ -76,7 +73,7 @@ namespace FluidSimulation {
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             glBindTexture(GL_TEXTURE_2D, 0);
 
-            // 绑定到FBO
+            // Texture2D绑定到FBO
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureSdf, 0);
 
             // generate render buffer object (RBO)
@@ -85,12 +82,13 @@ namespace FluidSimulation {
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 600, 600);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-            // 绑定到FBO
+            // RBO绑定到FBO
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRboSdf);
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
                 std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
             }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            // end fbo
 
             // 视口大小
             glViewport(0, 0, mWindowWidth, mWindowHeight);
@@ -104,28 +102,17 @@ namespace FluidSimulation {
             return 0;
         }
 
-        void Renderer::Update() {
-            // 画粒子
-            /*glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-            glEnable(GL_DEPTH_TEST);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        void Renderer::draw() {
 
-            glBindVertexArray(mVaoParticals);
-            mParticalShader->use();
-            glEnable(GL_PROGRAM_POINT_SIZE);
-            glDrawArrays(GL_POINTS, 0, mParticalNum);*/
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
-            // 画粒子球
-            glBindFramebuffer(GL_FRAMEBUFFER, mFboSdf);
             glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // 绘制前，设置好使用的VAO和shader程序
-            glBindVertexArray(mVaoParticals);
-            mParticalShader->use();
-            //mSdfShader->use();
+            glBindVertexArray(mVaoParticals);   // VAO
+            mParticalShader->use();             // shader
             glEnable(GL_PROGRAM_POINT_SIZE);
 
             // 使用当前激活的着色器，之前定义的顶点属性配置，和VBO的顶点数据（通过VAO间接绑定）来绘制图元
@@ -134,16 +121,7 @@ namespace FluidSimulation {
             // 绘制的顶点数为 mParticalNum
             glDrawArrays(GL_POINTS, 0, mParticalNum);   
 
-            // 画牛奶
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            /*glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-            glDisable(GL_DEPTH_TEST);
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            mMilkShader->use();
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, mTextureSdf);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);*/
 
             GLenum error = glGetError();
             if (error != GL_NO_ERROR) {

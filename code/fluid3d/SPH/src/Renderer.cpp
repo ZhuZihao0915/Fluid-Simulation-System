@@ -1,14 +1,13 @@
-#include "Renderer.h"
+#include "fluid3d/SPH/include/Renderer.h"
 
 namespace FluidSimulation {
 	namespace SPH3d {
-		void Renderer::Init() {
-            BuildShaders();
+        int32_t Renderer::Init() {
 
+            BuildShaders();
             GenerateFrameBuffers();
             GenerateBuffers();
             GenerateTextures();
-
             InitFilters();
             LoadSkyBox();
             CreateRenderAssets();
@@ -18,7 +17,7 @@ namespace FluidSimulation {
             glEnable(GL_MULTISAMPLE);
 		}
 
-        void Renderer::BluidShaders() {
+        void Renderer::BuildShaders() {
             /*
             mComputeParticals = new Glb::ComputeShader("ComputeParticals");
             std::vector<std::string> computeShaderpaths = {
@@ -29,8 +28,13 @@ namespace FluidSimulation {
             glUniform1i(glGetUniformLocation(mComputeParticals->getId(), "kernelBuffer"), 1);
             mComputeParticals->unUse();
             */
+            
+            mDrawColor3d = new Glb::Shader();
+            std::string drawColorVertPath = shaderPath + "/DrawColor3d.vert";
+            std::string drawColorFragPath = shaderPath + "/DrawColor3d.frag";
+            mDrawColor3d->buildFromFile(drawColorVertPath, drawColorFragPath);
 
-            mScreenQuad = new Glb::Shader();
+            /*mScreenQuad = new Glb::Shader();
             std::string screenQuadVertPath = shaderPath + "/ScreenQuad.vert";
             std::string screenQuadFragPath = shaderPath + "/ScreenQuad.frag";
             mScreenQuad->buildFromFile(screenQuadVertPath, screenQuadFragPath);
@@ -38,10 +42,6 @@ namespace FluidSimulation {
             glUniform1i(glGetUniformLocation(mScreenQuad->getId(), "tex"), 0);
             mScreenQuad->unUse();
 
-            mDrawColor3d = new Glb::Shader();
-            std::string drawColorVertPath = shaderPath + "/DrawColor3d.vert";
-            std::string drawColorFragPath = shaderPath + "/DrawColor3d.frag";
-            mDrawColor3d->buildFromFile(drawColorVertPath, drawColorFragPath);
 
             mPointSpriteZValue = new Glb::Shader();
             std::string pointSpriteZValueVertPath = shaderPath + "/PointSprite.vert";
@@ -49,8 +49,8 @@ namespace FluidSimulation {
             std::string pointSpriteZValueFragPath = shaderPath + "/PointSpriteZValue.frag";
             mPointSpriteZValue->buildFromFile(pointSpriteZValueVertPath, pointSpriteZValueFragPath, pointSpriteZValueGeomPath);
             mPointSpriteZValue->use();
-            mPointSpriteZValue->setFloat("zFar", Para3d::zFar);
-            mPointSpriteZValue->setFloat("zNear", Para3d::zNear);
+            mPointSpriteZValue->setFloat("zFar", SPH3D::zFar);
+            mPointSpriteZValue->setFloat("zNear", SPH3D::zNear);
             mPointSpriteZValue->unUse();
 
             mPointSpriteThickness = new Glb::Shader();
@@ -64,23 +64,57 @@ namespace FluidSimulation {
             std::string drawFluidColorFragPath = shaderPath + "/DrawFluidColor.frag";
             mDrawFluidColor->buildFromFile(drawFluidColorVertPath, drawFluidColorFragPath);
             mDrawFluidColor->use();
-            mDrawFluidColor->setFloat("zFar", Para3d::zFar);
-            mDrawFluidColor->setFloat("zNear", Para3d::zNear);
-            mDrawFluidColor->setFloat("eta", 1.0 / Para3d::IOR);
-            mDrawFluidColor->setVec3("f0", Para3d::F0);
+            mDrawFluidColor->setFloat("zFar", SPH3D::zFar);
+            mDrawFluidColor->setFloat("zNear", SPH3D::zNear);
+            mDrawFluidColor->setFloat("eta", 1.0 / SPH3D::IOR);
+            mDrawFluidColor->setVec3("f0", SPH3D::F0);
             mDrawFluidColor->setVec4("cameraIntrinsic", Glb::ProjToIntrinsic(mCamera.GetProjection(), mWindowWidth, mWindowHeight));
-            mDrawFluidColor->setVec3("fluidColor", Para3d::FLUID_COLOR);
-            mDrawFluidColor->setVec3("shadowColor", Para3d::SHADOW_COLOR);
-            mDrawFluidColor->setFloat("thicknessFactor", Para3d::THICKNESS_FACTOR);
+            mDrawFluidColor->setVec3("fluidColor", SPH3D::FLUID_COLOR);
+            mDrawFluidColor->setVec3("shadowColor", SPH3D::SHADOW_COLOR);
+            mDrawFluidColor->setFloat("thicknessFactor", SPH3D::THICKNESS_FACTOR);
             mDrawFluidColor->unUse();
 
             mDrawModel = new Glb::Shader();
             std::string drawModelVertPath = shaderPath + "/DrawModel.vert";
             std::string drawModelFragPath = shaderPath + "/DrawModel.frag";
-            mDrawModel->buildFromFile(drawModelVertPath, drawModelFragPath);
+            mDrawModel->buildFromFile(drawModelVertPath, drawModelFragPath);*/
         }
 
         void Renderer::GenerateFrameBuffers() {
+            // NEW!!!
+            // generate frame buffer object
+            glGenFramebuffers(1, &fbo);
+            // make it active
+            // start fbo
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+            // generate textures
+            glGenTextures(1, &textureID);
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 600, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            // Texture2D绑定到FBO
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+
+            // generate render buffer object (RBO)
+            glGenRenderbuffers(1, &rbo);
+            glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 600, 600);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+            // RBO绑定到FBO
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+                std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
+            }
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            // END!!!
+
             // depth framebuffer
             glGenFramebuffers(1, &mFboDepth);
 
@@ -167,12 +201,12 @@ namespace FluidSimulation {
         }
 
         void Renderer::InitFilters() {
-            mDepthFilter = new DepthFilter();
-            mDepthFilter->Create(8.0, 0.025);
+            /*mDepthFilter = new Glb::DepthFilter();
+            mDepthFilter->Create(8.0, 0.025);*/
         }
 
         void Renderer::LoadSkyBox() {
-            mSkyBox = new SkyBox();
+            mSkyBox = new Glb::SkyBox();
             mSkyBox->Create();
             std::vector<std::string> paths
             {
@@ -189,36 +223,40 @@ namespace FluidSimulation {
 
         void Renderer::CreateRenderAssets() {
             // 材质
-            mSlabWhite = new Material();
-            mSlabWhite->Create();
-            std::string albedoPath = "../resources/SlabWhite/TexturesCom_Marble_SlabWhite_1K_albedo.png";
-            std::string roughnessPath = "../resources/SlabWhite/TexturesCom_Marble_SlabWhite_1K_roughness.png";
-            mSlabWhite->LoadTextures(albedoPath, roughnessPath);
+            //mSlabWhite = new Glb::Material();
+            //mSlabWhite->Create();
+            //std::string albedoPath = "../../../../code/resources/SlabWhite/TexturesCom_Marble_SlabWhite_1K_albedo.png";
+            //std::string roughnessPath = "../../../../code/resources/SlabWhite/TexturesCom_Marble_SlabWhite_1K_roughness.png";
+            //mSlabWhite->LoadTextures(albedoPath, roughnessPath);
 
-            // 灯光
-            mLight.pos = glm::vec3(-0.8, -0.8, 2.0);
-            mLight.dir = glm::vec3(0.5, 0.5, -1.0);
-            mLight.aspect = 1.0f;
-            mLight.fovy = 30.0;
+            //// 灯光
+            //mLight.pos = glm::vec3(-0.8, -0.8, 2.0);
+            //mLight.dir = glm::vec3(0.5, 0.5, -1.0);
+            //mLight.aspect = 1.0f;
+            //mLight.fovy = 30.0;
 
-            // 阴影贴图
-            mShadowMap = new FluidShadowMap();
-            mShadowMap->SetImageSize(1000, 1000);
-            mShadowMap->SetLightInfo(mLight);
-            mShadowMap->SetIor(Para3d::IOR);
-            mShadowMap->Init();
+            //// 阴影贴图
+            //mShadowMap = new Glb::FluidShadowMap();
+            //mShadowMap->SetImageSize(1000, 1000);
+            //mShadowMap->SetLightInfo(mLight);
+            //mShadowMap->SetIor(SPH3D::IOR);
+            //mShadowMap->Init();
         }
 
+        // 生成需要渲染的object的VAO
         void Renderer::MakeVertexArrays() {
+
+            // 粒子
             glGenVertexArrays(1, &mVaoParticals);
             glBindVertexArray(mVaoParticals);
             glBindBuffer(GL_ARRAY_BUFFER, mBufferParticals);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ParticalInfo3d), (void*)offsetof(ParticalInfo3d, position));
-            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(0);   // location = 0
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(ParticalInfo3d), (void*)offsetof(ParticalInfo3d, density));
-            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(1);   // location = 1
             glBindVertexArray(0);
 
+            // 坐标轴
             glGenVertexArrays(1, &mVaoCoord);
             glBindVertexArray(mVaoCoord);
             glBindBuffer(GL_ARRAY_BUFFER, mCoordVertBuffer);
@@ -227,6 +265,7 @@ namespace FluidSimulation {
             glEnableVertexAttribArray(0);
             glBindVertexArray(0);
 
+            // 底板
             glGenVertexArrays(1, &mVaoFloor);
             glBindVertexArray(mVaoFloor);
             glBindBuffer(GL_ARRAY_BUFFER, mBufferFloor);
@@ -238,5 +277,38 @@ namespace FluidSimulation {
             glBindVertexArray(0);
         }
 
+        void Renderer::load(ParticalSystem3d& ps) {
+            // 申请装粒子信息的buffer
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferParticals);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mParticalInfos.size() * sizeof(ParticalInfo3d), ps.mParticalInfos.data(), GL_DYNAMIC_COPY);
+
+            // 申请block区间buffer
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferBlocks);
+            glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mBlockExtens.size() * sizeof(glm::uvec2), ps.mBlockExtens.data(), GL_DYNAMIC_COPY);
+            glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+            mParticalNum = ps.mParticalInfos.size();
+        }
+
+        void Renderer::draw() {
+            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LEQUAL);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glEnable(GL_PROGRAM_POINT_SIZE);
+
+            mDrawColor3d->use();
+            mDrawColor3d->setMat4("view", mCamera.GetView());
+            mDrawColor3d->setMat4("projection", mCamera.GetProjection());
+
+            glBindVertexArray(mVaoCoord);
+            glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, indices);
+            glBindVertexArray(mVaoParticals);
+            glDrawArrays(GL_POINTS, 0, mParticalNum);
+            mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
+            mDrawColor3d->unUse();
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
 	}
 }

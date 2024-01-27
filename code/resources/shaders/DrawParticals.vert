@@ -8,7 +8,7 @@ out float densNorm;
 
 void main() {
     gl_PointSize = 3;
-    gl_Position = vec4(pointPosition, 0.0, 1.0);
+    gl_Position = vec4(pointPosition.xy, 0.0, 1.0);
 
     densNorm = density / 5000.0f;   // normalization
 }

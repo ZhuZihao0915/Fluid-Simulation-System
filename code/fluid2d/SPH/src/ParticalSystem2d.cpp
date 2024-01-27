@@ -130,6 +130,7 @@ namespace FluidSimulation {
             return r * blockColNum + c;
         }
 
+        // 构建blocks，每个blocks[i]含有位置在第i个block的粒子索引
         void ParticalSystem2d::buildBlockStructure()
         {
             blocks = new std::vector<int>[blockRowNum * blockColNum] {std::vector<int>(0)};

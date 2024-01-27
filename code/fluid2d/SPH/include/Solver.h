@@ -15,7 +15,7 @@ namespace FluidSimulation {
             explicit Solver(ParticalSystem2d& ps);
             ~Solver();
 
-            void Iterate();
+            void solve();
 
         private:
             void updateDensityAndPressure();

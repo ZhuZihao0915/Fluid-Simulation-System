@@ -15,7 +15,7 @@ namespace FluidSimulation {
 
         }
 
-        void Solver::Iterate() {
+        void Solver::solve() {
             updateDensityAndPressure();
             initAccleration();
             updateViscosityAccleration();

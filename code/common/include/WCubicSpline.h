@@ -37,6 +37,7 @@ namespace Glb {
         
         float_t* GetData();
         uint32_t GetBufferSize();
+        glm::vec2 GetGrad(float f);
 
     private:
         float CalculateValue(float distance);

@@ -12,7 +12,7 @@ namespace FluidSimulation {
         ParticalSystem3d::~ParticalSystem3d() {
         }
 
-        void ParticalSystem3d::SetContainerSize(glm::vec3 corner, glm::vec3 size) {
+        void ParticalSystem3d::setContainerSize(glm::vec3 corner, glm::vec3 size) {
             mLowerBound = corner - mSupportRadius + mParticalDiameter;
             mUpperBound = corner + size + mSupportRadius - mParticalDiameter;
             mContainerCenter = (mLowerBound + mUpperBound) / 2.0f;
@@ -40,7 +40,7 @@ namespace FluidSimulation {
             mParticalInfos.clear();
         }
     
-        int32_t ParticalSystem3d::AddFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace) {
+        int32_t ParticalSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace) {
             glm::vec3 blockLowerBound = corner;
             glm::vec3 blockUpperBound = corner + size;
 
@@ -65,7 +65,7 @@ namespace FluidSimulation {
                         float y = (idY + rand.GetUniformRandom()) * particalSpace;
                         float z = (idZ + rand.GetUniformRandom()) * particalSpace;
                         particals[p].position = corner + glm::vec3(x, y, z);
-                        particals[p].blockId = GetBlockIdByPosition(particals[p].position);
+                        particals[p].blockId = getBlockIdByPosition(particals[p].position);
                         particals[p].velocity = v0;
                         p++;
                     }
@@ -76,7 +76,7 @@ namespace FluidSimulation {
             return particals.size();
         }
 
-        uint32_t ParticalSystem3d::GetBlockIdByPosition(glm::vec3 position) {
+        uint32_t ParticalSystem3d::getBlockIdByPosition(glm::vec3 position) {
             if (position.x < mLowerBound.x ||
                 position.y < mLowerBound.y ||
                 position.z < mLowerBound.z ||

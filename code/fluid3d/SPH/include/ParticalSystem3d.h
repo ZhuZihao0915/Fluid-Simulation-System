@@ -33,9 +33,9 @@ namespace FluidSimulation {
             ParticalSystem3d();
             ~ParticalSystem3d();
 
-            void SetContainerSize(glm::vec3 corner, glm::vec3 size);
-            int32_t AddFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace);
-            uint32_t GetBlockIdByPosition(glm::vec3 position);
+            void setContainerSize(glm::vec3 corner, glm::vec3 size);
+            int32_t addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace);
+            uint32_t getBlockIdByPosition(glm::vec3 position);
             void updateBlockInfo();
         public:
             // 粒子参数
@@ -57,11 +57,8 @@ namespace FluidSimulation {
             glm::vec3 mContainerCenter = glm::vec3(0.0f);
             glm::uvec3 mBlockNum = glm::uvec3(0);    // XYZ轴有几个block
             glm::vec3 mBlockSize = glm::vec3(0.0f);
-            std::vector<glm::uvec2> mBlockExtens;
+            std::vector<glm::uvec2> mBlockExtens;   // 记载着每个block含有那个索引区间的粒子（索引为mParticalInfos的索引）
             std::vector<int32_t> mBlockIdOffs;
-
-            // 核函数
-            Glb::WCubicSpline3d mW = Glb::WCubicSpline3d(mSupportRadius);
 
         };
 

@@ -21,6 +21,7 @@ include_directories(
 	"./fluid3d/"
 	"./fluid3d/SPH/include"
 	"./ui/include"
+	"."
 )
 
 # third party
@@ -35,7 +36,7 @@ add_subdirectory("./common")
 add_subdirectory("./fluid2d")
 
 # 3d simulation scheme
-#add_subdirectory("./fluid3d")
+add_subdirectory("./fluid3d")
 
 # ui
 add_subdirectory("./ui")

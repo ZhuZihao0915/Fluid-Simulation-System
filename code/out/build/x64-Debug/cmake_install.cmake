@@ -39,6 +39,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/third_party/glm/cmake_install.cmake")
   include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/common/cmake_install.cmake")
   include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/fluid2d/cmake_install.cmake")
+  include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/fluid3d/cmake_install.cmake")
   include("E:/CG/Fluid-Simulation-System/code/out/build/x64-Debug/ui/cmake_install.cmake")
 
 endif()
