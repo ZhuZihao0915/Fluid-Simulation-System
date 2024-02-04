@@ -24,9 +24,9 @@ namespace FluidSimulation {
             renderer->Init();
 
             ps = new ParticalSystem3d();
-            ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.6, 0.6, 0.6));
-            ps->addFluidBlock(glm::vec3(0.05, 0.35, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8, 0.01 * 0.8, 0.01 * 0.8);// 0.01 * 0.8);
-            ps->addFluidBlock(glm::vec3(0.35, 0.05, 0.25), glm::vec3(0.15, 0.15, 0.3), glm::vec3(0.0, 0.0, -3.0), 0.01 * 0.8, 0.01 * 0.8, 0.01 * 0.8);
+            ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1, 1, 1));
+            ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);// 0.01 * 0.8);
+            ps->addFluidBlock(glm::vec3(0.45, 0.45, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);
             
             //ps->addFluidBlock(glm::vec3(0.01, 0.01, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(-0.2, -0.2, 0.0), 0.03, 0.03, 0.01);// 0.01 * 0.8);
             //ps->addFluidBlock(glm::vec3(0.59, 0.59, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.2, 0.2, 0.0), 0.03, 0.03, 0.01);

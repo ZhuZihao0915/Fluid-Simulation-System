@@ -40,7 +40,7 @@ namespace FluidSimulation {
             mParticalInfos.clear();
         }
     
-        int32_t ParticalSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpaceX, float particalSpaceY, float particalSpaceZ) {
+        int32_t ParticalSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace) {
             glm::vec3 blockLowerBound = corner;
             glm::vec3 blockUpperBound = corner + size;
 
@@ -53,7 +53,7 @@ namespace FluidSimulation {
                 return 0;
             }
 
-            glm::uvec3 particalNum = glm::uvec3(size.x / particalSpaceX, size.y / particalSpaceY, size.z / particalSpaceZ);
+            glm::uvec3 particalNum = glm::uvec3(size.x / particalSpace, size.y / particalSpace, size.z / particalSpace);
             std::vector<ParticalInfo3d> particals(particalNum.x * particalNum.y * particalNum.z);
         
             Glb::RandomGenerator rand;
@@ -61,9 +61,9 @@ namespace FluidSimulation {
             for (int idX = 0; idX < particalNum.x; idX++) {
                 for (int idY = 0; idY < particalNum.y; idY++) {
                     for (int idZ = 0; idZ < particalNum.z; idZ++) {
-                        float x = (idX + rand.GetUniformRandom()) * particalSpaceX;
-                        float y = (idY + rand.GetUniformRandom()) * particalSpaceY;
-                        float z = (idZ + rand.GetUniformRandom()) * particalSpaceZ;
+                        float x = (idX + rand.GetUniformRandom()) * particalSpace;
+                        float y = (idY + rand.GetUniformRandom()) * particalSpace;
+                        float z = (idZ + rand.GetUniformRandom()) * particalSpace;
                         particals[p].position = corner + glm::vec3(x, y, z);
                         particals[p].blockId = getBlockIdByPosition(particals[p].position);
                         particals[p].velocity = v0;

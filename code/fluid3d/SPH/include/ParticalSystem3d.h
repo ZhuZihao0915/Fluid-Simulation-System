@@ -34,7 +34,7 @@ namespace FluidSimulation {
             ~ParticalSystem3d();
 
             void setContainerSize(glm::vec3 corner, glm::vec3 size);
-            int32_t addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpaceX, float particalSpaceY, float particalSpaceZ);
+            int32_t addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace);
             uint32_t getBlockIdByPosition(glm::vec3 position);
             void updateBlockInfo();
         public:

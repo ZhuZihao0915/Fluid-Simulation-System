@@ -31,14 +31,14 @@ namespace SPH3D {
     extern float eps = 1e-5;
 
     // 物理参数
-    extern float supportRadius = 0.025;
-    extern float particalRadius = 0.005;
+    extern float supportRadius = 0.04;// 0.025;
+    extern float particalRadius = 0.01;// 0.005;
     extern float particalDiameter = particalRadius * 2.0;
     extern float gravity = 9.8f;
     extern float density0 = 1000.0f;
-    extern float stiffness = 5.0f;
+    extern float stiffness = 20.0f;
     extern float exponent = 7.0f;   // 求解方程中的指数项
-    extern float viscosity = 8e-6f;
+    extern float viscosity = 8e-5f;
 
     // 光学参数
     extern float IOR = 1.3;
