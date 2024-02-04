@@ -3,11 +3,11 @@
 
 namespace Glb {
     Camera::Camera() {
-        mYaw = 90.0f;
-        mPitch = 15.0f;
+        mYaw = 95.0f;
+        mPitch = 8.0f;
 
         mWorldUp = glm::vec3(0.0, 0.0, 1.0);
-        mTargetPoint = glm::vec3(0.3, 0.35, 0.15);
+        mTargetPoint = glm::vec3(-0.34, 1.1, 0.8);
         mTargetDistance = 1.0f;
         UpdateView();
 

@@ -136,10 +136,14 @@ namespace Glb {
 
     glm::vec2 WCubicSpline3d::GetGrad(float f) {
         // 0<f<1
-        int i = f * mBufferSize;
+        /*int i = f * mBufferSize;
         float x = f * mBufferSize - i;
-        float y = 1 - x;
-        return mValueAndGradFactorBuffer[i] * y + mValueAndGradFactorBuffer[i + 1] * x;
+        return mValueAndGradFactorBuffer[i] * y + mValueAndGradFactorBuffer[i + 1] * x;*/
+        
+        
+        float index = f * mBufferSize;
+        return mValueAndGradFactorBuffer[(int)(index)];
+
     }
 
 

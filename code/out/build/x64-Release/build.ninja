@@ -47,7 +47,7 @@ cmake_ninja_workdir = E$:\CG\Fluid-Simulation-System\code\out\build\x64-Release\
 #############################################
 # Order-only phony target for FluidSimulationSystem
 
-build cmake_object_order_depends_target_FluidSimulationSystem: phony || cmake_object_order_depends_target_common cmake_object_order_depends_target_glad cmake_object_order_depends_target_imgui cmake_object_order_depends_target_mac2d cmake_object_order_depends_target_sph2d cmake_object_order_depends_target_ui
+build cmake_object_order_depends_target_FluidSimulationSystem: phony || cmake_object_order_depends_target_common cmake_object_order_depends_target_glad cmake_object_order_depends_target_imgui cmake_object_order_depends_target_mac2d cmake_object_order_depends_target_sph2d cmake_object_order_depends_target_sph3d cmake_object_order_depends_target_ui
 
 build CMakeFiles\FluidSimulationSystem.dir\code.cpp.obj: CXX_COMPILER__FluidSimulationSystem_unscanned_RelWithDebInfo E$:\CG\Fluid-Simulation-System\code\code.cpp || cmake_object_order_depends_target_FluidSimulationSystem
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
@@ -65,10 +65,10 @@ build CMakeFiles\FluidSimulationSystem.dir\code.cpp.obj: CXX_COMPILER__FluidSimu
 #############################################
 # Link the executable FluidSimulationSystem.exe
 
-build FluidSimulationSystem.exe: CXX_EXECUTABLE_LINKER__FluidSimulationSystem_RelWithDebInfo CMakeFiles\FluidSimulationSystem.dir\code.cpp.obj | ui\ui.lib third_party\glad\glad.lib third_party\imgui\imgui.lib fluid2d\SPH\sph2d.lib fluid2d\MAC\mac2d.lib common\common.lib E$:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglut.lib E$:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglutd.lib E$:\CG\Fluid-Simulation-System\code\third_party\glfw\lib\glfw3.lib || common\common.lib fluid2d\MAC\mac2d.lib fluid2d\SPH\sph2d.lib third_party\glad\glad.lib third_party\imgui\imgui.lib ui\ui.lib
+build FluidSimulationSystem.exe: CXX_EXECUTABLE_LINKER__FluidSimulationSystem_RelWithDebInfo CMakeFiles\FluidSimulationSystem.dir\code.cpp.obj | ui\ui.lib third_party\glad\glad.lib third_party\imgui\imgui.lib fluid2d\SPH\sph2d.lib fluid2d\MAC\mac2d.lib E$:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglut.lib E$:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglutd.lib fluid3d\SPH\sph3d.lib common\common.lib E$:\CG\Fluid-Simulation-System\code\third_party\glfw\lib\glfw3.lib || common\common.lib fluid2d\MAC\mac2d.lib fluid2d\SPH\sph2d.lib fluid3d\SPH\sph3d.lib third_party\glad\glad.lib third_party\imgui\imgui.lib ui\ui.lib
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   LINK_FLAGS = /machine:x64 /debug /INCREMENTAL /subsystem:console
-  LINK_LIBRARIES = ui\ui.lib  third_party\glad\glad.lib  third_party\imgui\imgui.lib  fluid2d\SPH\sph2d.lib  fluid2d\MAC\mac2d.lib  common\common.lib  E:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglut.lib  E:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglutd.lib  E:\CG\Fluid-Simulation-System\code\third_party\glfw\lib\glfw3.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
+  LINK_LIBRARIES = ui\ui.lib  third_party\glad\glad.lib  third_party\imgui\imgui.lib  fluid2d\SPH\sph2d.lib  fluid2d\MAC\mac2d.lib  E:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglut.lib  E:\CG\Fluid-Simulation-System\code\third_party\freeglut\lib\freeglutd.lib  fluid3d\SPH\sph3d.lib  common\common.lib  E:\CG\Fluid-Simulation-System\code\third_party\glfw\lib\glfw3.lib  kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
   OBJECT_DIR = CMakeFiles\FluidSimulationSystem.dir
   POST_BUILD = cd .
   PRE_LINK = cd .
@@ -376,6 +376,14 @@ build common\CMakeFiles\common.dir\src\DepthFilter.cpp.obj: CXX_COMPILER__common
   TARGET_COMPILE_PDB = common\CMakeFiles\common.dir\common.pdb
   TARGET_PDB = common\common.pdb
 
+build common\CMakeFiles\common.dir\src\FluidShadowMap.cpp.obj: CXX_COMPILER__common_unscanned_RelWithDebInfo E$:\CG\Fluid-Simulation-System\code\common\src\FluidShadowMap.cpp || cmake_object_order_depends_target_common
+  FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
+  INCLUDES = -IE:\CG\Fluid-Simulation-System\code\.\third_party\imgui\include -IE:\CG\Fluid-Simulation-System\code\.\third_party\glfw\include -IE:\CG\Fluid-Simulation-System\code\.\third_party\glad\include -IE:\CG\Fluid-Simulation-System\code\.\third_party\boost_1_83_0 -IE:\CG\Fluid-Simulation-System\code\.\third_party\freeglut -IE:\CG\Fluid-Simulation-System\code\.\third_party\glm -IE:\CG\Fluid-Simulation-System\code\.\third_party\stb -IE:\CG\Fluid-Simulation-System\code\.\common\include -IE:\CG\Fluid-Simulation-System\code\.\fluid2d -IE:\CG\Fluid-Simulation-System\code\.\fluid2d\SPH\include -IE:\CG\Fluid-Simulation-System\code\.\fluid2d\MAC\include -IE:\CG\Fluid-Simulation-System\code\.\fluid3d -IE:\CG\Fluid-Simulation-System\code\.\fluid3d\SPH\include -IE:\CG\Fluid-Simulation-System\code\.\ui\include -IE:\CG\Fluid-Simulation-System\code\. -IE:\CG\Fluid-Simulation-System\code\common\.\include
+  OBJECT_DIR = common\CMakeFiles\common.dir
+  OBJECT_FILE_DIR = common\CMakeFiles\common.dir\src
+  TARGET_COMPILE_PDB = common\CMakeFiles\common.dir\common.pdb
+  TARGET_PDB = common\common.pdb
+
 build common\CMakeFiles\common.dir\src\GridData2d.cpp.obj: CXX_COMPILER__common_unscanned_RelWithDebInfo E$:\CG\Fluid-Simulation-System\code\common\src\GridData2d.cpp || cmake_object_order_depends_target_common
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   INCLUDES = -IE:\CG\Fluid-Simulation-System\code\.\third_party\imgui\include -IE:\CG\Fluid-Simulation-System\code\.\third_party\glfw\include -IE:\CG\Fluid-Simulation-System\code\.\third_party\glad\include -IE:\CG\Fluid-Simulation-System\code\.\third_party\boost_1_83_0 -IE:\CG\Fluid-Simulation-System\code\.\third_party\freeglut -IE:\CG\Fluid-Simulation-System\code\.\third_party\glm -IE:\CG\Fluid-Simulation-System\code\.\third_party\stb -IE:\CG\Fluid-Simulation-System\code\.\common\include -IE:\CG\Fluid-Simulation-System\code\.\fluid2d -IE:\CG\Fluid-Simulation-System\code\.\fluid2d\SPH\include -IE:\CG\Fluid-Simulation-System\code\.\fluid2d\MAC\include -IE:\CG\Fluid-Simulation-System\code\.\fluid3d -IE:\CG\Fluid-Simulation-System\code\.\fluid3d\SPH\include -IE:\CG\Fluid-Simulation-System\code\.\ui\include -IE:\CG\Fluid-Simulation-System\code\. -IE:\CG\Fluid-Simulation-System\code\common\.\include
@@ -440,7 +448,7 @@ build common\CMakeFiles\common.dir\src\WCubicSpline.cpp.obj: CXX_COMPILER__commo
 #############################################
 # Link the static library common\common.lib
 
-build common\common.lib: CXX_STATIC_LIBRARY_LINKER__common_RelWithDebInfo common\CMakeFiles\common.dir\src\Camera.cpp.obj common\CMakeFiles\common.dir\src\ComputeShader.cpp.obj common\CMakeFiles\common.dir\src\Configure.cpp.obj common\CMakeFiles\common.dir\src\DepthFilter.cpp.obj common\CMakeFiles\common.dir\src\GridData2d.cpp.obj common\CMakeFiles\common.dir\src\GridData3d.cpp.obj common\CMakeFiles\common.dir\src\Material.cpp.obj common\CMakeFiles\common.dir\src\Shader.cpp.obj common\CMakeFiles\common.dir\src\ShadowMap.cpp.obj common\CMakeFiles\common.dir\src\SkyBox.cpp.obj common\CMakeFiles\common.dir\src\WCubicSpline.cpp.obj
+build common\common.lib: CXX_STATIC_LIBRARY_LINKER__common_RelWithDebInfo common\CMakeFiles\common.dir\src\Camera.cpp.obj common\CMakeFiles\common.dir\src\ComputeShader.cpp.obj common\CMakeFiles\common.dir\src\Configure.cpp.obj common\CMakeFiles\common.dir\src\DepthFilter.cpp.obj common\CMakeFiles\common.dir\src\FluidShadowMap.cpp.obj common\CMakeFiles\common.dir\src\GridData2d.cpp.obj common\CMakeFiles\common.dir\src\GridData3d.cpp.obj common\CMakeFiles\common.dir\src\Material.cpp.obj common\CMakeFiles\common.dir\src\Shader.cpp.obj common\CMakeFiles\common.dir\src\ShadowMap.cpp.obj common\CMakeFiles\common.dir\src\SkyBox.cpp.obj common\CMakeFiles\common.dir\src\WCubicSpline.cpp.obj
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = common\CMakeFiles\common.dir
@@ -802,7 +810,7 @@ build fluid3d\SPH\rebuild_cache: phony fluid3d\SPH\CMakeFiles\rebuild_cache.util
 #############################################
 # Order-only phony target for ui
 
-build cmake_object_order_depends_target_ui: phony || cmake_object_order_depends_target_common cmake_object_order_depends_target_glad cmake_object_order_depends_target_imgui cmake_object_order_depends_target_mac2d cmake_object_order_depends_target_sph2d
+build cmake_object_order_depends_target_ui: phony || cmake_object_order_depends_target_common cmake_object_order_depends_target_glad cmake_object_order_depends_target_imgui cmake_object_order_depends_target_mac2d cmake_object_order_depends_target_sph2d cmake_object_order_depends_target_sph3d
 
 build ui\CMakeFiles\ui.dir\src\HierarchyView.cpp.obj: CXX_COMPILER__ui_unscanned_RelWithDebInfo E$:\CG\Fluid-Simulation-System\code\ui\src\HierarchyView.cpp || cmake_object_order_depends_target_ui
   FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
@@ -860,7 +868,7 @@ build ui\CMakeFiles\ui.dir\src\UI.cpp.obj: CXX_COMPILER__ui_unscanned_RelWithDeb
 #############################################
 # Link the static library ui\ui.lib
 
-build ui\ui.lib: CXX_STATIC_LIBRARY_LINKER__ui_RelWithDebInfo ui\CMakeFiles\ui.dir\src\HierarchyView.cpp.obj ui\CMakeFiles\ui.dir\src\InspectorView.cpp.obj ui\CMakeFiles\ui.dir\src\Manager.cpp.obj ui\CMakeFiles\ui.dir\src\ProjectView.cpp.obj ui\CMakeFiles\ui.dir\src\SceneView.cpp.obj ui\CMakeFiles\ui.dir\src\UI.cpp.obj || common\common.lib fluid2d\MAC\mac2d.lib fluid2d\SPH\sph2d.lib third_party\glad\glad.lib third_party\imgui\imgui.lib
+build ui\ui.lib: CXX_STATIC_LIBRARY_LINKER__ui_RelWithDebInfo ui\CMakeFiles\ui.dir\src\HierarchyView.cpp.obj ui\CMakeFiles\ui.dir\src\InspectorView.cpp.obj ui\CMakeFiles\ui.dir\src\Manager.cpp.obj ui\CMakeFiles\ui.dir\src\ProjectView.cpp.obj ui\CMakeFiles\ui.dir\src\SceneView.cpp.obj ui\CMakeFiles\ui.dir\src\UI.cpp.obj || common\common.lib fluid2d\MAC\mac2d.lib fluid2d\SPH\sph2d.lib fluid3d\SPH\sph3d.lib third_party\glad\glad.lib third_party\imgui\imgui.lib
   LANGUAGE_COMPILE_FLAGS = /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MD /Zi /O2 /Ob1 /DNDEBUG
   LINK_FLAGS = /machine:x64
   OBJECT_DIR = ui\CMakeFiles\ui.dir

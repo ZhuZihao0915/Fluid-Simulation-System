@@ -83,10 +83,10 @@ namespace FluidSimulation {
         }
 
         // show image
-        ImGui::SetCursorPosX((windowSize.x - 600) * 0.5f);
+        ImGui::SetCursorPosX((windowSize.x - imageWidth) * 0.5f);
         ImGui::SetCursorPosY(90);
 
-        ImVec2 imageSize(600, 600);
+        ImVec2 imageSize(imageWidth, imageHeight);
         if (currentMethod == NULL) {
             ImGui::Image(NULL, imageSize);
         }
@@ -96,6 +96,56 @@ namespace FluidSimulation {
         ImGui::GetWindowDrawList()->AddImage((ImTextureID)texture,
             ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y), ImVec2(ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y),
             ImVec2(0, 1), ImVec2(1, 0));
+
+        // 如果鼠标停留在渲染界面上，将鼠标的运动报告给component
+        if (ImGui::IsItemHovered() && currentMethod != NULL) {
+
+            // 获取鼠标状态
+            double mouseX, mouseY;
+            glfwGetCursorPos(window, &mouseX, &mouseY);
+
+            // 检测滚轮
+            currentMethod->cameraScale(ImGui::GetIO().MouseWheel);
+
+            // 检测鼠标左键拖动
+            if (ImGui::IsMouseDragging(0, 0.0f)) {
+                if (!isLeftMouseDragging) {
+                    isLeftMouseDragging = true;
+                    lastMouseX = mouseX;
+                    lastMouseY = mouseY;
+                }
+                float deltaX = (float)(mouseX - lastMouseX);
+                float deltaY = (float)(mouseY - lastMouseY);
+
+                currentMethod->cameraRotate(deltaX, deltaY);
+                
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+            }
+            else {
+                isLeftMouseDragging = false;
+            }
+
+            // 检测鼠标右键拖动
+            if (ImGui::IsMouseDragging(1, 0.0f)) {
+                if (!isRightMouseDragging) {
+                    isRightMouseDragging = true;
+                    lastMouseX = mouseX;
+                    lastMouseY = mouseY;
+                }
+                float deltaX = (float)(mouseX - lastMouseX);
+                float deltaY = (float)(mouseY - lastMouseY);
+
+                currentMethod->cameraMove(deltaX, deltaY);
+
+                lastMouseX = mouseX;
+                lastMouseY = mouseY;
+            }
+            else {
+                isRightMouseDragging = false;
+            }
+
+        }
 
 		ImGui::End();
 	}

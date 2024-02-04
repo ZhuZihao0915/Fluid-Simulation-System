@@ -24,10 +24,26 @@ extern double theCellSize2d;
 extern int theDim3d[];
 extern double theCellSize3d;
 
+namespace SPH2D {
+    // 求解器参数
+    extern float dt;
+    extern int substep;
+
+    // 物理参数
+    extern float gravity;
+    extern float density;
+    extern float stiffness;
+    extern float exponent;
+    extern float viscosity;
+}
+
 namespace SPH3D {
     // 求解器参数
     extern float dt;
     extern int substep;
+    extern float maxVelocity;
+    extern float velocityAttenuation;
+    extern float eps;
 
     // 物理参数
     extern float supportRadius;
@@ -51,6 +67,11 @@ namespace SPH3D {
     // 几何参数
     extern float zFar;
     extern float zNear;
+
+    // 渲染
+    extern const glm::vec3 vertexes[];
+    extern const GLuint indices[];
+    extern std::vector<float_t> floorVertices;
 }
 
 extern std::string shaderPath;

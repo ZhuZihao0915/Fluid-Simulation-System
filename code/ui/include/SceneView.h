@@ -36,6 +36,14 @@ namespace FluidSimulation {
 
 		GLuint texture;
 
+		// 检测鼠标是否停留在渲染界面
+		bool isMouseHovering = false;
+		// 鼠标拖动状态
+		bool isLeftMouseDragging = false;
+		bool isRightMouseDragging = false;
+		double lastMouseX = 0.0;
+		double lastMouseY = 0.0;
+
 	public:
 		SceneView();
 		SceneView(GLFWwindow* window);

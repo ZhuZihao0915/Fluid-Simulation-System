@@ -5,7 +5,7 @@
 #include "ParticalSystem2d.h"
 #include "WCubicSpline.h"
 
-#include "Iteration.h"
+#include "Configure.h"
 
 namespace FluidSimulation {
 

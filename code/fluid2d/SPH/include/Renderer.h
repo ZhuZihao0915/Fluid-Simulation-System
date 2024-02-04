@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 
 #include "ParticalSystem2d.h"
+#include "Configure.h"
 
 namespace FluidSimulation {
 
@@ -46,8 +47,6 @@ namespace FluidSimulation {
         private:
 
             GLFWwindow* mWindow = nullptr;
-            int mWindowWidth = 600;
-            int mWindowHeight = 600;
 
             Glb::Shader* mParticalShader = nullptr;
             Glb::Shader* mSdfShader = nullptr;

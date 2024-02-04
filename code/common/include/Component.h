@@ -10,6 +10,7 @@
 namespace Glb {
 	class Component {
 	public:
+		bool is3D;
 		char* description;
 		Component() {
 			this->description = NULL;
@@ -18,6 +19,9 @@ namespace Glb {
 			this->description = description;
 		}
 
+		virtual void cameraRotate(float x, float y) { if (!is3D)return; };
+		virtual void cameraMove(float x, float y) { if (!is3D)return; };
+		virtual void cameraScale(float w) { if (!is3D)return; };
 		virtual void shutDown() = 0;
 		virtual void init() = 0;
 		virtual void simulate() = 0;

@@ -3,15 +3,13 @@
 #define __SPH_3D_RENDERER_H__
 
 
+#include <glm/glm.hpp>
+
 #include <glad/glad.h>
 #include "glfw3.h"
 
-#include <vector>
 #include "Shader.h"
-#include <glm/glm.hpp>
-
 #include "ComputeShader.h"
-#include "ParticalSystem3d.h"
 
 #include "Camera.h"
 #include "SkyBox.h"
@@ -20,41 +18,20 @@
 #include "DepthFilter.h"
 #include "Material.h"
 #include "ShadowMap.h"
-
 #include "Configure.h"
 
-
-const glm::vec3 vertexes[] = {
-    glm::vec3(0.0, 0.0, 0.0),
-    glm::vec3(1.0, 0.0, 0.0),
-    glm::vec3(0.0, 1.0, 0.0),
-    glm::vec3(0.0, 0.0, 1.0)
-};
-
-const GLuint indices[] = {
-    0, 1, 0, 2, 0, 3
-};
-
-std::vector<float_t> floorVertices = {
-    // vertex           texCoord
-     1.0f,  1.0f, 0.0f, 1.0, 1.0,
-    -1.0f,  1.0f, 0.0f, 0.0, 1.0,
-    -1.0f, -1.0f, 0.0f, 0.0, 0.0,
-     1.0f,  1.0f, 0.0f, 1.0, 1.0,
-    -1.0f, -1.0f, 0.0f, 0.0, 0.0,
-     1.0f, -1.0f, 0.0f, 1.0, 0.0,
-};
+#include "ParticalSystem3d.h"
 
 namespace FluidSimulation {
 
     namespace SPH3d {
+
         class Renderer
         {
         public:
             Renderer();
-            ~Renderer();
 
-            int32_t Init();
+            void Init();
 
             GLuint getRenderedTexture();
 
@@ -67,11 +44,6 @@ namespace FluidSimulation {
             void load(ParticalSystem3d& ps);
             void draw();
 
-            // window
-            bool ShouldClose();
-            void ProcessInput();
-            void PollEvents();
-
         private:
             static void ResizeCallback(GLFWwindow* window, int width, int height);
             static void CursorPosCallBack(GLFWwindow* window, double xpos, double ypos);
@@ -80,7 +52,7 @@ namespace FluidSimulation {
             static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
         private:
-            bool CreateWindow();
+            
             void UpdateFPS();
             void BuildShaders();
             void InitFilters();
@@ -93,6 +65,9 @@ namespace FluidSimulation {
             void DrawParticals();
             int32_t Destroy();
 
+        public:
+            Glb::Camera mCamera;
+
         private:
             // window
             GLFWwindow* mWindow = nullptr;
@@ -100,7 +75,6 @@ namespace FluidSimulation {
             int mWindowHeight = 1000;
 
             // camera
-            Glb::Camera mCamera;
             bool mFirstMouseFlag = true;
             float mLastX;
             float mLastY;
@@ -167,5 +141,5 @@ namespace FluidSimulation {
     }
 }
 
-#endif // !RENDER_WIDGET_H
+#endif
 

@@ -26,7 +26,7 @@ namespace FluidSimulation {
 
         void Solver::updateDensityAndPressure() {
             // initialized as normal condition
-            mPs.mDensity = std::vector<float>(mPs.positions.size(), Fluid::GetInstance().GetDensity());
+            mPs.mDensity = std::vector<float>(mPs.positions.size(), SPH2D::density);
             mPs.mPressure = std::vector<float>(mPs.positions.size(), 0.0f);
 
             // caculate
@@ -39,24 +39,24 @@ namespace FluidSimulation {
                     for (auto& nInfo : neighbors) {
                         density += mW.Value(nInfo.distance);    // kernel function (interpolation)
                     }
-                    density *= (mPs.volume * Fluid::GetInstance().GetDensity());
+                    density *= (mPs.volume * SPH2D::density);
                     mPs.mDensity[i] = density;
-                    mPs.mDensity[i] = std::max(density, Fluid::GetInstance().GetDensity());        // Ω˚÷π≈Ú’Õ
+                    mPs.mDensity[i] = max(density, SPH2D::density);        // Ω˚÷π≈Ú’Õ
                 }
                 // pressure
-                mPs.mPressure[i] = Fluid::GetInstance().GetStiffness() * (std::powf(mPs.mDensity[i] / Fluid::GetInstance().GetDensity(), Fluid::GetInstance().GetExponent()) - 1.0f);
+                mPs.mPressure[i] = SPH2D::stiffness * (std::powf(mPs.mDensity[i] / SPH2D::density, SPH2D::exponent) - 1.0f);
             }
         }
 
         // initialize the accleration as gravity
         void Solver::initAccleration() {
-            std::fill(mPs.accleration.begin() + mPs.mStartIndex, mPs.accleration.end(), glm::vec2(0.0f, -Fluid::GetInstance().GetGravity()));
+            std::fill(mPs.accleration.begin() + mPs.mStartIndex, mPs.accleration.end(), glm::vec2(0.0f, -SPH2D::gravity));
         }
 
         // update accleration by viscosity
         void Solver::updateViscosityAccleration() {
             float dim = 2.0f;
-            float constFactor = 2.0f * (dim + 2.0f) * Fluid::GetInstance().GetViscosity();
+            float constFactor = 2.0f * (dim + 2.0f) * SPH2D::viscosity;
             // traverse all particles
             for (int i = mPs.mStartIndex; i < mPs.positions.size(); i++) {
                 // if have neighbor(s)
@@ -105,11 +105,11 @@ namespace FluidSimulation {
             // traverse all particles
             for (int i = mPs.mStartIndex; i < mPs.positions.size(); i++) {
                 // use accleration update velocity
-                mPs.velocity[i] += Iteration::GetInstance().GetDt() * mPs.accleration[i];
+                mPs.velocity[i] += SPH2D::dt * mPs.accleration[i];
                 // restrict
                 mPs.velocity[i] = glm::clamp(mPs.velocity[i], glm::vec2(-100.0f), glm::vec2(100.0f));
                 // use velocity update position
-                mPs.positions[i] += Iteration::GetInstance().GetDt() * mPs.velocity[i];
+                mPs.positions[i] += SPH2D::dt * mPs.velocity[i];
             }
         }
 
@@ -141,7 +141,7 @@ namespace FluidSimulation {
                 }
                 // if does, update their position by new velocities
                 if (invFlag) {
-                    mPs.positions[i] += Iteration::GetInstance().GetDt() * mPs.velocity[i];
+                    mPs.positions[i] += SPH2D::dt * mPs.velocity[i];
                     mPs.velocity[i] = glm::clamp(mPs.velocity[i], glm::vec2(-100.0f), glm::vec2(100.0f)); // restriction
                 }
             }

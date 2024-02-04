@@ -25,8 +25,7 @@ namespace FluidSimulation {
 
             // initialize particle system
             // set the container's size
-            ps = new ParticalSystem2d(glm::vec2(Container::GetInstance().GetCornerX(), Container::GetInstance().GetCornerY()),
-                glm::vec2(Container::GetInstance().GetSizeX(), Container::GetInstance().GetSizeY()));
+            ps = new ParticalSystem2d(glm::vec2(-1.0f, -1.0f), glm::vec2(2.0f, 2.0f));
 
             // add a fluid block
             ps->addFluidBlock(glm::vec2(-0.4, -0.4), glm::vec2(0.8, 0.8), glm::vec2(-0.0f, -0.0f), 0.014f);
@@ -37,7 +36,7 @@ namespace FluidSimulation {
         }
 
         void Sph2dComponent::simulate() {
-            for (int i = 0; i < Iteration::GetInstance().GetSubstep(); i++) {
+            for (int i = 0; i < SPH2D::substep; i++) {
                 ps->searchNeighbors();
                 solver->solve();
             }

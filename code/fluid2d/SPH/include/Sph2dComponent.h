@@ -9,8 +9,6 @@
 #include "Component.h"
 #include "Configure.h"
 
-#include "Container.h"
-
 
 namespace FluidSimulation {
     namespace SPH2d {
@@ -25,6 +23,7 @@ namespace FluidSimulation {
                 renderer = NULL;
                 solver = NULL;
                 ps = NULL;
+                is3D = false;
             }
             virtual void shutDown();
             virtual void init();

@@ -4,7 +4,9 @@
 
 #include "ParticalSystem3d.h"
 #include "WCubicSpline.h"
-
+#include "Global.h"
+#include "Configure.h"
+#include <iostream>
 
 namespace FluidSimulation {
 

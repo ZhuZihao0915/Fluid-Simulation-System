@@ -1,7 +1,6 @@
 ﻿#include "FluidShadowMap.h"
 #include <iostream>
 #include "Global.h"
-#include "Parameters3d.h"
 
 namespace Glb {
     FluidShadowMap::FluidShadowMap() {

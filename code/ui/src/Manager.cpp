@@ -13,6 +13,7 @@ namespace FluidSimulation
         // 添加模拟方法
         methodComponents.push_back(new SPH2d::Sph2dComponent("sph 2d"));
         methodComponents.push_back(new MAC2d::Mac2dComponent("mac 2d"));
+        methodComponents.push_back(new SPH3d::Sph3dComponent("sph 3d"));
     }
 
 	void Manager::displayViews() {

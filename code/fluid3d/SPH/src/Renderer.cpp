@@ -2,7 +2,12 @@
 
 namespace FluidSimulation {
 	namespace SPH3d {
-        int32_t Renderer::Init() {
+
+        Renderer::Renderer() {
+
+        }
+
+        void Renderer::Init() {
 
             BuildShaders();
             GenerateFrameBuffers();
@@ -32,7 +37,8 @@ namespace FluidSimulation {
             mDrawColor3d = new Glb::Shader();
             std::string drawColorVertPath = shaderPath + "/DrawColor3d.vert";
             std::string drawColorFragPath = shaderPath + "/DrawColor3d.frag";
-            mDrawColor3d->buildFromFile(drawColorVertPath, drawColorFragPath);
+            //std::string drawColorGeomPath = shaderPath + "/DrawColor3d.geom";
+            mDrawColor3d->buildFromFile(drawColorVertPath, drawColorFragPath);// , drawColorGeomPath);
 
             /*mScreenQuad = new Glb::Shader();
             std::string screenQuadVertPath = shaderPath + "/ScreenQuad.vert";
@@ -260,7 +266,7 @@ namespace FluidSimulation {
             glGenVertexArrays(1, &mVaoCoord);
             glBindVertexArray(mVaoCoord);
             glBindBuffer(GL_ARRAY_BUFFER, mCoordVertBuffer);
-            glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec3), vertexes, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec3), SPH3D::vertexes, GL_STATIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
             glBindVertexArray(0);
@@ -269,7 +275,7 @@ namespace FluidSimulation {
             glGenVertexArrays(1, &mVaoFloor);
             glBindVertexArray(mVaoFloor);
             glBindBuffer(GL_ARRAY_BUFFER, mBufferFloor);
-            glBufferData(GL_ARRAY_BUFFER, floorVertices.size() * sizeof(float_t), floorVertices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, SPH3D::floorVertices.size() * sizeof(float_t), SPH3D::floorVertices.data(), GL_STATIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0));
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float_t)));
@@ -302,13 +308,18 @@ namespace FluidSimulation {
             mDrawColor3d->setMat4("projection", mCamera.GetProjection());
 
             glBindVertexArray(mVaoCoord);
-            glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, indices);
+            glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, SPH3D::indices);
             glBindVertexArray(mVaoParticals);
+            //glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mParticalNum);
             glDrawArrays(GL_POINTS, 0, mParticalNum);
             mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
             mDrawColor3d->unUse();
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+        GLuint Renderer::getRenderedTexture() {
+            return textureID;
         }
 	}
 }

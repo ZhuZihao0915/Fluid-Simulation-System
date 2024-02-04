@@ -6,7 +6,7 @@
 namespace FluidSimulation {
     namespace SPH3d {
         ParticalSystem3d::ParticalSystem3d() {
-    
+            
         }
 
         ParticalSystem3d::~ParticalSystem3d() {
@@ -40,7 +40,7 @@ namespace FluidSimulation {
             mParticalInfos.clear();
         }
     
-        int32_t ParticalSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace) {
+        int32_t ParticalSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpaceX, float particalSpaceY, float particalSpaceZ) {
             glm::vec3 blockLowerBound = corner;
             glm::vec3 blockUpperBound = corner + size;
 
@@ -53,7 +53,7 @@ namespace FluidSimulation {
                 return 0;
             }
 
-            glm::uvec3 particalNum = glm::uvec3(size.x / particalSpace, size.y / particalSpace, size.z / particalSpace);
+            glm::uvec3 particalNum = glm::uvec3(size.x / particalSpaceX, size.y / particalSpaceY, size.z / particalSpaceZ);
             std::vector<ParticalInfo3d> particals(particalNum.x * particalNum.y * particalNum.z);
         
             Glb::RandomGenerator rand;
@@ -61,9 +61,9 @@ namespace FluidSimulation {
             for (int idX = 0; idX < particalNum.x; idX++) {
                 for (int idY = 0; idY < particalNum.y; idY++) {
                     for (int idZ = 0; idZ < particalNum.z; idZ++) {
-                        float x = (idX + rand.GetUniformRandom()) * particalSpace;
-                        float y = (idY + rand.GetUniformRandom()) * particalSpace;
-                        float z = (idZ + rand.GetUniformRandom()) * particalSpace;
+                        float x = (idX + rand.GetUniformRandom()) * particalSpaceX;
+                        float y = (idY + rand.GetUniformRandom()) * particalSpaceY;
+                        float z = (idZ + rand.GetUniformRandom()) * particalSpaceZ;
                         particals[p].position = corner + glm::vec3(x, y, z);
                         particals[p].blockId = getBlockIdByPosition(particals[p].position);
                         particals[p].velocity = v0;
@@ -94,7 +94,11 @@ namespace FluidSimulation {
         }
 
         void ParticalSystem3d::updateBlockInfo() {
+            
             // 按blockId的顺序，对粒子进行排序
+            // 排序前要求各个粒子的blockID已经被正确更新
+            // 在addFluidBlock中，对粒子的blockID初始化
+            // 之后的模拟过程中，Slover::calculateBlockId()用来更新blockID
             std::sort(mParticalInfos.begin(), mParticalInfos.end(),
                 [=](ParticalInfo3d& first, ParticalInfo3d& second) {
                     return first.blockId < second.blockId;

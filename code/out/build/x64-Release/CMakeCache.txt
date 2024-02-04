@@ -238,7 +238,7 @@ sph2d_LIB_DEPENDS:STATIC=general;common;general;E:/CG/Fluid-Simulation-System/co
 sph3d_LIB_DEPENDS:STATIC=general;common;general;E:/CG/Fluid-Simulation-System/code/third_party/glfw/lib/glfw3.lib;
 
 //Dependencies for the target
-ui_LIB_DEPENDS:STATIC=general;glad;general;imgui;general;sph2d;general;mac2d;general;E:/CG/Fluid-Simulation-System/code/third_party/glfw/lib/glfw3.lib;
+ui_LIB_DEPENDS:STATIC=general;glad;general;imgui;general;sph2d;general;mac2d;general;sph3d;general;E:/CG/Fluid-Simulation-System/code/third_party/glfw/lib/glfw3.lib;
 
 
 ########################

@@ -7,7 +7,7 @@
 #include <glm/glm.hpp>
 #include "Global.h"
 
-#include "Fluid.h"
+#include "Configure.h"
 
 namespace FluidSimulation {
 
@@ -69,7 +69,7 @@ namespace FluidSimulation {
             float supportRadius = 0.025;
             float supportRadius2 = supportRadius * supportRadius;
             float volume = 0.8 * particalDiameter * particalDiameter;
-            float mass = Fluid::GetInstance().GetDensity() * volume;
+            float mass = SPH2D::density * volume;
 
         };
     }

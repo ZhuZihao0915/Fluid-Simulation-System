@@ -10,9 +10,7 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "Fluid.h"
-#include "Container.h"
-#include "Iteration.h"
+#include "Configure.h"
 #include "Manager.h"
 
 namespace FluidSimulation {

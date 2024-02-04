@@ -23,6 +23,7 @@ namespace FluidSimulation {
                 renderer = NULL;
                 solver = NULL;
                 grid = NULL;
+                is3D = false;
             }
             virtual void shutDown();
             virtual void init();
