@@ -18,6 +18,7 @@
 #include "Sph2dComponent.h"
 #include "Mac2dComponent.h"
 #include "Sph3dComponent.h"
+#include "Mac3dComponent.h"
 
 #include <vector>
 

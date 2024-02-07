@@ -22,7 +22,7 @@ namespace Glb {
         mLightViewUp = glm::normalize(glm::cross(mLightViewRight, mLightViewFront));
         mLightView = glm::lookAt(light.pos, light.pos + light.dir, mLightViewUp);
         float_t aspect = float_t(mWidth) / mHeight;
-        mLightProjection = glm::perspective(glm::radians(light.fovy), aspect, SPH3D::zNear, SPH3D::zFar);
+        mLightProjection = glm::perspective(glm::radians(light.fovy), aspect, SPH3dPara::zNear, SPH3dPara::zFar);
     }
 
     void FluidShadowMap::SetIor(float_t ior) {
@@ -77,8 +77,8 @@ namespace Glb {
         mCausticMap->use();
         mCausticMap->setMat4("model", model);
         for (int i = 0; i < Glb::ORIGIN_COLORS.size(); i++) {
-            mCausticMap->setFloat("eta", 1.0 / (mIor + SPH3D::IOR_BIAS * float(i - 1)));
-            mCausticMap->setVec3("photonColor", Glb::ORIGIN_COLORS[i] * SPH3D::CAUSTIC_FACTOR);
+            mCausticMap->setFloat("eta", 1.0 / (mIor + SPH3dPara::IOR_BIAS * float(i - 1)));
+            mCausticMap->setVec3("photonColor", Glb::ORIGIN_COLORS[i] * SPH3dPara::CAUSTIC_FACTOR);
             glDrawArrays(GL_POINTS, 0, mWidth * mHeight);
         }
         mCausticMap->unUse();
@@ -106,12 +106,12 @@ namespace Glb {
         mPointSpriteZValue->use();
         mPointSpriteZValue->setMat4("view", mLightView);
         mPointSpriteZValue->setMat4("projection", mLightProjection);
-        mPointSpriteZValue->setFloat("particalRadius", SPH3D::particalDiameter);
+        mPointSpriteZValue->setFloat("particalRadius", SPH3dPara::particalDiameter);
         mPointSpriteZValue->setVec3("cameraUp", mLightViewUp);
         mPointSpriteZValue->setVec3("cameraRight", mLightViewRight);
         mPointSpriteZValue->setVec3("cameraFront", mLightViewFront);
-        mPointSpriteZValue->setFloat("zFar", SPH3D::zFar);
-        mPointSpriteZValue->setFloat("zNear", SPH3D::zNear);
+        mPointSpriteZValue->setFloat("zFar", SPH3dPara::zFar);
+        mPointSpriteZValue->setFloat("zNear", SPH3dPara::zNear);
         mPointSpriteZValue->unUse();
 
         mCausticMap = new Glb::Shader();

@@ -15,5 +15,6 @@ target_link_libraries(ui imgui)
 target_link_libraries(ui sph2d)
 target_link_libraries(ui mac2d)
 target_link_libraries(ui sph3d)
+target_link_libraries(ui mac3d)
 
 target_link_libraries(ui "${PROJECT_SOURCE_DIR}/third_party/glfw/lib/glfw3.lib")

@@ -69,7 +69,7 @@ namespace FluidSimulation {
             float supportRadius = 0.025;
             float supportRadius2 = supportRadius * supportRadius;
             float volume = 0.8 * particalDiameter * particalDiameter;
-            float mass = SPH2D::density * volume;
+            float mass = SPH2dPara::density * volume;
 
         };
     }

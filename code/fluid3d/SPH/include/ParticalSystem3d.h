@@ -39,15 +39,15 @@ namespace FluidSimulation {
             void updateBlockInfo();
         public:
             // 粒子参数
-            float mSupportRadius = SPH3D::supportRadius;    // 支撑半径
+            float mSupportRadius = SPH3dPara::supportRadius;    // 支撑半径
             float mSupportRadius2 = mSupportRadius * mSupportRadius;
-            float mParticalRadius = SPH3D::particalRadius;   // 粒子半径
-            float mParticalDiameter = SPH3D::particalDiameter;
+            float mParticalRadius = SPH3dPara::particalRadius;   // 粒子半径
+            float mParticalDiameter = SPH3dPara::particalDiameter;
             float mVolume = std::pow(mParticalDiameter, 3);    // 体积
-            float mMass = SPH3D::density0 * mVolume;  // 质量
-            float mViscosity = SPH3D::viscosity;            // 粘度系数
-            float mExponent = SPH3D::exponent;              // 压力指数
-            int mStiffness = SPH3D::stiffness;            // 刚度
+            float mMass = SPH3dPara::density0 * mVolume;  // 质量
+            float mViscosity = SPH3dPara::viscosity;            // 粘度系数
+            float mExponent = SPH3dPara::exponent;              // 压力指数
+            int mStiffness = SPH3dPara::stiffness;            // 刚度
             std::vector<ParticalInfo3d> mParticalInfos;
             int mMaxNeighbors = 512;
 

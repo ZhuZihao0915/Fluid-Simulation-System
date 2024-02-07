@@ -25,11 +25,11 @@ namespace FluidSimulation {
 
             ps = new ParticalSystem3d();
             ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1, 1, 1));
-            ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);// 0.01 * 0.8);
+            ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);
             ps->addFluidBlock(glm::vec3(0.45, 0.45, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);
             
-            //ps->addFluidBlock(glm::vec3(0.01, 0.01, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(-0.2, -0.2, 0.0), 0.03, 0.03, 0.01);// 0.01 * 0.8);
-            //ps->addFluidBlock(glm::vec3(0.59, 0.59, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.2, 0.2, 0.0), 0.03, 0.03, 0.01);
+            // ps->addFluidBlock(glm::vec3(0.01, 0.01, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(-0.2, -0.2, 0.0), 0.03, 0.03, 0.01);// 0.01 * 0.8);
+            // ps->addFluidBlock(glm::vec3(0.59, 0.59, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.2, 0.2, 0.0), 0.03, 0.03, 0.01);
             // ps.sddFluidBlock(glm::vec3(0.2, 0.2, 0.25), glm::vec3(0.2, 0.2, 0.3), glm::vec3(0.0, 0.0, 0.0), 0.01 * 0.8);
 
             // 对粒子排序，并组建block结构
@@ -41,7 +41,7 @@ namespace FluidSimulation {
         }
 
         void Sph3dComponent::simulate() {
-            for (int i = 0; i < SPH3D::substep; i++) {
+            for (int i = 0; i < SPH3dPara::substep; i++) {
                 ps->updateBlockInfo();
                 solver->solve();
             }

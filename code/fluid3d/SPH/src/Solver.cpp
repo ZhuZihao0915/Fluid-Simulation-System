@@ -1,4 +1,5 @@
 #include "fluid3d/SPH/include/Solver.h"
+#include <omp.h>
 
 namespace FluidSimulation {
 
@@ -27,7 +28,7 @@ namespace FluidSimulation {
 #pragma omp parallel for
 			for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
 
-				mPs.mParticalInfos[i].accleration = SPH3D::gravity * -Glb::Z_AXIS;
+				mPs.mParticalInfos[i].accleration = SPH3dPara::gravity * -Glb::Z_AXIS;
 				//std::cout << mPs.mParticalInfos[i].accleration.z << std::endl;
 				// 计算 viscosity 和 pressure
 				glm::vec3 viscosityForce = glm::vec3(0.0);
@@ -38,10 +39,10 @@ namespace FluidSimulation {
 						for (int j = mPs.mBlockExtens[bIdj].x; j < mPs.mBlockExtens[bIdj].y; j++) {
 							glm::vec3 radiusIj = mPs.mParticalInfos[i].position - mPs.mParticalInfos[j].position;
 							float diatanceIj = length(radiusIj);
-							if (diatanceIj <= SPH3D::supportRadius) {
+							if (diatanceIj <= SPH3dPara::supportRadius) {
 								float dotDvToRad = glm::dot(mPs.mParticalInfos[i].velocity - mPs.mParticalInfos[j].velocity, radiusIj);
-								float denom = diatanceIj * diatanceIj + 0.01 * SPH3D::supportRadius * SPH3D::supportRadius;
-								glm::vec3 wGrad = mW.GetGrad(diatanceIj / SPH3D::supportRadius).g * radiusIj;
+								float denom = diatanceIj * diatanceIj + 0.01 * SPH3dPara::supportRadius * SPH3dPara::supportRadius;
+								glm::vec3 wGrad = mW.GetGrad(diatanceIj / SPH3dPara::supportRadius).g * radiusIj;
 								//std::cout << wGrad.z << std::endl;
 								viscosityForce += (float)(0.5 / mPs.mParticalInfos[j].density) * dotDvToRad * wGrad / denom;
 								pressureForce += mPs.mParticalInfos[j].density * (mPs.mParticalInfos[i].pressDivDens2 + mPs.mParticalInfos[j].pressDivDens2) * wGrad;
@@ -62,15 +63,15 @@ namespace FluidSimulation {
 #pragma omp parallel for
 			for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
 				// 使用加速度（和dt）更新速度
-				mPs.mParticalInfos[i].velocity = mPs.mParticalInfos[i].velocity + SPH3D::dt * mPs.mParticalInfos[i].accleration;
+				mPs.mParticalInfos[i].velocity = mPs.mParticalInfos[i].velocity + SPH3dPara::dt * mPs.mParticalInfos[i].accleration;
 				// 限制速度在各方向的大小
 				glm::vec3 newVelocity;
 				for (int j = 0; j < 3; j++) {
-					newVelocity[j] = max(-SPH3D::maxVelocity, min(mPs.mParticalInfos[i].velocity[j], SPH3D::maxVelocity));
+					newVelocity[j] = max(-SPH3dPara::maxVelocity, min(mPs.mParticalInfos[i].velocity[j], SPH3dPara::maxVelocity));
 				}
 				mPs.mParticalInfos[i].velocity = newVelocity;
 				// 使用速度（和dt）更新位置
-				mPs.mParticalInfos[i].position = mPs.mParticalInfos[i].position + SPH3D::dt * mPs.mParticalInfos[i].velocity;
+				mPs.mParticalInfos[i].position = mPs.mParticalInfos[i].position + SPH3dPara::dt * mPs.mParticalInfos[i].velocity;
 			}
 		}
 
@@ -82,45 +83,45 @@ namespace FluidSimulation {
 
 				bool invFlag = false;
 
-				if (mPs.mParticalInfos[i].position.x < mPs.mLowerBound.x + SPH3D::supportRadius) {
+				if (mPs.mParticalInfos[i].position.x < mPs.mLowerBound.x + SPH3dPara::supportRadius) {
 					mPs.mParticalInfos[i].velocity.x = abs(mPs.mParticalInfos[i].velocity.x);
 					invFlag = true;
 				}
 
-				if (mPs.mParticalInfos[i].position.y < mPs.mLowerBound.y + SPH3D::supportRadius) {
+				if (mPs.mParticalInfos[i].position.y < mPs.mLowerBound.y + SPH3dPara::supportRadius) {
 					mPs.mParticalInfos[i].velocity.y = abs(mPs.mParticalInfos[i].velocity.y);
 					invFlag = true;
 				}
 
-				if (mPs.mParticalInfos[i].position.z < mPs.mLowerBound.z + SPH3D::supportRadius) {
+				if (mPs.mParticalInfos[i].position.z < mPs.mLowerBound.z + SPH3dPara::supportRadius) {
 					mPs.mParticalInfos[i].velocity.z = abs(mPs.mParticalInfos[i].velocity.z);
 					invFlag = true;
 				}
 
-				if (mPs.mParticalInfos[i].position.x > mPs.mUpperBound.x - SPH3D::supportRadius) {
+				if (mPs.mParticalInfos[i].position.x > mPs.mUpperBound.x - SPH3dPara::supportRadius) {
 					mPs.mParticalInfos[i].velocity.x = -abs(mPs.mParticalInfos[i].velocity.x);
 					invFlag = true;
 				}
 
-				if (mPs.mParticalInfos[i].position.y > mPs.mUpperBound.y - SPH3D::supportRadius) {
+				if (mPs.mParticalInfos[i].position.y > mPs.mUpperBound.y - SPH3dPara::supportRadius) {
 					mPs.mParticalInfos[i].velocity.y = -abs(mPs.mParticalInfos[i].velocity.y);
 					invFlag = true;
 				}
 
-				if (mPs.mParticalInfos[i].position.z > mPs.mUpperBound.z - SPH3D::supportRadius) {
+				if (mPs.mParticalInfos[i].position.z > mPs.mUpperBound.z - SPH3dPara::supportRadius) {
 					mPs.mParticalInfos[i].velocity.z = -abs(mPs.mParticalInfos[i].velocity.z);
 					invFlag = true;
 				}
 
 				if (invFlag) {
-					mPs.mParticalInfos[i].velocity *= SPH3D::velocityAttenuation;	// 到达边界，衰减速度
+					mPs.mParticalInfos[i].velocity *= SPH3dPara::velocityAttenuation;	// 到达边界，衰减速度
 				}
 
 				// 限制速度和位置
 				glm::vec3 newPosition, newVelocity;
 				for (int j = 0; j < 3; j++) {
-					newPosition[j] = max((mPs.mLowerBound[j] + SPH3D::supportRadius + SPH3D::eps), min(mPs.mParticalInfos[i].position[j], (mPs.mUpperBound[j] - (SPH3D::supportRadius + SPH3D::eps))));
-					newVelocity[j] = max(-SPH3D::maxVelocity, min(mPs.mParticalInfos[i].velocity[j], SPH3D::maxVelocity));
+					newPosition[j] = max((mPs.mLowerBound[j] + SPH3dPara::supportRadius + SPH3dPara::eps), min(mPs.mParticalInfos[i].position[j], (mPs.mUpperBound[j] - (SPH3dPara::supportRadius + SPH3dPara::eps))));
+					newVelocity[j] = max(-SPH3dPara::maxVelocity, min(mPs.mParticalInfos[i].velocity[j], SPH3dPara::maxVelocity));
 				}
 				mPs.mParticalInfos[i].position = newPosition;
 				mPs.mParticalInfos[i].velocity = newVelocity;
@@ -153,17 +154,17 @@ namespace FluidSimulation {
 							// 根据粒子之间的距离，模拟密度
 							glm::vec3 radiusIj = mPs.mParticalInfos[i].position - mPs.mParticalInfos[j].position;
 							float diatanceIj = length(radiusIj);
-							if (diatanceIj <= SPH3D::supportRadius) {
-								mPs.mParticalInfos[i].density += mW.GetGrad(diatanceIj / SPH3D::supportRadius).r;
+							if (diatanceIj <= SPH3dPara::supportRadius) {
+								mPs.mParticalInfos[i].density += mW.GetGrad(diatanceIj / SPH3dPara::supportRadius).r;
 							}
 						}
 					}
 				}
 				
-				mPs.mParticalInfos[i].density *= (mPs.mVolume * SPH3D::density0);
-				mPs.mParticalInfos[i].density = max(mPs.mParticalInfos[i].density, SPH3D::density0);
+				mPs.mParticalInfos[i].density *= (mPs.mVolume * SPH3dPara::density0);
+				mPs.mParticalInfos[i].density = max(mPs.mParticalInfos[i].density, SPH3dPara::density0);
 				// 根据更新得到的密度，以及设定的stiffness、exponent参数计算得到pressure
-				mPs.mParticalInfos[i].pressure = SPH3D::stiffness * (pow(mPs.mParticalInfos[i].density / SPH3D::density0, SPH3D::exponent) - 1.0);
+				mPs.mParticalInfos[i].pressure = SPH3dPara::stiffness * (pow(mPs.mParticalInfos[i].density / SPH3dPara::density0, SPH3dPara::exponent) - 1.0);
 				mPs.mParticalInfos[i].pressDivDens2 = mPs.mParticalInfos[i].pressure / pow(mPs.mParticalInfos[i].density, 2);
 			}
 		}

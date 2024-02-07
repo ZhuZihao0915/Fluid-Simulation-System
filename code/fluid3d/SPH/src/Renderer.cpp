@@ -55,8 +55,8 @@ namespace FluidSimulation {
             std::string pointSpriteZValueFragPath = shaderPath + "/PointSpriteZValue.frag";
             mPointSpriteZValue->buildFromFile(pointSpriteZValueVertPath, pointSpriteZValueFragPath, pointSpriteZValueGeomPath);
             mPointSpriteZValue->use();
-            mPointSpriteZValue->setFloat("zFar", SPH3D::zFar);
-            mPointSpriteZValue->setFloat("zNear", SPH3D::zNear);
+            mPointSpriteZValue->setFloat("zFar", SPH3dPara::zFar);
+            mPointSpriteZValue->setFloat("zNear", SPH3dPara::zNear);
             mPointSpriteZValue->unUse();
 
             mPointSpriteThickness = new Glb::Shader();
@@ -70,14 +70,14 @@ namespace FluidSimulation {
             std::string drawFluidColorFragPath = shaderPath + "/DrawFluidColor.frag";
             mDrawFluidColor->buildFromFile(drawFluidColorVertPath, drawFluidColorFragPath);
             mDrawFluidColor->use();
-            mDrawFluidColor->setFloat("zFar", SPH3D::zFar);
-            mDrawFluidColor->setFloat("zNear", SPH3D::zNear);
-            mDrawFluidColor->setFloat("eta", 1.0 / SPH3D::IOR);
-            mDrawFluidColor->setVec3("f0", SPH3D::F0);
+            mDrawFluidColor->setFloat("zFar", SPH3dPara::zFar);
+            mDrawFluidColor->setFloat("zNear", SPH3dPara::zNear);
+            mDrawFluidColor->setFloat("eta", 1.0 / SPH3dPara::IOR);
+            mDrawFluidColor->setVec3("f0", SPH3dPara::F0);
             mDrawFluidColor->setVec4("cameraIntrinsic", Glb::ProjToIntrinsic(mCamera.GetProjection(), mWindowWidth, mWindowHeight));
-            mDrawFluidColor->setVec3("fluidColor", SPH3D::FLUID_COLOR);
-            mDrawFluidColor->setVec3("shadowColor", SPH3D::SHADOW_COLOR);
-            mDrawFluidColor->setFloat("thicknessFactor", SPH3D::THICKNESS_FACTOR);
+            mDrawFluidColor->setVec3("fluidColor", SPH3dPara::FLUID_COLOR);
+            mDrawFluidColor->setVec3("shadowColor", SPH3dPara::SHADOW_COLOR);
+            mDrawFluidColor->setFloat("thicknessFactor", SPH3dPara::THICKNESS_FACTOR);
             mDrawFluidColor->unUse();
 
             mDrawModel = new Glb::Shader();
@@ -245,7 +245,7 @@ namespace FluidSimulation {
             //mShadowMap = new Glb::FluidShadowMap();
             //mShadowMap->SetImageSize(1000, 1000);
             //mShadowMap->SetLightInfo(mLight);
-            //mShadowMap->SetIor(SPH3D::IOR);
+            //mShadowMap->SetIor(SPH3dPara::IOR);
             //mShadowMap->Init();
         }
 
@@ -266,7 +266,7 @@ namespace FluidSimulation {
             glGenVertexArrays(1, &mVaoCoord);
             glBindVertexArray(mVaoCoord);
             glBindBuffer(GL_ARRAY_BUFFER, mCoordVertBuffer);
-            glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec3), SPH3D::vertexes, GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, 4 * sizeof(glm::vec3), SPH3dPara::vertexes, GL_STATIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
             glEnableVertexAttribArray(0);
             glBindVertexArray(0);
@@ -275,7 +275,7 @@ namespace FluidSimulation {
             glGenVertexArrays(1, &mVaoFloor);
             glBindVertexArray(mVaoFloor);
             glBindBuffer(GL_ARRAY_BUFFER, mBufferFloor);
-            glBufferData(GL_ARRAY_BUFFER, SPH3D::floorVertices.size() * sizeof(float_t), SPH3D::floorVertices.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, SPH3dPara::floorVertices.size() * sizeof(float_t), SPH3dPara::floorVertices.data(), GL_STATIC_DRAW);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0));
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float_t)));
@@ -308,7 +308,7 @@ namespace FluidSimulation {
             mDrawColor3d->setMat4("projection", mCamera.GetProjection());
 
             glBindVertexArray(mVaoCoord);
-            glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, SPH3D::indices);
+            glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, SPH3dPara::indices);
             glBindVertexArray(mVaoParticals);
             //glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mParticalNum);
             glDrawArrays(GL_POINTS, 0, mParticalNum);

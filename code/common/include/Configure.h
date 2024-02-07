@@ -21,10 +21,22 @@ extern int imageHeight;
 extern int theDim2d[];
 extern double theCellSize2d;
 
-extern int theDim3d[];
-extern double theCellSize3d;
+namespace MAC3dPara{
+    extern int theDim3d[];
+    extern double theCellSize3d;
 
-namespace SPH2D {
+    extern float dt;
+
+    extern double airDensity;
+    extern double ambientTemp;
+    extern double boussinesqAlpha;
+    extern double boussinesqBeta;
+    extern double vorticityConst;
+
+    extern int sheetsNum;
+}
+
+namespace SPH2dPara {
     // 求解器参数
     extern float dt;
     extern int substep;
@@ -37,7 +49,7 @@ namespace SPH2D {
     extern float viscosity;
 }
 
-namespace SPH3D {
+namespace SPH3dPara {
     // 求解器参数
     extern float dt;
     extern int substep;

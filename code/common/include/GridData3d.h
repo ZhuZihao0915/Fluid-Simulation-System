@@ -51,11 +51,12 @@ namespace Glb {
 		// corresponding to it
 		virtual void getCell(const glm::vec3& pt, int& i, int& j, int& k);
 
+		glm::vec3 mMax;		// 三维空间中的最大坐标，表示网格的尺寸
+
 	protected:
 
 		virtual glm::vec3 worldToSelf(const glm::vec3& pt) const;
 		double mDfltValue;	// 默认值，用于初始化数据
-		glm::vec3 mMax;		// 三维空间中的最大坐标，表示网格的尺寸
 		ublas::vector<double> mData;	// 存储网格数据的一维数组
 	};
 

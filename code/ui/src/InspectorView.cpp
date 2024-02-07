@@ -17,15 +17,15 @@ namespace FluidSimulation {
 		if (show2dID == 1) {
 			ImGui::Text("Fluid Parameters:");
 
-			ImGui::SliderFloat("Gravity", &SPH2D::gravity, -20.0f, 20.0f);
+			ImGui::SliderFloat("Gravity", &SPH2dPara::gravity, -20.0f, 20.0f);
 
-			ImGui::SliderFloat("Normal Density", &SPH2D::density, 500.0f, 1500.0f);
+			ImGui::SliderFloat("Normal Density", &SPH2dPara::density, 500.0f, 1500.0f);
 
-			ImGui::SliderFloat("Stiffness", &SPH2D::stiffness, 10.0f, 100.0f);
+			ImGui::SliderFloat("Stiffness", &SPH2dPara::stiffness, 10.0f, 100.0f);
 
-			ImGui::SliderFloat("Exponent", &SPH2D::exponent, 5.0f, 10.0f);
+			ImGui::SliderFloat("Exponent", &SPH2dPara::exponent, 5.0f, 10.0f);
 
-			ImGui::SliderFloat("Viscosity", &SPH2D::viscosity, 0.01f, 0.04f);
+			ImGui::SliderFloat("Viscosity", &SPH2dPara::viscosity, 0.01f, 0.04f);
 
 		}
 		if (show2dID == 2) {
@@ -35,9 +35,9 @@ namespace FluidSimulation {
 		}
 		else if (show2dID == 3) {
 			ImGui::Text("Iteration Parameters:");
-			ImGui::SliderFloat("dt times", &SPH2D::dt, 0.1f, 10.0f);
+			ImGui::SliderFloat("dt times", &SPH2dPara::dt, 0.1f, 10.0f);
 
-			ImGui::SliderInt("substep", &SPH2D::substep, 1, 15);
+			ImGui::SliderInt("substep", &SPH2dPara::substep, 1, 15);
 		}
 
 		ImGui::End();

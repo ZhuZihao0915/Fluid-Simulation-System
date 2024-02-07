@@ -36,7 +36,7 @@ namespace FluidSimulation {
         }
 
         void Sph2dComponent::simulate() {
-            for (int i = 0; i < SPH2D::substep; i++) {
+            for (int i = 0; i < SPH2dPara::substep; i++) {
                 ps->searchNeighbors();
                 solver->solve();
             }

@@ -6,11 +6,25 @@ int imageHeight = 800;
 int theDim2d[2] = { 100, 100 };
 double theCellSize2d = 0.5;
 
-int theDim3d[3] = { 50, 50, 50 };
-double theCellSize3d = 0.5;
+
+namespace MAC3dPara {
+    int theDim3d[3] = { 20, 20, 20 };
+    double theCellSize3d = 0.5;
+
+    extern float dt = 0.01;
+
+    extern double airDensity = 1.0; //(1.3 kg/m^2) in reality,
+    extern double ambientTemp = 0.0;
+    extern double boussinesqAlpha = 500.0;
+    extern double boussinesqBeta = 2500.0;
+    extern double vorticityConst = 100.0;
+
+    extern int sheetsNum = 5;
+}
 
 
-namespace SPH2D {
+
+namespace SPH2dPara {
     // 求解器参数
     extern float dt = 4e-4;
     extern int substep = 5;
@@ -22,10 +36,10 @@ namespace SPH2D {
     extern float viscosity = 0.03f;
 }
 
-namespace SPH3D {
+namespace SPH3dPara {
     // 求解器参数
-    extern float dt = 4e-4;
-    extern int substep = 5;
+    extern float dt = 6e-4;
+    extern int substep = 3;
     extern float maxVelocity = 100;
     extern float velocityAttenuation = 0.7;
     extern float eps = 1e-5;

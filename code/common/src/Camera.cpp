@@ -63,6 +63,10 @@ namespace Glb {
         return mFront;
     }
 
+    glm::vec3 Camera::GetPosition() {
+        return mPosition;
+    }
+
     void Camera::UpdateView() {
         mFront.x = std::cos(glm::radians(mPitch)) * std::cos(glm::radians(mYaw));
         mFront.y = std::cos(glm::radians(mPitch)) * std::sin(glm::radians(mYaw));
@@ -74,5 +78,19 @@ namespace Glb {
 
         mPosition = mTargetPoint - mTargetDistance * mFront;
         mView = glm::lookAt(mPosition, mTargetPoint, mUp);
+    }
+
+    void Camera::updateOpenGLMatrices() {
+        // 设置投影矩阵
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glMultMatrixf(glm::value_ptr(mProjection));
+
+        // 计算模型视图矩阵
+        glm::mat4 viewMatrix = glm::lookAt(mPosition, mPosition + mFront, mUp);
+
+        // 将模型视图矩阵加载到 OpenGL 中
+        glMatrixMode(GL_MODELVIEW);
+        glLoadMatrixf(glm::value_ptr(viewMatrix));
     }
 }

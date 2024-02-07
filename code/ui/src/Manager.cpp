@@ -14,6 +14,7 @@ namespace FluidSimulation
         methodComponents.push_back(new SPH2d::Sph2dComponent("sph 2d"));
         methodComponents.push_back(new MAC2d::Mac2dComponent("mac 2d"));
         methodComponents.push_back(new SPH3d::Sph3dComponent("sph 3d"));
+        methodComponents.push_back(new MAC3d::Mac3dComponent("mac 3d"));
     }
 
 	void Manager::displayViews() {

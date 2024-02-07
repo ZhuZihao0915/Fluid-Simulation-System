@@ -27,6 +27,9 @@ E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/fluid3d/CMakeFiles/rebu
 E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/fluid3d/SPH/CMakeFiles/sph3d.dir
 E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/fluid3d/SPH/CMakeFiles/edit_cache.dir
 E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/fluid3d/SPH/CMakeFiles/rebuild_cache.dir
+E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/fluid3d/MAC/CMakeFiles/mac3d.dir
+E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/fluid3d/MAC/CMakeFiles/edit_cache.dir
+E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/fluid3d/MAC/CMakeFiles/rebuild_cache.dir
 E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/ui/CMakeFiles/ui.dir
 E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/ui/CMakeFiles/edit_cache.dir
 E:/CG/Fluid-Simulation-System/code/out/build/x64-Release/ui/CMakeFiles/rebuild_cache.dir

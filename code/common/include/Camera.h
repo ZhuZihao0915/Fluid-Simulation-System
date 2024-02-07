@@ -2,9 +2,12 @@
 #ifndef __CAMERA_H__
 #define __CAMERA_H__
 
+#include <glad/glad.h>
+#include <glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+
 
 namespace Glb {
     class Camera {
@@ -23,6 +26,9 @@ namespace Glb {
         glm::vec3 GetUp();                               //获取相机上方向量
         glm::vec3 GetRight();                             //获取相机右方向量
         glm::vec3 GetFront();                             //获取相机前方向量
+        glm::vec3 GetPosition();
+
+        void Camera::updateOpenGLMatrices();
 
     private:
         void UpdateView();                                //更新视图矩阵

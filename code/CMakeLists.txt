@@ -20,6 +20,7 @@ include_directories(
 	"./fluid2d/MAC/include"
 	"./fluid3d/"
 	"./fluid3d/SPH/include"
+	"./fluid3d/MAC/include"
 	"./ui/include"
 	"."
 )
