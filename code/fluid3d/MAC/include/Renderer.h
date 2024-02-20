@@ -35,9 +35,18 @@ namespace FluidSimulation {
 
 			bool backToFront;
 
-			GLuint vaoXSheets;
-			GLuint vaoYSheets;
-			GLuint vaoZSheets;
+			GLuint VAO;
+			GLuint VBO;
+
+			int width = 100;
+			int height = 100;
+			int numSheets = 5;
+			float* data;
+
+			Glb::Shader* shader;
+
+			GLuint fbo = 0;
+			GLuint rbo = 0;
 
 			MACGrid3d& mGrid;
 

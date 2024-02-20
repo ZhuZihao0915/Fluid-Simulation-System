@@ -19,6 +19,7 @@ namespace FluidSimulation {
             }
             grid = new MACGrid3d();
             renderer = new Renderer(*grid);
+            renderer->init();
             solver = new Solver(*grid);
         }
 
@@ -31,5 +32,18 @@ namespace FluidSimulation {
             renderer->draw();
             return renderer->getImTextureIDByDensity();
         }
+
+        void Mac3dComponent::cameraMove(float x, float y) {
+            renderer->mCamera.ProcessMove(glm::vec2(x, y));
+        }
+
+        void Mac3dComponent::cameraRotate(float x, float y) {
+            renderer->mCamera.ProcessRotate(glm::vec2(x, y));
+        }
+
+        void Mac3dComponent::cameraScale(float w) {
+            renderer->mCamera.ProcessScale(static_cast<float>(w));
+        }
+
     }
 }
