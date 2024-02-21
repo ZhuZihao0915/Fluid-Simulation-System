@@ -20,7 +20,8 @@ namespace FluidSimulation {
             }
 
             // 
-            renderer = new Renderer;
+            camera = new Glb::Camera();
+            renderer = new Renderer(*camera);
             renderer->Init();
 
             ps = new ParticalSystem3d();

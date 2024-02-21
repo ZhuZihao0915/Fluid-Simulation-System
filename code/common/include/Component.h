@@ -3,6 +3,7 @@
 #define __COMPONENT_H__
 
 #include <glfw3.h>
+#include "Camera.h"
 
 // 流体模拟算法组件
 // 用于组织粒子/网格系统、渲染器、求解器
@@ -10,13 +11,18 @@
 namespace Glb {
 	class Component {
 	public:
+		int id;
 		bool is3D;
 		char* description;
+		Camera* camera;
+
 		Component() {
 			this->description = NULL;
+			this->camera = NULL;
 		}
 		Component(char* description) {
 			this->description = description;
+			this->camera = NULL;
 		}
 
 		virtual void cameraRotate(float x, float y) { if (!is3D)return; };

@@ -24,7 +24,7 @@
 namespace FluidSimulation {
 	class SceneView {
 
-	private:
+	public:
 		GLFWwindow* window;
 		ImVec2 pos;
 
@@ -48,8 +48,7 @@ namespace FluidSimulation {
 		SceneView();
 		SceneView(GLFWwindow* window);
 		void SceneView::RenderLoop();
-		void display2d();
-		void display3d();
+		void display();
 	};
 }
 

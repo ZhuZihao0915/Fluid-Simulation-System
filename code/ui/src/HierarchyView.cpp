@@ -11,7 +11,7 @@ namespace FluidSimulation {
 		pos = ImVec2(0.0f, 0.0f);
 	}
 
-	void HierarchyView::display2d() {
+	void HierarchyView::display() {
 		int windowPosX, windowPosY;
 		glfwGetWindowPos(window, &windowPosX, &windowPosY);
 
@@ -25,45 +25,43 @@ namespace FluidSimulation {
 		ImGui::Begin("Hierarchy", NULL, ImGuiWindowFlags_NoCollapse);
 
 
-		bool itemSelected = false;
+		if (Manager::GetInstance().GetSceneView()->currentMethod == NULL) {
+			ImGui::Text("No Simulation Method!\nPlease select a simulation method.");
+		}
+		else {
+			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
+			{
+				// sph 2d
+			case 0:
+				
+				// mac 3d
+			case 3:
+				bool itemSelected0 = false;
+				if (ImGui::Selectable("Camera", &itemSelected0)) {
+					if (itemSelected0) { Manager::GetInstance().GetInspectorView()->showID = 0; }
+					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+				}
 
-		if (ImGui::Selectable("Fluid", &itemSelected)) {
-			// 处理点击事件
-			// itemSelected 现在保存了该项的选择状态
-			if (itemSelected) {
-				// 项被选中时执行的代码
-				Manager::GetInstance().GetInspectorView()->show2dID = 1;
-			}
-			else {
-				// 项取消选中时执行的代码
-				Manager::GetInstance().GetInspectorView()->show2dID = false;
-			}
-		}
+				bool itemSelected1 = false;
+				if (ImGui::Selectable("Fluid", &itemSelected1)) {
+					if (itemSelected1) { Manager::GetInstance().GetInspectorView()->showID = 1; }
+					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+				}
 
-		bool itemSelected2 = false;
-		if (ImGui::Selectable("Container", &itemSelected2)) {
-			if (itemSelected2) { Manager::GetInstance().GetInspectorView()->show2dID = 2; }
-			else { Manager::GetInstance().GetInspectorView()->show2dID = false; }
-		}
-		bool itemSelected3 = false;
-		if (ImGui::Selectable("Iteration", &itemSelected3)) {
-			if (itemSelected3) { Manager::GetInstance().GetInspectorView()->show2dID = 3; }
-			else { Manager::GetInstance().GetInspectorView()->show2dID = false; }
-		}
+				bool itemSelected2 = false;
+				if (ImGui::Selectable("Container", &itemSelected2)) {
+					if (itemSelected2) { Manager::GetInstance().GetInspectorView()->showID = 2; }
+					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+				}
 
-		/*
-		if (ImGui::TreeNodeEx("Fluid", ImGuiTreeNodeFlags_NoTreePushOnOpen)) {
-			if (ImGui::IsItemClicked()) {
-				Manager::GetInstance().GetInspectorView()->show = true;
+				bool itemSelected3 = false;
+				if (ImGui::Selectable("Iteration", &itemSelected3)) {
+					if (itemSelected3) { Manager::GetInstance().GetInspectorView()->showID = 3; }
+					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+				}
 			}
-			ImGui::TreePop();
 		}
-		*/
 
 		ImGui::End();
-	}
-
-	void HierarchyView::display3d() {
-
 	}
 }

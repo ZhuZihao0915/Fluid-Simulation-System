@@ -18,11 +18,14 @@ namespace FluidSimulation {
             Solver* solver;
             ParticalSystem3d* ps;
 
-            Sph3dComponent(char* description) {
+            Sph3dComponent(char* description, int id) {
                 this->description = description;
+                this->id = id;
                 renderer = NULL;
                 solver = NULL;
                 ps = NULL;
+                camera = NULL;
+                is3D = true;
             }
             virtual void shutDown();
             virtual void init();

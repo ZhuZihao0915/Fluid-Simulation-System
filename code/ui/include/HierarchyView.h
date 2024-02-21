@@ -24,8 +24,7 @@ namespace FluidSimulation {
 	public:
 		HierarchyView();
 		HierarchyView(GLFWwindow* window);
-		void display2d();
-		void display3d();
+		void display();
 	};
 }
 

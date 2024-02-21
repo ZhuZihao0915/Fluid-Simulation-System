@@ -3,10 +3,6 @@
 namespace FluidSimulation {
 	namespace SPH3d {
 
-        Renderer::Renderer() {
-
-        }
-
         void Renderer::Init() {
 
             BuildShaders();

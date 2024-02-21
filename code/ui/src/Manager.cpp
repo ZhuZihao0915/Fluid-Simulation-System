@@ -9,12 +9,15 @@ namespace FluidSimulation
         inspectorView = new InspectorView(window);
         projectView =  new ProjectView(window);
         sceneView = new SceneView(window);
+    
 
+        // TODO
         // 添加模拟方法
-        methodComponents.push_back(new SPH2d::Sph2dComponent("sph 2d"));
-        methodComponents.push_back(new MAC2d::Mac2dComponent("mac 2d"));
-        methodComponents.push_back(new SPH3d::Sph3dComponent("sph 3d"));
-        methodComponents.push_back(new MAC3d::Mac3dComponent("mac 3d"));
+        int id = 0;
+        methodComponents.push_back(new SPH2d::Sph2dComponent("sph 2d", id++));
+        methodComponents.push_back(new MAC2d::Mac2dComponent("mac 2d", id++));
+        methodComponents.push_back(new SPH3d::Sph3dComponent("sph 3d", id++));
+        methodComponents.push_back(new MAC3d::Mac3dComponent("mac 3d", id++));
     }
 
 	void Manager::displayViews() {
@@ -31,19 +34,10 @@ namespace FluidSimulation
         ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 
         // display all views
-        if (is3DModel) {
-            hierarchyView->display3d();
-            sceneView->display3d();
-            inspectorView->display3d();
-            projectView->display();
-        }
-        else {
-            hierarchyView->display2d();
-            sceneView->display2d();
-            inspectorView->display2d();
-            projectView->display();
-        }
-
+        hierarchyView->display();
+        sceneView->display();
+        inspectorView->display();
+        projectView->display();
 	}
 
     void Manager::pushMessage(char* message) {

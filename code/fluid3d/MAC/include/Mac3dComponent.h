@@ -18,12 +18,14 @@ namespace FluidSimulation {
             Solver* solver;
             MACGrid3d* grid;
 
-            Mac3dComponent(char* description) {
+            Mac3dComponent(char* description, int id) {
                 this->description = description;
+                this->id = id;
                 renderer = NULL;
                 solver = NULL;
                 grid = NULL;
-                is3D = false;
+                camera = NULL;
+                is3D = true;
             }
             virtual void shutDown();
             virtual void init();

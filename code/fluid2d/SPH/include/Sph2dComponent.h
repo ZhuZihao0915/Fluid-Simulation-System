@@ -18,8 +18,9 @@ namespace FluidSimulation {
             Solver* solver;
             ParticalSystem2d* ps;
 
-            Sph2dComponent(char* description) {
+            Sph2dComponent(char* description, int id) {
                 this->description = description;
+                this->id = id;
                 renderer = NULL;
                 solver = NULL;
                 ps = NULL;

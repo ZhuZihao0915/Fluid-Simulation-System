@@ -14,7 +14,8 @@ namespace FluidSimulation {
         texture = -1;   // no texture;
 	}
 
-	void SceneView::display2d() {
+	void SceneView::display() {
+        ImGui::SetNextWindowSizeConstraints(ImVec2(900, 900), ImVec2(1200, 1200));
 		ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoCollapse);
 
         ImVec2 windowSize = ImGui::GetWindowSize();
@@ -149,9 +150,4 @@ namespace FluidSimulation {
 
 		ImGui::End();
 	}
-
-
-    void SceneView::display3d() {
-        
-    }
 }

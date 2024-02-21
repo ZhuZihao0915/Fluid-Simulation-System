@@ -14,7 +14,7 @@ namespace FluidSimulation {
 	namespace MAC3d {
 		class Renderer {
 		public:
-			Renderer(MACGrid3d& grid) :mGrid(grid) {};
+			Renderer(MACGrid3d& grid, Glb::Camera& c) :mGrid(grid), mCamera(c) {};
 
 			void init();
 			void createTextureFromFramebuffer();
@@ -27,7 +27,7 @@ namespace FluidSimulation {
 
 			GLuint getImTextureIDByDensity();
 
-			Glb::Camera mCamera;
+			Glb::Camera& mCamera;
 
 		private:
 

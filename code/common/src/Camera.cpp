@@ -7,15 +7,13 @@ namespace Glb {
         mPitch = 8.0f;
 
         mWorldUp = glm::vec3(0.0, 0.0, 1.0);
-        mTargetPoint = glm::vec3(-0.34, 1.1, 0.8);
-        mTargetDistance = 1.0f;
+        mPosition = glm::vec3(-0.34, 1.1, 0.8);
         UpdateView();
 
-        float aspect = 1.0f;
-        float nearPlane = 0.1f;
-        float farPlane = 100.0f;
-        float fovyDeg = 60.0f;
-        mProjection = glm::perspective(glm::radians(fovyDeg), aspect, nearPlane, farPlane);
+        aspect = 1.0f;
+        nearPlane = 0.1f;
+        farPlane = 100.0f;
+        fovyDeg = 60.0f;
     }
 
     Camera::~Camera() {
@@ -23,8 +21,8 @@ namespace Glb {
     }
 
     void Camera::ProcessMove(glm::vec2 offset) {
-        mTargetPoint -= offset.x * mSensitiveX * mRight;
-        mTargetPoint += offset.y * mSensitiveY * mUp;
+        mPosition -= offset.x * mSensitiveX * mRight;
+        mPosition += offset.y * mSensitiveY * mUp;
         UpdateView();
     }
 
@@ -35,20 +33,16 @@ namespace Glb {
     }
 
     void Camera::ProcessScale(float offset) {
-        mTargetPoint += offset * mSensitiveFront * mFront;
+        mPosition += offset * mSensitiveFront * mFront;
         UpdateView();
     }
 
-    void Camera::SetPerspective(float aspect, float nearPlane, float mFarPlane, float fovyDeg) {
-        mProjection = glm::perspective(glm::radians(fovyDeg), aspect, nearPlane, mFarPlane);
-    }
-
     glm::mat4 Camera::GetView() {
-        return mView;
+        return glm::lookAt(mPosition, mPosition + mFront, mUp);
     }
 
     glm::mat4 Camera::GetProjection() {
-        return mProjection;
+        return glm::perspective(glm::radians(fovyDeg), aspect, nearPlane, farPlane);
     }
 
     glm::vec3 Camera::GetUp() {
@@ -68,6 +62,7 @@ namespace Glb {
     }
 
     void Camera::UpdateView() {
+        // 更新三个向量
         mFront.x = std::cos(glm::radians(mPitch)) * std::cos(glm::radians(mYaw));
         mFront.y = std::cos(glm::radians(mPitch)) * std::sin(glm::radians(mYaw));
         mFront.z = std::sin(glm::radians(mPitch));
@@ -75,22 +70,5 @@ namespace Glb {
 
         mRight = glm::normalize(glm::cross(mFront, mWorldUp));
         mUp = glm::normalize(glm::cross(mRight, mFront));
-
-        mPosition = mTargetPoint - mTargetDistance * mFront;
-        mView = glm::lookAt(mPosition, mTargetPoint, mUp);
-    }
-
-    void Camera::updateOpenGLMatrices() {
-        // 设置投影矩阵
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glMultMatrixf(glm::value_ptr(mProjection));
-
-        // 计算模型视图矩阵
-        glm::mat4 viewMatrix = glm::lookAt(mPosition, mPosition + mFront, mUp);
-
-        // 将模型视图矩阵加载到 OpenGL 中
-        glMatrixMode(GL_MODELVIEW);
-        glLoadMatrixf(glm::value_ptr(viewMatrix));
     }
 }

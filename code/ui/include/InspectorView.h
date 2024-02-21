@@ -22,13 +22,11 @@ namespace FluidSimulation {
 
 	public:
 
-		int show2dID;
-		int show3dID;
+		int showID;
 
 		InspectorView();
 		InspectorView(GLFWwindow* window);
-		void display2d();
-		void display3d();
+		void display();
 	};
 }
 

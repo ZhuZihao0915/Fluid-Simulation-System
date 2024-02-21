@@ -18,8 +18,9 @@ namespace FluidSimulation {
             Solver* solver;
             MACGrid2d* grid;
 
-            Mac2dComponent(char* description) {
+            Mac2dComponent(char* description, int id) {
                 this->description = description;
+                this->id = id;
                 renderer = NULL;
                 solver = NULL;
                 grid = NULL;

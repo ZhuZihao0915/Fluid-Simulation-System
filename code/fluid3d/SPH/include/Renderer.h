@@ -29,7 +29,7 @@ namespace FluidSimulation {
         class Renderer
         {
         public:
-            Renderer();
+            Renderer(Glb::Camera& c) :mCamera(c) {};
 
             void Init();
 
@@ -66,7 +66,7 @@ namespace FluidSimulation {
             int32_t Destroy();
 
         public:
-            Glb::Camera mCamera;
+            Glb::Camera& mCamera;
 
         private:
             // window

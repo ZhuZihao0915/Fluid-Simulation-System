@@ -47,8 +47,6 @@ namespace FluidSimulation
 		ProjectView* GetProjectView() const { return projectView; };
 		GLFWwindow* GetWindow() const { return window; };
 		std::vector<char*> GetLog() const { return log; };
-		bool GetIs3DModel() const { return is3DModel; };
-		void SetIs3DModel(bool is3dmodel) { is3DModel = is3dmodel; };
 
 	private:
 
@@ -58,13 +56,11 @@ namespace FluidSimulation
 			sceneView = NULL;
 			inspectorView = NULL;
 			projectView = NULL;
-			is3DModel = false;
 		};
 
 		Manager(const Manager&) = delete;
 		Manager& operator=(const Manager&) = delete;
-
-		bool is3DModel;
+		
 		GLFWwindow* window;
 		HierarchyView* hierarchyView;
 		SceneView* sceneView;

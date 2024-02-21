@@ -17,8 +17,9 @@ namespace FluidSimulation {
                 solver = NULL;
                 grid = NULL;
             }
+            camera = new Glb::Camera();
             grid = new MACGrid3d();
-            renderer = new Renderer(*grid);
+            renderer = new Renderer(*grid, *camera);
             renderer->init();
             solver = new Solver(*grid);
         }

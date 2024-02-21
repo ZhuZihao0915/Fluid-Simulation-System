@@ -38,6 +38,10 @@ namespace FluidSimulation {
 
 			createTextureFromFramebuffer();
 
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_BLEND); //开启混合模式
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //设置混合函数
+
 			data = new float[4 * width * height];
 		}
 
@@ -121,6 +125,8 @@ namespace FluidSimulation {
 
 		void Renderer::drawXSheets()
 		{
+			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			for (float k = 0; k <= mGrid.mU.mMax[2];k+=mGrid.mU.mMax[2]/(numSheets-1)) {
 				
@@ -160,7 +166,7 @@ namespace FluidSimulation {
 				projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(0.0f, 0.0f, k));
+				model = glm::translate(model, glm::vec3(0.0f, 0.0f, k/ mGrid.mU.mMax[2]));
 				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));

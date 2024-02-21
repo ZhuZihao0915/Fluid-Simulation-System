@@ -8,42 +8,43 @@ namespace FluidSimulation {
 
 	InspectorView::InspectorView(GLFWwindow* window) {
 		this->window = window;
-		show2dID = false;
+		showID = false;
 	}
 
-	void InspectorView::display2d() {
+	void InspectorView::display() {
 		ImGui::Begin("Inspector", NULL, ImGuiWindowFlags_NoCollapse);
 
-		if (show2dID == 1) {
-			ImGui::Text("Fluid Parameters:");
-
-			ImGui::SliderFloat("Gravity", &SPH2dPara::gravity, -20.0f, 20.0f);
-
-			ImGui::SliderFloat("Normal Density", &SPH2dPara::density, 500.0f, 1500.0f);
-
-			ImGui::SliderFloat("Stiffness", &SPH2dPara::stiffness, 10.0f, 100.0f);
-
-			ImGui::SliderFloat("Exponent", &SPH2dPara::exponent, 5.0f, 10.0f);
-
-			ImGui::SliderFloat("Viscosity", &SPH2dPara::viscosity, 0.01f, 0.04f);
-
+		if (Manager::GetInstance().GetSceneView()->currentMethod==NULL) {
+			ImGui::Text("No Simulation Method!\nPlease select a simulation method.");
 		}
-		if (show2dID == 2) {
+		else{
+			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
+			{
+			// sph 2d
+			case 0:
+				switch (showID)
+				{
 
-
-			ImGui::Text("*You have to reset to\n apply the new\n container parameters.");
-		}
-		else if (show2dID == 3) {
-			ImGui::Text("Iteration Parameters:");
-			ImGui::SliderFloat("dt times", &SPH2dPara::dt, 0.1f, 10.0f);
-
-			ImGui::SliderInt("substep", &SPH2dPara::substep, 1, 15);
+				}
+			// mac 3d
+			case 3:
+				switch (showID)
+				{
+				// camera
+				case 0:
+					float floatStep = 0.1;
+					ImGui::InputFloat3("Position", &Manager::GetInstance().GetSceneView()->currentMethod->camera->mPosition.x);
+					ImGui::InputScalar("Fov", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->fovyDeg, &floatStep, NULL);
+					ImGui::InputScalar("Aspect", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->aspect, &floatStep, NULL);
+					ImGui::InputScalar("Near", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->nearPlane, &floatStep, NULL);
+					ImGui::InputScalar("Far", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->farPlane, &floatStep, NULL);
+					ImGui::InputScalar("Yaw", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mYaw, &floatStep, NULL);
+					ImGui::InputScalar("Pitch", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mPitch, &floatStep, NULL);
+					Manager::GetInstance().GetSceneView()->currentMethod->camera->UpdateView();
+				}
+			}
 		}
 
 		ImGui::End();
-	}
-
-	void InspectorView::display3d() {
-
 	}
 }
