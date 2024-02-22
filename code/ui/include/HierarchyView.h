@@ -21,6 +21,8 @@ namespace FluidSimulation {
 		GLFWwindow* window;
 		ImVec2 pos;
 
+		bool selected[10] = { false };
+
 	public:
 		HierarchyView();
 		HierarchyView(GLFWwindow* window);

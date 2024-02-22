@@ -19,21 +19,23 @@ namespace FluidSimulation {
 
         void Solver::solve()
         {
+            // TODO
+            // 求解/模拟
+
+
             // 密度源释放流体
             updateSources();
-
             // advect 速度
             advectVelocity();
             // 考虑浮力、涡度等因素
             addExternalForces();
             // project 确保incompressible的特性
             project();
-
             // advect 温度
             advectTemperature();
-
             // advect 密度
             advectDensity();
+
         }
 
 #define FOR_EACH_CELL \
@@ -56,17 +58,21 @@ namespace FluidSimulation {
 
             // source的位置
             int size = 2; // neighborhood size
-            int sourcei = (int)MAC3dPara::theDim3d[0] / 5;
-            int sourcek = (int)MAC3dPara::theDim3d[2] / 2;
+            int sourcei = (int)MAC3dPara::theDim3d[0] / 2;
+            int sourcej = (int)MAC3dPara::theDim3d[1] / 2;
 
-            for (int k = sourcek - size; k < sourcek + size; k++)
-            {
-                // 添加温度、密度
-                mGrid.mT(sourcei, 0, k) = 2.0;
-                mGrid.mD(sourcei, 0, k) = 2.0;
-                // 赋予初始垂直方向速度
-                mGrid.mV(sourcei, 0, k) = 1.0;
-            }
+            mGrid.mT(sourcei, sourcej, 0) = 2.0f;
+            mGrid.mD(sourcei, sourcej, 0) = 2.0f;
+            mGrid.mW(sourcei, sourcej, 0) = 1.0f;
+
+            //for (int k = sourcek - size; k < sourcek + size; k++)
+            //{
+            //    // 添加温度、密度
+            //    mGrid.mT(sourcei, 0, k) = 2.0;
+            //    mGrid.mD(sourcei, 0, k) = 2.0;
+            //    // 赋予初始垂直方向速度
+            //    mGrid.mV(sourcei, 0, k) = 1.0;
+            //}
         }
 
         void Solver::advectVelocity()
@@ -106,16 +112,16 @@ namespace FluidSimulation {
             // 计算浮力，更新向上的速度
             FOR_EACH_FACE
             {
-               if (mGrid.isFace(i,j,k,mGrid.Y))
+               if (mGrid.isFace(i,j,k,mGrid.Z))
                {
                   glm::vec3 pos = mGrid.getBottomFace(i,j,k);
-                  double yforce = mGrid.getBoussinesqForce(pos);
-                  double vel = mGrid.mV(i,j,k);
-                  vel = vel + MAC3dPara::dt * yforce;
-                  target.mV(i, j, k) = vel;
+                  double zforce = mGrid.getBoussinesqForce(pos);
+                  double vel = mGrid.mW(i,j,k);
+                  vel = vel + MAC3dPara::dt * zforce;
+                  target.mW(i, j, k) = vel;
                }
             }
-            mGrid.mV = target.mV;
+            mGrid.mW = target.mW;
 
 
             // 计算涡度，更新各方向的速度
@@ -283,11 +289,8 @@ namespace FluidSimulation {
             }
             mGrid.mD = target.mD;
         }
-
-
-
-
-
+            
+        
         void Solver::constructA()
         {
             unsigned int numCells = mGrid.mSolid.data().size();
@@ -328,8 +331,8 @@ namespace FluidSimulation {
             }
         }
 
-#define VALA(r,c) (r != -1 && c != -1)? A(r,c) : 0
 
+#define VALA(r,c) (r != -1 && c != -1)? A(r,c) : 0
         // 构建预条件（Preconditioning），用来改善迭代求解器的收敛性能
         void Solver::constructPrecon()
         {

@@ -31,9 +31,6 @@ namespace FluidSimulation {
 		else {
 			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
 			{
-				// sph 2d
-			case 0:
-				
 				// mac 3d
 			case 3:
 				bool itemSelected0 = false;

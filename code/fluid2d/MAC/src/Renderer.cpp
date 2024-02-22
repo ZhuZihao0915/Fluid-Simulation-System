@@ -9,17 +9,16 @@ namespace FluidSimulation {
 
 			for (int j = 1; j <= imageHeight; j++) {
 				for (int i = 1; i <= imageWidth; i++) {
-					float pt_x = i * mGrid->mU.mMax[0] / (imageWidth);
-					float pt_y = j * mGrid->mU.mMax[1] / (imageHeight);
+					float pt_x = i * mGrid.mU.mMax[0] / (imageWidth);
+					float pt_y = j * mGrid.mU.mMax[1] / (imageHeight);
 					glm::vec2 pt(pt_x, pt_y);
-					glm::vec4 color = mGrid->getRenderColor(pt);
+					glm::vec4 color = mGrid.getRenderColor(pt);
 					imageData.push_back(color.x);
 					imageData.push_back(color.y);
 					imageData.push_back(color.z);
 				}
 			}
-			applyFilter(imageData, imageWidth, imageHeight);
-
+			
 			GLuint textureID;
 			glGenTextures(1, &textureID);
 			glBindTexture(GL_TEXTURE_2D, textureID);

@@ -2,11 +2,6 @@
 #ifndef __MAC2D_MACGRID_2D_H__
 #define __MAC2D_MACGRID_2D_H__
 
-#pragma warning(disable: 4244 4267 4996)
-#include <boost/numeric/ublas/vector.hpp>
-#include <boost/numeric/ublas/io.hpp>
-#include <boost/numeric/ublas/matrix_sparse.hpp>
-
 #include <windows.h>
 #include "GL/gl.h"
 #include <glm/glm.hpp>
@@ -39,8 +34,6 @@ namespace FluidSimulation {
 
             glm::vec4 getRenderColor(int i, int j);
             glm::vec4 getRenderColor(const glm::vec2& pt);
-
-        protected:
 
             // Setup
             void initialize();
@@ -89,11 +82,6 @@ namespace FluidSimulation {
             bool intersects(const glm::vec2& pt, const glm::vec2& dir, int i, int j, double& time);
             int numSolidCells();
 
-            // Compute pressure and divergence
-            void constructB(ublas::vector<double>& b, unsigned int numCells, double dt);
-            void constructA(ublas::compressed_matrix<double>& A);
-            void constructPrecon(ublas::compressed_matrix<double>& A, ublas::vector<double>& precon);
-
             double getPressureCoeffBetweenCells(
                 int i0, int j0, int i1, int j1);
             double getDivergence(int i, int j);  // At center
@@ -101,16 +89,11 @@ namespace FluidSimulation {
             bool checkDivergence();
 
             // Compute forces
-            void computeBouyancy(double dt);
-            void computeVorticityConfinement(double dt);
             double getBoussinesqForce(const glm::vec2& pt);
 
             glm::vec2 getVorticityN(int i, int j);
             glm::vec2 getVorticity(int i, int j);
             double getConfinementForce(int i, int j);
-
-            // Testing
-            void testInterpolation();
 
 
         public:
@@ -122,16 +105,6 @@ namespace FluidSimulation {
 
             Glb::GridData2d mSolid;
 
-            enum RenderMode { CUBES, SHEETS };
-            static RenderMode theRenderMode;
-            static bool theDisplayVel;
-            static double theAirDensity;
-            static double theAmbientTemp;
-            static double theBoussinesqAlpha;
-            static double theBoussinesqBeta;
-            static double theVorticityConst;
-            static bool theVConfEnabled;
-            static bool theSourceEnabled;
         };
 
     }

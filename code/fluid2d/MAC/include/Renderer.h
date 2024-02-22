@@ -11,14 +11,14 @@ namespace FluidSimulation {
 	namespace MAC2d {
 		class Renderer {
 		public:
-			Renderer(MACGrid2d* mGrid) {
-				this->mGrid = mGrid;
+			Renderer(MACGrid2d& grid): mGrid(grid){
+
 			}
 
 			GLuint getImTextureIDByDensity();
 			void Renderer::applyFilter(std::vector<float>& imageData, int width, int height);
 		private:
-			MACGrid2d* mGrid;
+			MACGrid2d& mGrid;
 		
 		};
 	}

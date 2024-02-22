@@ -12,7 +12,7 @@ namespace FluidSimulation
     
 
         // TODO
-        // 添加模拟方法
+        // 添加方法
         int id = 0;
         methodComponents.push_back(new SPH2d::Sph2dComponent("sph 2d", id++));
         methodComponents.push_back(new MAC2d::Mac2dComponent("mac 2d", id++));
@@ -34,7 +34,7 @@ namespace FluidSimulation
         ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 
         // display all views
-        hierarchyView->display();
+        //hierarchyView->display();
         sceneView->display();
         inspectorView->display();
         projectView->display();

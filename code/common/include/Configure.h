@@ -18,12 +18,9 @@
 extern int imageWidth;
 extern int imageHeight;
 
-extern int theDim2d[];
-extern double theCellSize2d;
-
-namespace MAC3dPara{
-    extern int theDim3d[];
-    extern double theCellSize3d;
+namespace MAC2dPara {
+    extern int theDim2d[];
+    extern double theCellSize2d;
 
     extern float dt;
 
@@ -32,9 +29,48 @@ namespace MAC3dPara{
     extern double boussinesqAlpha;
     extern double boussinesqBeta;
     extern double vorticityConst;
-
-    extern int sheetsNum;
 }
+
+namespace MAC3dPara{
+    extern int theDim3d[];
+    extern double theCellSize3d;
+
+    extern bool xySheetsON;
+    extern bool yzSheetsON;
+    extern bool xzSheetsON;
+
+    extern int xySheetsNum;
+    extern int yzSheetsNum;
+    extern int xzSheetsNum;
+
+    extern float dt;
+
+    extern double airDensity;
+    extern double ambientTemp;
+    extern double boussinesqAlpha;
+    extern double boussinesqBeta;
+    extern double vorticityConst;
+    
+}
+
+//namespace SPH2dPara {
+//    // 求解器参数
+//    extern float dt;
+//    extern int substep;
+//    extern float maxVelocity;
+//    extern float velocityAttenuation;
+//    extern float eps;
+//
+//    // 物理参数
+//    extern float supportRadius;
+//    extern float particalRadius;
+//    extern float particalDiameter;
+//    extern float gravity;
+//    extern float density0;
+//    extern float stiffness;
+//    extern float exponent;
+//    extern float viscosity;
+//}
 
 namespace SPH2dPara {
     // 求解器参数

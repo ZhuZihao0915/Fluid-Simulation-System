@@ -18,8 +18,8 @@ namespace FluidSimulation {
                 grid = NULL;
             }
             grid = new MACGrid2d();
-            renderer = new Renderer(grid);
-            solver = new Solver(grid);
+            renderer = new Renderer(*grid);
+            solver = new Solver(*grid);
         }
 
         void Mac2dComponent::simulate() {

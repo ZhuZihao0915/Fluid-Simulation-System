@@ -18,8 +18,7 @@ namespace FluidSimulation {
                 solver = NULL;
                 ps = NULL;
             }
-
-            // 
+            
             camera = new Glb::Camera();
             renderer = new Renderer(*camera);
             renderer->Init();
@@ -29,14 +28,11 @@ namespace FluidSimulation {
             ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);
             ps->addFluidBlock(glm::vec3(0.45, 0.45, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);
             
-            // ps->addFluidBlock(glm::vec3(0.01, 0.01, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(-0.2, -0.2, 0.0), 0.03, 0.03, 0.01);// 0.01 * 0.8);
-            // ps->addFluidBlock(glm::vec3(0.59, 0.59, 0.5), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.2, 0.2, 0.0), 0.03, 0.03, 0.01);
-            // ps.sddFluidBlock(glm::vec3(0.2, 0.2, 0.25), glm::vec3(0.2, 0.2, 0.3), glm::vec3(0.0, 0.0, 0.0), 0.01 * 0.8);
-
             // 对粒子排序，并组建block结构
             ps->updateBlockInfo();
             std::cout << "partical num = " << ps->mParticalInfos.size() << std::endl;
             
+
             solver = new Solver(*ps);
 
         }

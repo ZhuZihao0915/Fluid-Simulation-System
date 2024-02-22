@@ -19,11 +19,12 @@ namespace FluidSimulation {
 			void init();
 			void createTextureFromFramebuffer();
 
+
 			void draw();
 			void drawOneSheet();
-			void drawXSheets();
-			void drawYSheets();
-			void drawZSheets();
+			void drawXYSheets();	// 平行于XY面的切面
+			void drawYZSheets();
+			void drawXZSheets();
 
 			GLuint getImTextureIDByDensity();
 
@@ -33,14 +34,20 @@ namespace FluidSimulation {
 
 			GLuint textureID = 0;
 
-			bool backToFront;
+			float eps = 0.05f;
 
-			GLuint VAO;
-			GLuint VBO;
+			GLuint VAO_XY;
+			GLuint VBO_XY;
 
-			int width = 100;
-			int height = 100;
-			int numSheets = 5;
+			GLuint VAO_YZ;
+			GLuint VBO_YZ;
+
+			GLuint VAO_XZ;
+			GLuint VBO_XZ;
+
+			int width = 200;
+			int height = 200;
+			
 			float* data;
 
 			Glb::Shader* shader;

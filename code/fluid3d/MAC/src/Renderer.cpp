@@ -1,16 +1,36 @@
 #include "Renderer.h"
+#include "Renderer.h"
+#include "Renderer.h"
 #include "fluid3d/MAC/include/Renderer.h"
 
 namespace FluidSimulation {
 	namespace MAC3d {
 
-		float vertices[] = {
+		float verticesXY[] = {
 			0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 			1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
 			0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+		};
+
+		float verticesYZ[] = {
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f
+		};
+
+		float verticesXZ[] = {
+			0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
+			0.0f, 0.0f, 0.0f, 1.0f, 0.0f
 		};
 
 		void Renderer::init()
@@ -22,12 +42,12 @@ namespace FluidSimulation {
 			shader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
 
 
-			glGenVertexArrays(1, &VAO);
-			glGenBuffers(1, &VBO);
+			glGenVertexArrays(1, &VAO_XY);
+			glGenBuffers(1, &VBO_XY);
 
-			glBindVertexArray(VAO);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+			glBindVertexArray(VAO_XY);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_XY);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(verticesXY), verticesXY, GL_STATIC_DRAW);
 
 			// position attribute
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
@@ -35,10 +55,37 @@ namespace FluidSimulation {
 
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 			glEnableVertexAttribArray(1);
+			glBindVertexArray(0);
+
+
+			glGenVertexArrays(1, &VAO_YZ);
+			glGenBuffers(1, &VBO_YZ);
+			glBindVertexArray(VAO_YZ);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_YZ);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(verticesYZ), verticesYZ, GL_STATIC_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(1);
+			glBindVertexArray(0);
+
+			glGenVertexArrays(1, &VAO_XZ);
+			glGenBuffers(1, &VBO_XZ);
+			glBindVertexArray(VAO_XZ);
+			glBindBuffer(GL_ARRAY_BUFFER, VBO_XZ);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(verticesXZ), verticesXZ, GL_STATIC_DRAW);
+			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+			glEnableVertexAttribArray(1);
+			glBindVertexArray(0);
+
 
 			createTextureFromFramebuffer();
 
-			glEnable(GL_DEPTH_TEST);
+			// 如果开启深度测试，就只能绘制一个方向的平面
+			glDisable(GL_DEPTH_TEST);
+
 			glEnable(GL_BLEND); //开启混合模式
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //设置混合函数
 
@@ -47,7 +94,6 @@ namespace FluidSimulation {
 
 		void Renderer::createTextureFromFramebuffer()
 		{
-			// NEW!!!
 			// generate frame buffer object
 			glGenFramebuffers(1, &fbo);
 			// make it active
@@ -57,7 +103,7 @@ namespace FluidSimulation {
 			// generate textures
 			glGenTextures(1, &textureID);
 			glBindTexture(GL_TEXTURE_2D, textureID);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 600, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -70,25 +116,38 @@ namespace FluidSimulation {
 			// generate render buffer object (RBO)
 			glGenRenderbuffers(1, &rbo);
 			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 600, 600);
+			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageWidth, imageHeight);
 			glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 			// RBO绑定到FBO
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-				std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
+				std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			// END!!!
+
 		}
 
 		void Renderer::draw() {
 			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 			
-			drawXSheets();
+			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+			if (MAC3dPara::xySheetsON) {
+				drawXYSheets();
+			}
+			if (MAC3dPara::yzSheetsON)
+			{
+				drawYZSheets();
+			}
+			if (MAC3dPara::xzSheetsON) {
+				drawXZSheets();
+			}
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-			//drawOneSheet();
+			
+
 		}
 
 
@@ -123,17 +182,15 @@ namespace FluidSimulation {
 
 		}
 
-		void Renderer::drawXSheets()
+		void Renderer::drawXYSheets()
 		{
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			for (float k = 0; k <= mGrid.mU.mMax[2];k+=mGrid.mU.mMax[2]/(numSheets-1)) {
+			for (float k = eps; k <= mGrid.mW.mMax[2];k+=(mGrid.mW.mMax[2]-2*eps)/(MAC3dPara::xySheetsNum-1)) {
 				
 				for (int j = 1; j <= height; j++) {
 					for (int i = 1; i <= width; i++) {
 						float pt_x = i * mGrid.mU.mMax[0] / (width);
-						float pt_y = j * mGrid.mU.mMax[1] / (height);
+						float pt_y = j * mGrid.mV.mMax[1] / (height);
 						float pt_z = k;
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
@@ -162,21 +219,122 @@ namespace FluidSimulation {
 				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
 
 				glm::mat4 view = mCamera.GetView();
-				glm::mat4 projection = glm::mat4(1.0f);
-				projection = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
+				glm::mat4 projection = mCamera.GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(0.0f, 0.0f, k/ mGrid.mU.mMax[2]));
+				model = glm::translate(model, glm::vec3(0.0f, 0.0f, k/ mGrid.mW.mMax[2]));
 				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
 
-				glBindVertexArray(VAO);
+				glBindVertexArray(VAO_XY);
 				shader->use();
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 
 			}
 
+		}
+
+		void Renderer::drawYZSheets()
+		{
+
+			for (float i = eps; i <= mGrid.mU.mMax[0]; i += (mGrid.mU.mMax[0]-2*eps) / (MAC3dPara::yzSheetsNum - 1)) {
+				for (int k = height; k >= 1; k--) {
+					for (int j = 1; j <= width; j++) {
+						float pt_x = i;
+						float pt_y = j * mGrid.mV.mMax[1] / (width);
+						float pt_z = k * mGrid.mW.mMax[2] / (height);
+						glm::vec3 pt(pt_x, pt_y, pt_z);
+						glm::vec4 color = mGrid.getRenderColor(pt);
+						data[4 * ((height - k) * width + (j - 1))] = color.r;
+						data[4 * ((height - k) * width + (j - 1)) + 1] = color.g;
+						data[4 * ((height - k) * width + (j - 1)) + 2] = color.b;
+						data[4 * ((height - k) * width + (j - 1)) + 3] = color.a;
+					}
+				}
+
+				unsigned int texture;
+				glGenTextures(1, &texture);
+				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+				// set the texture wrapping parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				// set texture filtering parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				shader->use();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
+
+				glm::mat4 view = mCamera.GetView();
+				glm::mat4 projection = mCamera.GetProjection();
+
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(i / mGrid.mU.mMax[2], 0.0f, 0.0f));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+				glBindVertexArray(VAO_YZ);
+				shader->use();
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			}
+		}
+
+		void Renderer::drawXZSheets()
+		{
+
+			for (float j = eps; j <= mGrid.mV.mMax[1]; j += (mGrid.mV.mMax[1] - 2 * eps) / (MAC3dPara::xzSheetsNum - 1)) {
+				for (int k = height; k >= 1; k--) {
+					for (int i = width; i >= 1; i--) {
+						float pt_x = i * mGrid.mU.mMax[0] / (width);
+						float pt_y = j;
+						float pt_z = k * mGrid.mW.mMax[2] / (height);
+						glm::vec3 pt(pt_x, pt_y, pt_z);
+						glm::vec4 color = mGrid.getRenderColor(pt);
+						data[4 * ((height - k) * width + (width - i))] = color.r;
+						data[4 * ((height - k) * width + (width - i)) + 1] = color.g;
+						data[4 * ((height - k) * width + (width - i)) + 2] = color.b;
+						data[4 * ((height - k) * width + (width - i)) + 3] = color.a;
+					}
+				}
+
+				unsigned int texture;
+				glGenTextures(1, &texture);
+				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+				// set the texture wrapping parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				// set texture filtering parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				shader->use();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
+
+				glm::mat4 view = mCamera.GetView();
+				glm::mat4 projection = mCamera.GetProjection();
+
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(0.0f, j / mGrid.mV.mMax[1], 0.0f));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+				glBindVertexArray(VAO_XZ);
+				shader->use();
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			}
 		}
 
 		GLuint Renderer::getImTextureIDByDensity() {

@@ -14,6 +14,8 @@ namespace FluidSimulation {
 		}
 
 		void Solver::solve() {
+			// TODO
+			// Çó½â/Ä£Äâ
 			computeDensityAndPress();
 			computeAccleration();
 			eulerIntegration();

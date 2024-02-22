@@ -47,7 +47,6 @@ namespace FluidSimulation {
 	public:
 		SceneView();
 		SceneView(GLFWwindow* window);
-		void SceneView::RenderLoop();
 		void display();
 	};
 }

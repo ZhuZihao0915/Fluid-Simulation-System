@@ -9,15 +9,11 @@
 #include "glfw3.h"
 
 #include "Shader.h"
-#include "ComputeShader.h"
 
 #include "Camera.h"
 #include "SkyBox.h"
 #include "Global.h"
 
-#include "DepthFilter.h"
-#include "Material.h"
-#include "ShadowMap.h"
 #include "Configure.h"
 
 #include "ParticalSystem3d.h"
@@ -53,14 +49,11 @@ namespace FluidSimulation {
 
         private:
             
-            void UpdateFPS();
             void BuildShaders();
-            void InitFilters();
             void GenerateFrameBuffers();
             void GenerateBuffers();
             void GenerateTextures();
             void LoadSkyBox();
-            void CreateRenderAssets();
             void MakeVertexArrays();
             void DrawParticals();
             int32_t Destroy();

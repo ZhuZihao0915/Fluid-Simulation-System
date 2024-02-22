@@ -3,13 +3,30 @@
 int imageWidth = 800;
 int imageHeight = 800;
 
-int theDim2d[2] = { 100, 100 };
-double theCellSize2d = 0.5;
+namespace MAC2dPara {
+    extern int theDim2d[2] = { 100, 100};
+    extern double theCellSize2d = 0.5;
 
+    extern float dt = 0.01;
+
+    extern double airDensity = 1.0; //(1.3 kg/m^2) in reality,
+    extern double ambientTemp = 0.0;
+    extern double boussinesqAlpha = 500.0;
+    extern double boussinesqBeta = 2500.0;
+    extern double vorticityConst = 100.0;
+}
 
 namespace MAC3dPara {
-    int theDim3d[3] = { 20, 20, 20 };
-    double theCellSize3d = 0.5;
+    extern int theDim3d[3] = { 20, 20, 20 };
+    extern double theCellSize3d = 0.5;
+
+    extern bool xySheetsON = false;
+    extern bool yzSheetsON = true;
+    extern bool xzSheetsON = false;
+
+    extern int xySheetsNum = 5;
+    extern int yzSheetsNum = 5;
+    extern int xzSheetsNum = 5;
 
     extern float dt = 0.01;
 
@@ -19,10 +36,28 @@ namespace MAC3dPara {
     extern double boussinesqBeta = 2500.0;
     extern double vorticityConst = 100.0;
 
-    extern int sheetsNum = 5;
 }
 
 
+
+//namespace SPH2dPara {
+//    // 求解器参数
+//    extern float dt = 6e-4;
+//    extern int substep = 3;
+//    extern float maxVelocity = 100;
+//    extern float velocityAttenuation = 0.7;
+//    extern float eps = 1e-5;
+//
+//    // 物理参数
+//    extern float supportRadius = 0.04;// 0.025;
+//    extern float particalRadius = 0.01;// 0.005;
+//    extern float particalDiameter = particalRadius * 2.0;
+//    extern float gravity = 9.8f;
+//    extern float density0 = 1000.0f;
+//    extern float stiffness = 20.0f;
+//    extern float exponent = 7.0f;   // 求解方程中的指数项
+//    extern float viscosity = 8e-5f;
+//}
 
 namespace SPH2dPara {
     // 求解器参数

@@ -38,9 +38,9 @@ namespace Glb {
     void GridData2d::initialize(double dfltValue)
     {
         mDfltValue = dfltValue;
-        mMax[0] = theCellSize2d * theDim2d[0];
-        mMax[1] = theCellSize2d * theDim2d[1];
-        mData.resize(theDim2d[0] * theDim2d[1], false);
+        mMax[0] = MAC2dPara::theCellSize2d * MAC2dPara::theDim2d[0];
+        mMax[1] = MAC2dPara::theCellSize2d * MAC2dPara::theDim2d[1];
+        mData.resize(MAC2dPara::theDim2d[0] * MAC2dPara::theDim2d[1], false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
@@ -50,12 +50,12 @@ namespace Glb {
         dflt = mDfltValue;  // HACK: Protect against setting the default value
 
         if (i< 0 || j<0 ||
-            i > theDim2d[0] - 1 ||
-            j > theDim2d[1] - 1 )
+            i > MAC2dPara::theDim2d[0] - 1 ||
+            j > MAC2dPara::theDim2d[1] - 1 )
             return dflt;
 
         int col = i;
-        int row = j * theDim2d[0];
+        int row = j * MAC2dPara::theDim2d[0];
 
         return mData(col + row);
     }
@@ -63,20 +63,20 @@ namespace Glb {
     void GridData2d::getCell(const glm::vec2& pt, int& i, int& j)
     {
         glm::vec2 pos = worldToSelf(pt);
-        i = (int)(pos[0] / theCellSize2d);
-        j = (int)(pos[1] / theCellSize2d);
+        i = (int)(pos[0] / MAC2dPara::theCellSize2d);
+        j = (int)(pos[1] / MAC2dPara::theCellSize2d);
     }
 
     double GridData2d::interpolate(const glm::vec2& pt)
     {
         glm::vec2 pos = worldToSelf(pt);
 
-        int i = (int)(pos[0] / theCellSize2d);
-        int j = (int)(pos[1] / theCellSize2d);
+        int i = (int)(pos[0] / MAC2dPara::theCellSize2d);
+        int j = (int)(pos[1] / MAC2dPara::theCellSize2d);
 
-        double scale = 1.0 / theCellSize2d;
-        double fractx = scale * (pos[0] - i * theCellSize2d);
-        double fracty = scale * (pos[1] - j * theCellSize2d);
+        double scale = 1.0 / MAC2dPara::theCellSize2d;
+        double fractx = scale * (pos[0] - i * MAC2dPara::theCellSize2d);
+        double fracty = scale * (pos[1] - j * MAC2dPara::theCellSize2d);
 
         assert(fractx < 1.0 && fractx >= 0);
         assert(fracty < 1.0 && fracty >= 0);
@@ -96,8 +96,8 @@ namespace Glb {
     glm::vec2 GridData2d::worldToSelf(const glm::vec2& pt) const
     {
         glm::vec2 out;
-        out[0] = min(max(0.0, pt[0] - theCellSize2d * 0.5), mMax[0]);
-        out[1] = min(max(0.0, pt[1] - theCellSize2d * 0.5), mMax[1]);
+        out[0] = min(max(0.0, pt[0] - MAC2dPara::theCellSize2d * 0.5), mMax[0]);
+        out[1] = min(max(0.0, pt[1] - MAC2dPara::theCellSize2d * 0.5), mMax[1]);
         return out;
     }
 
@@ -112,9 +112,9 @@ namespace Glb {
     void GridData2dX::initialize(double dfltValue)
     {
         GridData2d::initialize(dfltValue);
-        mMax[0] = theCellSize2d * (theDim2d[0] + 1);
-        mMax[1] = theCellSize2d * theDim2d[1];
-        mData.resize((theDim2d[0] + 1) * theDim2d[1], false);
+        mMax[0] = MAC2dPara::theCellSize2d * (MAC2dPara::theDim2d[0] + 1);
+        mMax[1] = MAC2dPara::theCellSize2d * MAC2dPara::theDim2d[1];
+        mData.resize((MAC2dPara::theDim2d[0] + 1) * MAC2dPara::theDim2d[1], false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
@@ -123,13 +123,13 @@ namespace Glb {
         static double dflt = 0;
         dflt = mDfltValue;  // Protect against setting the default value
 
-        if (i < 0 || i > theDim2d[0]) return dflt;
+        if (i < 0 || i > MAC2dPara::theDim2d[0]) return dflt;
 
         if (j < 0) j = 0;
-        if (j > theDim2d[1] - 1) j = theDim2d[1] - 1;
+        if (j > MAC2dPara::theDim2d[1] - 1) j = MAC2dPara::theDim2d[1] - 1;
 
         int col = i;
-        int row = j * (theDim2d[0] + 1);
+        int row = j * (MAC2dPara::theDim2d[0] + 1);
 
         return mData(row + col);
     }
@@ -138,7 +138,7 @@ namespace Glb {
     {
         glm::vec2 out;
         out[0] = min(max(0.0, pt[0]), mMax[0]);
-        out[1] = min(max(0.0, pt[1] - theCellSize2d * 0.5), mMax[1]);
+        out[1] = min(max(0.0, pt[1] - MAC2dPara::theCellSize2d * 0.5), mMax[1]);
         return out;
     }
 
@@ -153,9 +153,9 @@ namespace Glb {
     void GridData2dY::initialize(double dfltValue)
     {
         GridData2d::initialize(dfltValue);
-        mMax[0] = theCellSize2d * theDim2d[0];
-        mMax[1] = theCellSize2d * (theDim2d[1] + 1);
-        mData.resize(theDim2d[0] * (theDim2d[1] + 1), false);
+        mMax[0] = MAC2dPara::theCellSize2d * MAC2dPara::theDim2d[0];
+        mMax[1] = MAC2dPara::theCellSize2d * (MAC2dPara::theDim2d[1] + 1);
+        mData.resize(MAC2dPara::theDim2d[0] * (MAC2dPara::theDim2d[1] + 1), false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
@@ -164,13 +164,13 @@ namespace Glb {
         static double dflt = 0;
         dflt = mDfltValue;  // Protect against setting the default value
 
-        if (j < 0 || j > theDim2d[1]) return dflt;
+        if (j < 0 || j > MAC2dPara::theDim2d[1]) return dflt;
 
         if (i < 0) i = 0;
-        if (i > theDim2d[0] - 1) i = theDim2d[0] - 1;
+        if (i > MAC2dPara::theDim2d[0] - 1) i = MAC2dPara::theDim2d[0] - 1;
 
         int col = i;
-        int row = j * theDim2d[0];
+        int row = j * MAC2dPara::theDim2d[0];
 
         return mData(row + col);
     }
@@ -178,7 +178,7 @@ namespace Glb {
     glm::vec2 GridData2dY::worldToSelf(const glm::vec2& pt) const
     {
         glm::vec2 out;
-        out[0] = min(max(0.0, pt[0] - theCellSize2d * 0.5), mMax[0]);
+        out[0] = min(max(0.0, pt[0] - MAC2dPara::theCellSize2d * 0.5), mMax[0]);
         out[1] = min(max(0.0, pt[1]), mMax[1]);
         return out;
     }
@@ -240,12 +240,12 @@ namespace Glb {
         // Bicubic Interpolation
         glm::vec2 pos = worldToSelf(pt);
 
-        int i = (int)(pos[0] / theCellSize2d);
-        int j = (int)(pos[1] / theCellSize2d);
+        int i = (int)(pos[0] / MAC2dPara::theCellSize2d);
+        int j = (int)(pos[1] / MAC2dPara::theCellSize2d);
 
-        double scale = 1.0 / theCellSize2d;
-        double fractx = scale * (pos[0] - i * theCellSize2d);
-        double fracty = scale * (pos[1] - j * theCellSize2d);
+        double scale = 1.0 / MAC2dPara::theCellSize2d;
+        double fractx = scale * (pos[0] - i * MAC2dPara::theCellSize2d);
+        double fracty = scale * (pos[1] - j * MAC2dPara::theCellSize2d);
 
         assert(fractx < 1.0 && fractx >= 0);
         assert(fracty < 1.0 && fracty >= 0);
