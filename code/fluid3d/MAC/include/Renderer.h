@@ -45,8 +45,8 @@ namespace FluidSimulation {
 			GLuint VAO_XZ;
 			GLuint VBO_XZ;
 
-			int width = 200;
-			int height = 200;
+			int width = 400;
+			int height = 400;
 			
 			float* data;
 

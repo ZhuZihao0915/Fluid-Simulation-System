@@ -6,6 +6,7 @@ namespace Glb {
     GridData3d::GridData3d() :
         mDfltValue(0.0), mMax(0.0, 0.0, 0.0)
     {
+
     }
 
     GridData3d::GridData3d(const GridData3d& orig) :

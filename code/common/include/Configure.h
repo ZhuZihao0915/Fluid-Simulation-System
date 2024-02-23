@@ -20,20 +20,22 @@ extern int imageHeight;
 
 namespace MAC2dPara {
     extern int theDim2d[];
-    extern double theCellSize2d;
+    extern float theCellSize2d;
 
     extern float dt;
+    
+    extern float sourceVelocity;
 
-    extern double airDensity;
-    extern double ambientTemp;
-    extern double boussinesqAlpha;
-    extern double boussinesqBeta;
-    extern double vorticityConst;
+    extern float airDensity;
+    extern float ambientTemp;
+    extern float boussinesqAlpha;
+    extern float boussinesqBeta;
+    extern float vorticityConst;
 }
 
 namespace MAC3dPara{
     extern int theDim3d[];
-    extern double theCellSize3d;
+    extern float theCellSize3d;
 
     extern bool xySheetsON;
     extern bool yzSheetsON;
@@ -45,11 +47,13 @@ namespace MAC3dPara{
 
     extern float dt;
 
-    extern double airDensity;
-    extern double ambientTemp;
-    extern double boussinesqAlpha;
-    extern double boussinesqBeta;
-    extern double vorticityConst;
+    extern float sourceVelocity;
+
+    extern float airDensity;
+    extern float ambientTemp;
+    extern float boussinesqAlpha;
+    extern float boussinesqBeta;
+    extern float vorticityConst;
     
 }
 

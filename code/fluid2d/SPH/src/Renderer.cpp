@@ -45,11 +45,6 @@ namespace FluidSimulation {
             glUniform1i(glGetUniformLocation(mMilkShader->getId(), "textureSdf"), 0);
             */
 
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR) {
-                std::cerr << "OpenGL error: " << error << std::endl;
-            }
-
             // generate vertex array object
             glGenVertexArrays(1, &mVaoParticals);
             // generate vertex buffer object (for position)
@@ -93,12 +88,6 @@ namespace FluidSimulation {
             // 视口大小
             glViewport(0, 0, imageWidth, imageHeight);
 
-            error = glGetError();
-            if (error != GL_NO_ERROR) {
-                std::cerr << "OpenGL error: " << error << std::endl;
-            }
-
-
             return 0;
         }
 
@@ -125,7 +114,7 @@ namespace FluidSimulation {
 
             GLenum error = glGetError();
             if (error != GL_NO_ERROR) {
-                std::cerr << "OpenGL error: " << error << std::endl;
+                //std::cerr << "OpenGL error: " << error << std::endl;
             }
         }
 
@@ -182,21 +171,6 @@ namespace FluidSimulation {
             glBindVertexArray(0);
 
             mParticalNum = ps.positions.size();
-        }
-
-
-        float Renderer::CalculateFPS() {
-            auto nowTime = std::chrono::system_clock::now();
-            auto deltaTime = nowTime - mUpdateTime;
-            mUpdateTime = nowTime;
-            auto durMS = std::chrono::duration_cast<std::chrono::milliseconds>(deltaTime).count();
-            float fps = 1000.0f / durMS;
-            return fps;
-        }
-
-        void Renderer::ResizeCallback(GLFWwindow* window, int width, int height) {
-            auto thisPtr = reinterpret_cast<Renderer*>(glfwGetWindowUserPointer(window));
-            glViewport(0, 0, width, height);
         }
 
         GLuint Renderer::GetRenderedTexture() {

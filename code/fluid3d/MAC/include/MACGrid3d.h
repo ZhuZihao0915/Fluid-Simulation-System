@@ -29,19 +29,11 @@ namespace FluidSimulation {
             glm::vec4 getRenderColor(int i, int j, int k);
             glm::vec4 getRenderColor(const glm::vec3& pt);
 
-        protected:
-
-        public:
-            // Setup
+            // setup
             void initialize();
             void createSolids();
 
-            // Rendering
-            struct Cube { glm::vec2 pos; glm::vec4 color; double dist; };
-
-
-            // Simulation
-
+            // 根据位置获得该点的属性值
             glm::vec3 traceBack(const glm::vec3& pt, double dt);
             glm::vec3 getVelocity(const glm::vec3& pt);
             double getVelocityX(const glm::vec3& pt);
@@ -53,7 +45,6 @@ namespace FluidSimulation {
             enum Direction { X, Y, Z };
             
             // 根据网格索引获取中心点位置以及各边向量
-
             glm::vec3 getCenter(int i, int j, int k);
             glm::vec3 getLeftFace(int i, int j, int k);
             glm::vec3 getRightFace(int i, int j, int k);
@@ -61,6 +52,7 @@ namespace FluidSimulation {
             glm::vec3 getBottomFace(int i, int j, int k);
             glm::vec3 getFrontFace(int i, int j, int k);
             glm::vec3 getBackFace(int i, int j, int k);
+
             void getCell(int index, int& i, int& j, int& k);
             int getIndex(int i, int j, int k);
             bool isNeighbor(int i0, int j0, int k0, int i1, int j1, int k1);
@@ -72,8 +64,7 @@ namespace FluidSimulation {
             bool intersects(const glm::vec3& pt, const glm::vec3& dir, int i, int j, int k, double& time);
             int numSolidCells();
 
-            double getPressureCoeffBetweenCells(
-                int i0, int j0, int k0, int i1, int j1, int k1);
+            double getPressureCoeffBetweenCells(int i0, int j0, int k0, int i1, int j1, int k1);
             double getDivergence(int i, int j, int k);  // At center
             double checkDivergence(int i, int j, int k);  // At center
             bool checkDivergence();
@@ -85,14 +76,12 @@ namespace FluidSimulation {
 
 
         public:
-
-            Glb::GridData3dX mU;
-            Glb::GridData3dY mV;
-            Glb::GridData3dZ mW;
-            Glb::CubicGridData3d mD;
-            Glb::CubicGridData3d mT;
-
-            Glb::GridData3d mSolid;
+            Glb::GridData3dX mU;        // x
+            Glb::GridData3dY mV;        // y
+            Glb::GridData3dZ mW;        // z
+            Glb::CubicGridData3d mD;    // density
+            Glb::CubicGridData3d mT;    // temperature
+            Glb::GridData3d mSolid;     // solid
         };
 
     }

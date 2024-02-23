@@ -33,7 +33,6 @@ namespace FluidSimulation{
 
 			MACGrid2d target;   // 用于advection阶段存储新的场
 
-
 			ublas::compressed_matrix<double> A;
 			ublas::vector<double> b;
 			ublas::vector<double> precon;

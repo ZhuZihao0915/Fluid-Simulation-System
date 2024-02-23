@@ -24,14 +24,6 @@ namespace FluidSimulation {
 
             void reset();
 
-            void draw();
-            void updateSources();
-            void advectVelocity(double dt);
-            void addExternalForces(double dt);
-            void project(double dt);
-            void advectTemperature(double dt);
-            void advectDensity(double dt);
-
             glm::vec4 getRenderColor(int i, int j);
             glm::vec4 getRenderColor(const glm::vec2& pt);
 
@@ -39,26 +31,11 @@ namespace FluidSimulation {
             void initialize();
             void createSolids();
 
-            // Rendering
-            struct Cube { glm::vec2 pos; glm::vec4 color; double dist; };
-            void drawWireGrid();
-            void drawSolids();
-            void drawSmokeCubes();
-            void drawSmoke();
-            void drawCube(const MACGrid2d::Cube& c);
-            void drawFace(const MACGrid2d::Cube& c);
-            void drawVelocities();
-            void drawVForces();
-
-            void drawZSheets(bool backToFront);
-            void drawXSheets(bool backToFront);
-
             // Simulation
             glm::vec2 traceBack(const glm::vec2& pt, double dt);
             glm::vec2 getVelocity(const glm::vec2& pt);
             double getVelocityX(const glm::vec2& pt);
             double getVelocityY(const glm::vec2& pt);
-            
             double getTemperature(const glm::vec2& pt);
             double getDensity(const glm::vec2& pt);
 
@@ -71,6 +48,7 @@ namespace FluidSimulation {
             glm::vec2 getTopLine(int i, int j);
             glm::vec2 getBottomLine(int i, int j);
 
+
             void getCell(int index, int& i, int& j);
             int getIndex(int i, int j);
             bool isNeighbor(int i0, int j0, int i1, int j1);
@@ -82,14 +60,16 @@ namespace FluidSimulation {
             bool intersects(const glm::vec2& pt, const glm::vec2& dir, int i, int j, double& time);
             int numSolidCells();
 
-            double getPressureCoeffBetweenCells(
-                int i0, int j0, int i1, int j1);
+
+            double getPressureCoeffBetweenCells(int i0, int j0, int i1, int j1);
             double getDivergence(int i, int j);  // At center
             double checkDivergence(int i, int j);  // At center
             bool checkDivergence();
 
+
             // Compute forces
             double getBoussinesqForce(const glm::vec2& pt);
+
 
             glm::vec2 getVorticityN(int i, int j);
             glm::vec2 getVorticity(int i, int j);
@@ -98,12 +78,12 @@ namespace FluidSimulation {
 
         public:
 
-            Glb::GridData2dX mU;
-            Glb::GridData2dY mV;
-            Glb::CubicGridData2d mD;
-            Glb::CubicGridData2d mT;
+            Glb::GridData2dX mU;        // x
+            Glb::GridData2dY mV;        // y
+            Glb::CubicGridData2d mD;    // density
+            Glb::CubicGridData2d mT;    // temperature
 
-            Glb::GridData2d mSolid;
+            Glb::GridData2d mSolid;     // solid
 
         };
 

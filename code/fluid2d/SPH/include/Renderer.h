@@ -28,21 +28,11 @@ namespace FluidSimulation {
 
             int32_t Destroy();
 
-            bool ShouldClose();
-
-            void ProcessInput();
-
             void PollEvents();
 
             void LoadVertexes(ParticalSystem2d& ps);
 
             GLuint GetRenderedTexture();
-
-        private:
-
-            float CalculateFPS();
-
-            static void ResizeCallback(GLFWwindow* window, int width, int height);
 
         private:
 

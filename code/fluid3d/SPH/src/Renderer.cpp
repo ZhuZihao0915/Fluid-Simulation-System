@@ -194,7 +194,7 @@ namespace FluidSimulation {
             glBindVertexArray(mVaoParticals);
             //glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mParticalNum);
             glDrawArrays(GL_POINTS, 0, mParticalNum);
-            mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
+            //mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
             mDrawColor3d->unUse();
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -63,16 +63,12 @@ namespace FluidSimulation {
 
             mGrid.mT(sourcei, sourcej, 0) = 2.0f;
             mGrid.mD(sourcei, sourcej, 0) = 2.0f;
-            mGrid.mW(sourcei, sourcej, 0) = 1.0f;
 
-            //for (int k = sourcek - size; k < sourcek + size; k++)
-            //{
-            //    // 添加温度、密度
-            //    mGrid.mT(sourcei, 0, k) = 2.0;
-            //    mGrid.mD(sourcei, 0, k) = 2.0;
-            //    // 赋予初始垂直方向速度
-            //    mGrid.mV(sourcei, 0, k) = 1.0;
-            //}
+            for (int i = -1; i <= 1; i++) {
+                mGrid.mW(sourcei + i, sourcej, 0) = MAC3dPara::sourceVelocity;
+                mGrid.mW(sourcei, sourcej + i, 0) = MAC3dPara::sourceVelocity;
+            }
+        
         }
 
         void Solver::advectVelocity()

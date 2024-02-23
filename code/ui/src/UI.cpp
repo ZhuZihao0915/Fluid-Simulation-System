@@ -29,7 +29,7 @@ namespace FluidSimulation {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         // create window
-        GLFWwindow* window = glfwCreateWindow(1440, 1200, "Fluid Simulation System", NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(1440, 1100, "Fluid Simulation System", NULL, NULL);
         if (!window) {
             Manager::GetInstance().pushMessage("Fail to create window.");
             glfwTerminate();

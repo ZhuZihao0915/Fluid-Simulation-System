@@ -5,7 +5,6 @@
 #include <glfw3.h>
 #include "Camera.h"
 
-// 流体模拟算法组件
 // 用于组织粒子/网格系统、渲染器、求解器
 
 namespace Glb {
@@ -28,6 +27,7 @@ namespace Glb {
 		virtual void cameraRotate(float x, float y) { if (!is3D)return; };
 		virtual void cameraMove(float x, float y) { if (!is3D)return; };
 		virtual void cameraScale(float w) { if (!is3D)return; };
+
 		virtual void shutDown() = 0;
 		virtual void init() = 0;
 		virtual void simulate() = 0;

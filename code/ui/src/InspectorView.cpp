@@ -58,7 +58,7 @@ namespace FluidSimulation {
 			Manager::GetInstance().pushMessage("Reset succeeded.");
 		}
 
-
+		ImGui::Separator();
 
 		if (Manager::GetInstance().GetSceneView()->currentMethod==NULL) {
 			ImGui::Text("No Simulation Method!\nPlease select a simulation method.");
@@ -68,7 +68,37 @@ namespace FluidSimulation {
 			float floatStep = 0.1;
 			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
 			{
+			case 0:
 
+				ImGui::Text("Physical Parameters:");
+				ImGui::SliderFloat("Gravity", &SPH2dPara::gravity, -10.0f, 20.0f);
+				ImGui::SliderFloat("Density", &SPH2dPara::density, 100.0f, 2000.0f);
+				ImGui::SliderFloat("Stiffness", &SPH2dPara::stiffness, 10.0f, 100.0f);
+				ImGui::SliderFloat("Viscosity", &SPH2dPara::viscosity, 0.0f, 0.5f);
+
+				ImGui::Separator();
+
+				ImGui::Text("Solver:");
+				ImGui::SliderFloat("Delta Time", &SPH2dPara::dt, 0.0f, 6e-2f);
+				ImGui::InputScalar("Substep", ImGuiDataType_S32, &SPH2dPara::substep, &intStep, NULL);
+				
+
+				break;
+			case 1:
+				ImGui::Text("Physical Parameters:");
+				ImGui::SliderFloat("Air Density", &MAC2dPara::airDensity, 0.10f, 3.0f);
+				ImGui::SliderFloat("Ambient Temperature", &MAC2dPara::ambientTemp, 0.0f, 50.0f);
+				ImGui::SliderFloat("Boussinesq Alpha", &MAC2dPara::boussinesqAlpha, 100.0f, 1000.0f);
+				ImGui::SliderFloat("Boussinesq Beta", &MAC2dPara::boussinesqBeta, 1000.0f, 5000.0f);
+				ImGui::SliderFloat("Vorticity", &MAC2dPara::vorticityConst, 10.0f, 200.0f);
+				
+				ImGui::Separator();
+
+				ImGui::Text("Solver:");
+				ImGui::SliderFloat("Delta Time", &MAC2dPara::dt, 0.0f, 0.1f);
+				ImGui::SliderFloat("Source Velocity", &MAC2dPara::sourceVelocity, 0.0f, 5.0f);
+
+				break;
 			// sph 3d
 			case 2:
 				ImGui::Text("Camera:");
@@ -80,6 +110,21 @@ namespace FluidSimulation {
 				ImGui::InputScalar("Yaw", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mYaw, &floatStep, NULL);
 				ImGui::InputScalar("Pitch", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mPitch, &floatStep, NULL);
 				Manager::GetInstance().GetSceneView()->currentMethod->camera->UpdateView();
+
+				ImGui::Separator();
+
+				ImGui::Text("Solver:");
+				ImGui::SliderFloat("Delta Time", &SPH3dPara::dt, 0.0f, 6e-2f);
+				ImGui::InputScalar("Substep", ImGuiDataType_S32, &SPH3dPara::substep, &intStep, NULL);
+				ImGui::InputScalar("Velocity Attenuation", ImGuiDataType_Float, &SPH3dPara::velocityAttenuation, &floatStep, NULL);
+
+				ImGui::Separator();
+
+				ImGui::Text("Physical Parameters:");
+				ImGui::SliderFloat("Gravity", &SPH3dPara::gravity, -10.0f, 20.0f);
+				ImGui::SliderFloat("Density", &SPH3dPara::density0, 100.0f, 2000.0f);
+				ImGui::SliderFloat("Stiffness", &SPH3dPara::stiffness, 10.0f, 50.0f);
+				ImGui::SliderFloat("Viscosity", &SPH3dPara::viscosity, 0.0f, 8e-3f);
 
 				break;
 			// mac 3d
@@ -106,6 +151,19 @@ namespace FluidSimulation {
 
 				ImGui::Separator();
 
+				ImGui::Text("Solver:");
+				ImGui::SliderFloat("Delta Time", &MAC3dPara::dt, 0.0f, 0.1f);
+				ImGui::SliderFloat("Source Velocity", &MAC3dPara::sourceVelocity, 0.0f, 5.0f);
+
+				ImGui::Separator();
+
+				ImGui::Text("Physical Parameters:");
+				ImGui::SliderFloat("Air Density", &MAC3dPara::airDensity, 0.10f, 3.0f);
+				ImGui::SliderFloat("Ambient Temperature", &MAC3dPara::ambientTemp, 0.0f, 50.0f);
+				ImGui::SliderFloat("Boussinesq Alpha", &MAC3dPara::boussinesqAlpha, 100.0f, 1000.0f);
+				ImGui::SliderFloat("Boussinesq Beta", &MAC3dPara::boussinesqBeta, 1000.0f, 5000.0f);
+				ImGui::SliderFloat("Vorticity", &MAC3dPara::vorticityConst, 10.0f, 200.0f);
+				
 			}
 		}
 

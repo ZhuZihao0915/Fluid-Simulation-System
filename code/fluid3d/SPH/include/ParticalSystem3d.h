@@ -21,12 +21,7 @@ namespace FluidSimulation {
             alignas(4) float_t pressDivDens2;;
             alignas(4) uint32_t blockId;
         };
-
-        struct NeighborInfo {
-            alignas(16) glm::vec3 radius;
-            alignas(4) float_t distance;
-            alignas(4) int32_t neighborId;
-        };
+        
 
         class ParticalSystem3d {
         public:

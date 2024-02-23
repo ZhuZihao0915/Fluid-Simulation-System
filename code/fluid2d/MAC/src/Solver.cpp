@@ -124,7 +124,7 @@ namespace FluidSimulation {
             mGrid.mD(sourcei, 0) = 2.0;
 
             // 赋予初始垂直方向速度
-            mGrid.mV(sourcei, 0) = 1.0;
+            mGrid.mV(sourcei, 0) = MAC2dPara::sourceVelocity;
         }
 
 #define FOR_EACH_CELL \
