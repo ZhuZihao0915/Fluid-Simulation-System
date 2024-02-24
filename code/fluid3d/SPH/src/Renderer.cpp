@@ -14,6 +14,8 @@ namespace FluidSimulation {
 
             glGenVertexArrays(1, &mVaoNull);
             glEnable(GL_MULTISAMPLE);
+
+            glViewport(0, 0, imageWidth, imageHeight);
 		}
 
         void Renderer::BuildShaders() {
@@ -27,10 +29,10 @@ namespace FluidSimulation {
         void Renderer::GenerateFrameBuffers() {
             // NEW!!!
             // generate frame buffer object
-            glGenFramebuffers(1, &fbo);
+            glGenFramebuffers(1, &FBO);
             // make it active
             // start fbo
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
             // generate textures
             glGenTextures(1, &textureID);
@@ -46,13 +48,13 @@ namespace FluidSimulation {
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
             // generate render buffer object (RBO)
-            glGenRenderbuffers(1, &rbo);
-            glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+            glGenRenderbuffers(1, &RBO);
+            glBindRenderbuffer(GL_RENDERBUFFER, RBO);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 600, 600);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
             // RBO绑定到FBO
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
                 std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
             }
@@ -160,8 +162,8 @@ namespace FluidSimulation {
         // 生成需要渲染的object的VAO
         void Renderer::MakeVertexArrays() {
             // 粒子
-            glGenVertexArrays(1, &mVaoParticals);
-            glBindVertexArray(mVaoParticals);
+            glGenVertexArrays(1, &VAO);
+            glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, mBufferParticals);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ParticalInfo3d), (void*)offsetof(ParticalInfo3d, position));
             glEnableVertexAttribArray(0);   // location = 0
@@ -174,11 +176,11 @@ namespace FluidSimulation {
             // 申请装粒子信息的buffer
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferParticals);
             glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mParticalInfos.size() * sizeof(ParticalInfo3d), ps.mParticalInfos.data(), GL_DYNAMIC_COPY);
-            mParticalNum = ps.mParticalInfos.size();
+            particalNum = ps.mParticalInfos.size();
         }
 
         void Renderer::draw() {
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
             glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LEQUAL);
@@ -191,9 +193,9 @@ namespace FluidSimulation {
 
             glBindVertexArray(mVaoCoord);
             glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, SPH3dPara::indices);
-            glBindVertexArray(mVaoParticals);
+            glBindVertexArray(VAO);
             //glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mParticalNum);
-            glDrawArrays(GL_POINTS, 0, mParticalNum);
+            glDrawArrays(GL_POINTS, 0, particalNum);
             //mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
             mDrawColor3d->unUse();
 

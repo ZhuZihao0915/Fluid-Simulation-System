@@ -16,11 +16,11 @@ namespace Glb {
     private:
         std::chrono::system_clock::time_point mStartPoint;
     public:
-        void Start() {
+        void start() {
             mStartPoint = std::chrono::system_clock::now();
         }
 
-        int GetTime() {
+        int getTime() {
             auto dur = std::chrono::system_clock::now() - mStartPoint;
             return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
         }

@@ -2,6 +2,7 @@
 #include <GL/glut.h>
 #include "ConjGrad3d.h"
 #include "Configure.h"
+#include "Global.h"
 
 namespace FluidSimulation {
     namespace MAC3d {
@@ -22,17 +23,21 @@ namespace FluidSimulation {
             // TODO
             // 求解/模拟
 
-
             // 密度源释放流体
             updateSources();
+            
             // advect 速度
             advectVelocity();
+
             // 考虑浮力、涡度等因素
             addExternalForces();
+
             // project 确保incompressible的特性
             project();
+
             // advect 温度
             advectTemperature();
+
             // advect 密度
             advectDensity();
 
@@ -57,7 +62,6 @@ namespace FluidSimulation {
             target.reset();
 
             // source的位置
-            int size = 2; // neighborhood size
             int sourcei = (int)MAC3dPara::theDim3d[0] / 2;
             int sourcej = (int)MAC3dPara::theDim3d[1] / 2;
 
@@ -73,6 +77,7 @@ namespace FluidSimulation {
 
         void Solver::advectVelocity()
         {
+#pragma omp parallel for
             FOR_EACH_FACE
             {
                if (mGrid.isFace(i,j,k,mGrid.X))
@@ -105,6 +110,7 @@ namespace FluidSimulation {
 
         void Solver::addExternalForces()
         {
+#pragma omp parallel for
             // 计算浮力，更新向上的速度
             FOR_EACH_FACE
             {
@@ -138,6 +144,7 @@ namespace FluidSimulation {
             }
 
                 // 使用计算好的约束力，更新速度场
+#pragma omp parallel for
             FOR_EACH_FACE
             {
                 if (mGrid.isFace(i, j, k, mGrid.X))
@@ -184,9 +191,11 @@ namespace FluidSimulation {
             // 相关博客：https://yangwc.com/2019/08/03/MakingFluidImcompressible/
             // 为了进一步加快求解的收敛速度，可以采用预处理的共轭梯度法
 
-            ublas::vector<double> p(numCells);
             constructB(numCells);
-            Glb::cg_psolve3d(A, precon, b, p, 500, 0.005);
+            ublas::vector<double> p = conjugateGradient(A, b, precon);
+
+            //Glb::cg_psolve3d(A, precon, b, p, 500, 0.005);
+            // 
             //Glb::cg_solve3d(A, b, p, 500, 0.005);
 
 
@@ -196,6 +205,7 @@ namespace FluidSimulation {
             double pressureChange;
 
             // 使用压力场更新速度场
+#pragma omp parallel for
             FOR_EACH_FACE
             {
                if (mGrid.isFace(i,j,k,mGrid.X))
@@ -293,10 +303,12 @@ namespace FluidSimulation {
             A.resize(numCells, numCells, false);
 
             // 矩阵A(r, c)存储着 cell r 接受到 cell c 带来的压力
+#pragma omp parallel for
             for (unsigned int row = 0; row < numCells; row++)
             {
                 int ri, rj, rk; mGrid.getCell(row, ri, rj, rk); // Each row corresponds to a cell
                 if (mGrid.isSolidCell(ri, rj, rk)) continue;
+#pragma omp parallel for
                 for (unsigned int col = 0; col < numCells; col++)
                 {
                     int ci, cj, ck; mGrid.getCell(col, ci, cj, ck); // Each col corresponds to a possible neighbor
@@ -314,6 +326,7 @@ namespace FluidSimulation {
         {
             b.resize(numCells);
             double constant = -(MAC3dPara::airDensity * MAC3dPara::theCellSize3d * MAC3dPara::theCellSize3d) / MAC3dPara::dt;
+#pragma omp parallel for
             for (unsigned int index = 0; index < numCells; index++)
             {
                 int i, j, k; 

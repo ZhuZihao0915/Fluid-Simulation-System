@@ -11,7 +11,8 @@ namespace Glb {
         Shader();
         ~Shader();
 
-        int32_t buildFromFile(std::string& vertPath, std::string& fragPath, std::string& geomPath = std::string(""));
+        int32_t buildFromFile(std::string& vertPath, std::string& fragPath);
+        int32_t buildFromFile(std::string& vertPath, std::string& fragPath, std::string& geomPath);
         void use();
         void unUse();
         GLuint getId();

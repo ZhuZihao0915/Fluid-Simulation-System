@@ -3,11 +3,11 @@
 
 namespace Glb {
     Camera::Camera() {
-        mYaw = 5.0f;
-        mPitch = 5.0f;
+        mYaw = 13.0f;
+        mPitch = 22.5f;
 
         mWorldUp = glm::vec3(0.0, 0.0, 1.0);
-        mPosition = glm::vec3(3.273f, 1.639f, 1.469f);
+        mPosition = glm::vec3(2.0f, 1.0f, 1.178f);
         UpdateView();
 
         aspect = 1.0f;

@@ -17,7 +17,6 @@ namespace FluidSimulation{
 
 			virtual void solve();
 
-			void updateSources();
 			void advectVelocity();
 			void addExternalForces();
 			void project();

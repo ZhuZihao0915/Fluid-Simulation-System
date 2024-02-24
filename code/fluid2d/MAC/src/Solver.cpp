@@ -14,12 +14,12 @@ namespace FluidSimulation {
 
         Solver::~Solver()
         {
+
         }
 
         void Solver::solve()
         {
-            // 密度源释放流体
-            updateSources();
+            target.reset();
 
             // advect 速度
             advectVelocity();
@@ -109,22 +109,6 @@ namespace FluidSimulation {
                     b(index) = constant * mGrid.getDivergence(i, j);
                 else b(index) = 0;
             }
-        }
-
-
-        void Solver::updateSources() {
-            // 初始化更新时用到的临时场
-            target.reset();
-
-            // source的位置
-            int sourcei = (int)MAC2dPara::theDim2d[0] / 5;
-
-            // 添加温度、密度
-            mGrid.mT(sourcei, 0) = 2.0;
-            mGrid.mD(sourcei, 0) = 2.0;
-
-            // 赋予初始垂直方向速度
-            mGrid.mV(sourcei, 0) = MAC2dPara::sourceVelocity;
         }
 
 #define FOR_EACH_CELL \

@@ -20,7 +20,6 @@ namespace FluidSimulation {
             camera = new Glb::Camera();
             grid = new MACGrid3d();
             renderer = new Renderer(*grid, *camera);
-            renderer->init();
             solver = new Solver(*grid);
         }
 
@@ -31,7 +30,7 @@ namespace FluidSimulation {
         GLuint Mac3dComponent::getRenderedTexture()
         {
             renderer->draw();
-            return renderer->getImTextureIDByDensity();
+            return renderer->getTextureID();
         }
 
         void Mac3dComponent::cameraMove(float x, float y) {

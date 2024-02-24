@@ -12,55 +12,27 @@ namespace FluidSimulation {
     namespace SPH2d {
 
         Renderer::Renderer() {
-
-        }
-
-        int32_t Renderer::Init() {
-
-            //glfwSetWindowUserPointer(window, this);
-            //glfwSetFramebufferSizeCallback(window, ResizeCallback);
-
-            // 初始化shader
-
-            extern std::string shaderPath;
-
             std::string particalVertShaderPath = shaderPath + "/DrawParticals.vert";
             std::string particalFragShaderPath = shaderPath + "/DrawParticals.frag";
-            mParticalShader = new Glb::Shader();
-            mParticalShader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
-
-            /*
-            std::string ballVertShaderPath = shaderPath + "/DrawSdf.vert";
-            std::string ballGeomShaderPath = shaderPath + "/DrawSdf.geom";
-            std::string ballFragShaderPath = shaderPath + "/DrawSdf.frag";
-            mSdfShader = new Glb::Shader();
-            mSdfShader->buildFromFile(ballVertShaderPath, ballFragShaderPath, ballGeomShaderPath);
-
-            std::string milkVertShaderPath = shaderPath + "/DrawMilk.vert";
-            std::string milkFragShaderPath = shaderPath + "/DrawMilk.frag";
-            mMilkShader = new Glb::Shader();
-            mMilkShader->buildFromFile(milkVertShaderPath, milkFragShaderPath);
-
-            glUseProgram(mMilkShader->getId());
-            glUniform1i(glGetUniformLocation(mMilkShader->getId(), "textureSdf"), 0);
-            */
+            shader = new Glb::Shader();
+            shader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
 
             // generate vertex array object
-            glGenVertexArrays(1, &mVaoParticals);
+            glGenVertexArrays(1, &VAO);
             // generate vertex buffer object (for position)
-            glGenBuffers(1, &mPositionBuffer);
+            glGenBuffers(1, &positionBuffer);
             // generate vertex buffer object (for density)
-            glGenBuffers(1, &mDensityBuffer);
+            glGenBuffers(1, &densityBuffer);
 
             // generate frame buffer object
-            glGenFramebuffers(1, &fbo);
+            glGenFramebuffers(1, &FBO);
             // make it active
             // start fbo
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
             // generate textures
-            glGenTextures(1, &mTextureSdf);
-            glBindTexture(GL_TEXTURE_2D, mTextureSdf);
+            glGenTextures(1, &textureID);
+            glBindTexture(GL_TEXTURE_2D, textureID);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -69,80 +41,36 @@ namespace FluidSimulation {
             glBindTexture(GL_TEXTURE_2D, 0);
 
             // Texture2D绑定到FBO
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureSdf, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
             // generate render buffer object (RBO)
-            glGenRenderbuffers(1, &mRboSdf);
-            glBindRenderbuffer(GL_RENDERBUFFER, mRboSdf);
+            glGenRenderbuffers(1, &RBO);
+            glBindRenderbuffer(GL_RENDERBUFFER, RBO);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageWidth, imageHeight);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
             // RBO绑定到FBO
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRboSdf);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-                std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
+                std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
             }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             // end fbo
 
-            // 视口大小
             glViewport(0, 0, imageWidth, imageHeight);
-
-            return 0;
         }
 
-        void Renderer::draw() {
+        
+        void Renderer::draw(ParticalSystem2d& ps) {
 
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
-            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-            glEnable(GL_DEPTH_TEST);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-            // 绘制前，设置好使用的VAO和shader程序
-            glBindVertexArray(mVaoParticals);   // VAO
-            mParticalShader->use();             // shader
-            glEnable(GL_PROGRAM_POINT_SIZE);
-
-            // 使用当前激活的着色器，之前定义的顶点属性配置，和VBO的顶点数据（通过VAO间接绑定）来绘制图元
-            // 图元类型为 GL_POINTS
-            // 顶点数组的起始索引为 0
-            // 绘制的顶点数为 mParticalNum
-            glDrawArrays(GL_POINTS, 0, mParticalNum);   
-
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR) {
-                //std::cerr << "OpenGL error: " << error << std::endl;
-            }
-        }
-
-        int32_t Renderer::Destroy() {
-
-            glDeleteVertexArrays(1, &mVaoParticals);
-            glDeleteBuffers(1, &mPositionBuffer);
-            glDeleteBuffers(1, &mDensityBuffer);
-            delete mParticalShader;
-            delete mSdfShader;
-            delete mMilkShader;
-            glfwTerminate();
-            return 0;
-        }
-
-        void Renderer::PollEvents() {
-            glfwPollEvents();
-        }
-
-        void Renderer::LoadVertexes(ParticalSystem2d& ps) {
             // bind VAO (decide which VAO we want to set)
-            glBindVertexArray(mVaoParticals);
+            glBindVertexArray(VAO);
 
             // bind VBO to GL_ARRAY_BUFFER
-            glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, positionBuffer);
             // copy data to the current bound buffer(VBO)
             glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * ps.positions.size(), ps.positions.data(), GL_STATIC_DRAW);
-           
+
             // tell OpenGL how to parse vertex data. here are the parameters' meaning:
             // 0 is the VBO's location of current VAO, which is defined in shader
             // 2 means vec2
@@ -155,7 +83,7 @@ namespace FluidSimulation {
             glEnableVertexAttribArray(0);   // 对应shader中的lacation
 
             // 绑定VBO到GL_ARRAY_BUFFER，后续对GL_ARRAY_BUFFER的操作就是对该VBO的操作
-            glBindBuffer(GL_ARRAY_BUFFER, mDensityBuffer);
+            glBindBuffer(GL_ARRAY_BUFFER, densityBuffer);
             // 把数据复制到缓冲的内存中
             /* 第四个参数指定了我们希望显卡如何管理给定的数据。它有三种形式：
 
@@ -170,11 +98,35 @@ namespace FluidSimulation {
 
             glBindVertexArray(0);
 
-            mParticalNum = ps.positions.size();
+            particalNum = ps.positions.size();
+
+
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+            glEnable(GL_DEPTH_TEST);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            glBindVertexArray(VAO);
+            shader->use();
+            glEnable(GL_PROGRAM_POINT_SIZE);
+
+            glDrawArrays(GL_POINTS, 0, particalNum);   
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+        void Renderer::destroy() {
+            glDeleteVertexArrays(1, &VAO);
+            glDeleteBuffers(1, &positionBuffer);
+            glDeleteBuffers(1, &densityBuffer);
+            glDeleteFramebuffers(1, &FBO);
+            glDeleteRenderbuffers(1, &RBO);
+            delete shader;
         }
 
         GLuint Renderer::GetRenderedTexture() {
-            return mTextureSdf;
+            return textureID;
         }
     }
 

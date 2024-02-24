@@ -22,38 +22,26 @@ namespace FluidSimulation {
         public:
             Renderer();
 
-            int32_t Init();
+            void draw(ParticalSystem2d& ps);
 
-            void draw();
-
-            int32_t Destroy();
-
-            void PollEvents();
-
-            void LoadVertexes(ParticalSystem2d& ps);
+            void destroy();
 
             GLuint GetRenderedTexture();
 
         private:
 
-            GLFWwindow* mWindow = nullptr;
+            Glb::Shader* shader = nullptr;
 
-            Glb::Shader* mParticalShader = nullptr;
-            Glb::Shader* mSdfShader = nullptr;
-            Glb::Shader* mMilkShader = nullptr;
+            GLuint VAO = 0;
+            GLuint positionBuffer = 0;
+            GLuint densityBuffer = 0;
 
-            GLuint mVaoParticals = 0;
-            GLuint mPositionBuffer = 0;
-            GLuint mDensityBuffer = 0;
+            GLuint FBO = 0;
+            GLuint RBO = 0;
 
-            GLuint fbo = 0;
-            GLuint mTextureSdf = 0;
-            GLuint mRboSdf = 0;
+            GLuint textureID = 0;
 
-            size_t mParticalNum = 0;
-
-            std::chrono::system_clock::time_point mUpdateTime;
-
+            size_t particalNum = 0;
 
         };
     }

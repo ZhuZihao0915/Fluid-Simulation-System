@@ -68,6 +68,10 @@ namespace FluidSimulation {
 			float floatStep = 0.1;
 			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
 			{
+			// TODO
+			// 添加各算法的参数控制组件
+			
+			// sph 2d
 			case 0:
 
 				ImGui::Text("Physical Parameters:");
@@ -84,6 +88,7 @@ namespace FluidSimulation {
 				
 
 				break;
+			// mac 2d
 			case 1:
 				ImGui::Text("Physical Parameters:");
 				ImGui::SliderFloat("Air Density", &MAC2dPara::airDensity, 0.10f, 3.0f);
@@ -163,7 +168,8 @@ namespace FluidSimulation {
 				ImGui::SliderFloat("Boussinesq Alpha", &MAC3dPara::boussinesqAlpha, 100.0f, 1000.0f);
 				ImGui::SliderFloat("Boussinesq Beta", &MAC3dPara::boussinesqBeta, 1000.0f, 5000.0f);
 				ImGui::SliderFloat("Vorticity", &MAC3dPara::vorticityConst, 10.0f, 200.0f);
-				
+				break;
+
 			}
 		}
 

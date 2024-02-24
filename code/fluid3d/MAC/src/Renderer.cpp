@@ -33,7 +33,7 @@ namespace FluidSimulation {
 			0.0f, 0.0f, 0.0f, 1.0f, 0.0f
 		};
 
-		void Renderer::init()
+		Renderer::Renderer(MACGrid3d& grid, Glb::Camera& c) :mGrid(grid), mCamera(c)
 		{
 
 			std::string particalVertShaderPath = shaderPath + "/DrawSmoke3d.vert";
@@ -81,24 +81,11 @@ namespace FluidSimulation {
 			glBindVertexArray(0);
 
 
-			createTextureFromFramebuffer();
-
-			// 如果开启深度测试，就只能绘制一个方向的平面
-			glDisable(GL_DEPTH_TEST);
-
-			glEnable(GL_BLEND); //开启混合模式
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //设置混合函数
-
-			data = new float[4 * width * height];
-		}
-
-		void Renderer::createTextureFromFramebuffer()
-		{
 			// generate frame buffer object
-			glGenFramebuffers(1, &fbo);
+			glGenFramebuffers(1, &FBO);
 			// make it active
 			// start fbo
-			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
 			// generate textures
 			glGenTextures(1, &textureID);
@@ -114,24 +101,35 @@ namespace FluidSimulation {
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
 			// generate render buffer object (RBO)
-			glGenRenderbuffers(1, &rbo);
-			glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+			glGenRenderbuffers(1, &RBO);
+			glBindRenderbuffer(GL_RENDERBUFFER, RBO);
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageWidth, imageHeight);
 			glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 			// RBO绑定到FBO
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
 				std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+
+			// 如果开启深度测试，就只能绘制一个方向的平面
+			glDisable(GL_DEPTH_TEST);
+
+			glEnable(GL_BLEND); //开启混合模式
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); //设置混合函数
+
+			data = new float[4 * width * height];
+
+			glViewport(0, 0, imageWidth, imageHeight);
 		}
+		
 
 		void Renderer::draw() {
-			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 			
-			glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			if (MAC3dPara::xySheetsON) {
@@ -147,39 +145,6 @@ namespace FluidSimulation {
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			
-
-		}
-
-
-		void Renderer::drawOneSheet()
-		{
-			std::vector<float> imageData;
-
-			for (int j = 1; j <= imageHeight; j++) {
-				for (int i = 1; i <= imageWidth; i++) {
-					float pt_x = i * mGrid.mU.mMax[0] / (imageWidth);
-					float pt_y = j * mGrid.mU.mMax[1] / (imageHeight);
-					float pt_z = mGrid.mU.mMax[1] / 2;
-					glm::vec3 pt(pt_x, pt_y, pt_z);
-					glm::vec4 color = mGrid.getRenderColor(pt);
-					imageData.push_back(color.x);
-					imageData.push_back(color.y);
-					imageData.push_back(color.z);
-				}
-			}
-			
-			glGenTextures(1, &textureID);
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			// 设置纹理参数
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-			// 将颜色数据传递给纹理
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_FLOAT, imageData.data());
-			glBindTexture(GL_TEXTURE_2D, 0);
-
 		}
 
 		void Renderer::drawXYSheets()
@@ -337,7 +302,7 @@ namespace FluidSimulation {
 			}
 		}
 
-		GLuint Renderer::getImTextureIDByDensity() {
+		GLuint Renderer::getTextureID() {
 			return textureID;
 		}
 

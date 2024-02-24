@@ -34,7 +34,7 @@ namespace FluidSimulation
         ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 
         // display all views
-        //hierarchyView->display();
+        // hierarchyView->display();
         sceneView->display();
         inspectorView->display();
         projectView->display();

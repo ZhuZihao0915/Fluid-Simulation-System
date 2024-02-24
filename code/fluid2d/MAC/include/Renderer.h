@@ -6,20 +6,34 @@
 #include <glfw3.h>
 #include "Configure.h"
 #include "glm/glm.hpp"
+#include "Shader.h"
 
 namespace FluidSimulation {
 	namespace MAC2d {
 		class Renderer {
 		public:
-			Renderer(MACGrid2d& grid): mGrid(grid){
+			Renderer();
 
-			}
+			void draw(MACGrid2d& mGrid);
 
-			GLuint getImTextureIDByDensity();
-			void Renderer::applyFilter(std::vector<float>& imageData, int width, int height);
+			void destroy();
+
+			GLuint getTextureID();
+
 		private:
-			MACGrid2d& mGrid;
-		
+			
+			Glb::Shader* shader;
+			
+			float* data;
+			int width = 800;
+			int height = 800;
+
+			GLuint VAO;
+			GLuint VBO;
+			GLuint FBO;
+			GLuint RBO;
+
+			GLuint textureID = 0;
 		};
 	}
 }

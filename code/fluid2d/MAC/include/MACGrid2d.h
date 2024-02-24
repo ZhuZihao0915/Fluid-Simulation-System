@@ -30,6 +30,7 @@ namespace FluidSimulation {
             // Setup
             void initialize();
             void createSolids();
+            void updateSources();
 
             // Simulation
             glm::vec2 traceBack(const glm::vec2& pt, double dt);

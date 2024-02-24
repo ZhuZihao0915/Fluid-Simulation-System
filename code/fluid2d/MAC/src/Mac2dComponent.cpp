@@ -2,6 +2,7 @@
 
 namespace FluidSimulation {
     namespace MAC2d {
+
         void Mac2dComponent::shutDown() {
             delete renderer, solver, grid;
             renderer = NULL;
@@ -17,18 +18,24 @@ namespace FluidSimulation {
                 solver = NULL;
                 grid = NULL;
             }
+
             grid = new MACGrid2d();
-            renderer = new Renderer(*grid);
+            renderer = new Renderer();
             solver = new Solver(*grid);
+
         }
 
         void Mac2dComponent::simulate() {
+
+            grid->updateSources();
             solver->solve();
+            renderer->draw(*grid);
+
         }
 
         GLuint Mac2dComponent::getRenderedTexture()
         {
-            return renderer->getImTextureIDByDensity();
+            return renderer->getTextureID();
         }
     }
 }

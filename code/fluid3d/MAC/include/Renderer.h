@@ -14,11 +14,7 @@ namespace FluidSimulation {
 	namespace MAC3d {
 		class Renderer {
 		public:
-			Renderer(MACGrid3d& grid, Glb::Camera& c) :mGrid(grid), mCamera(c) {};
-
-			void init();
-			void createTextureFromFramebuffer();
-
+			Renderer(MACGrid3d& grid, Glb::Camera& c);
 
 			void draw();
 			void drawOneSheet();
@@ -26,7 +22,7 @@ namespace FluidSimulation {
 			void drawYZSheets();
 			void drawXZSheets();
 
-			GLuint getImTextureIDByDensity();
+			GLuint getTextureID();
 
 			Glb::Camera& mCamera;
 
@@ -45,15 +41,15 @@ namespace FluidSimulation {
 			GLuint VAO_XZ;
 			GLuint VBO_XZ;
 
-			int width = 400;
-			int height = 400;
+			int width = 600;
+			int height = 600;
 			
 			float* data;
 
 			Glb::Shader* shader;
 
-			GLuint fbo = 0;
-			GLuint rbo = 0;
+			GLuint FBO = 0;
+			GLuint RBO = 0;
 
 			MACGrid3d& mGrid;
 

@@ -31,21 +31,9 @@ namespace FluidSimulation {
 
             GLuint getRenderedTexture();
 
-            // 上传、读取数据
-            void UploadUniforms(ParticalSystem3d& ps);
-            void UploadParticalInfo(ParticalSystem3d& ps);
-            void DumpParticalInfo(ParticalSystem3d& ps);
-
             // 求解、渲染
             void load(ParticalSystem3d& ps);
             void draw();
-
-        private:
-            static void ResizeCallback(GLFWwindow* window, int width, int height);
-            static void CursorPosCallBack(GLFWwindow* window, double xpos, double ypos);
-            static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-            static void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-            static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
         private:
             
@@ -84,8 +72,8 @@ namespace FluidSimulation {
             Glb::Shader* mDrawFluidColor = nullptr;
             Glb::Shader* mDrawModel = nullptr;*/
 
-            GLuint fbo = 0;
-            GLuint rbo = 0;
+            GLuint FBO = 0;
+            GLuint RBO = 0;
 
             // fbo
             GLuint mFboDepth = 0;
@@ -96,7 +84,7 @@ namespace FluidSimulation {
 
             // vao
             GLuint mVaoNull = 0;
-            GLuint mVaoParticals = 0;
+            GLuint VAO = 0;
             GLuint mVaoCoord = 0;
             GLuint mVaoFloor = 0;
 
@@ -119,7 +107,7 @@ namespace FluidSimulation {
             // Material* mSlabWhite = nullptr;
 
             // time statistics
-            int32_t mParticalNum = 0;
+            int32_t particalNum = 0;
             float_t mUpdateTime = 0.0f;
             float_t updateTitleTime = 0.0f;
             float_t frameCount = 0.0f;
