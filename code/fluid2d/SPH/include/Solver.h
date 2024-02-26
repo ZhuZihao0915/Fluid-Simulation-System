@@ -12,23 +12,17 @@ namespace FluidSimulation {
     namespace SPH2d {
         class Solver {
         public:
-            explicit Solver(ParticalSystem2d& ps);
+            Solver(ParticalSystem2d& ps);
             ~Solver();
 
             void solve();
 
         private:
-            void updateDensityAndPressure();
-
-            void initAccleration();
-
-            void updateViscosityAccleration();
-
-            void updatePressureAccleration();
-
-            void eulerIntegrate();
-
+            void eulerIntegration();
+            void computeDensityAndPress();
+            void computeAccleration();
             void boundaryCondition();
+            void calculateBlockId();
 
         private:
             ParticalSystem2d& mPs;

@@ -6,6 +6,7 @@ namespace Glb {
     GridData2d::GridData2d() :
         mDfltValue(0.0), mMax(0.0, 0.0)
     {
+
     }
 
     GridData2d::GridData2d(const GridData2d& orig) :

@@ -257,7 +257,7 @@ namespace FluidSimulation {
                       vel = vel - scaleConstant * pressureChange;
                       target.mV(i, j) = vel;
                    }
-                }
+               }
             }
 
             mGrid.mU = target.mU;

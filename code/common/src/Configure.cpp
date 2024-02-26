@@ -19,7 +19,7 @@ namespace MAC2dPara {
 }
 
 namespace MAC3dPara {
-    extern int theDim3d[3] = { 16, 16, 16 };
+    extern int theDim3d[3] = { 10, 10, 10 };
     extern float theCellSize3d = 0.5;
 
     extern bool xySheetsON = false;
@@ -44,36 +44,36 @@ namespace MAC3dPara {
 
 
 
-//namespace SPH2dPara {
-//    // 求解器参数
-//    extern float dt = 6e-4;
-//    extern int substep = 3;
-//    extern float maxVelocity = 100;
-//    extern float velocityAttenuation = 0.7;
-//    extern float eps = 1e-5;
-//
-//    // 物理参数
-//    extern float supportRadius = 0.04;// 0.025;
-//    extern float particalRadius = 0.01;// 0.005;
-//    extern float particalDiameter = particalRadius * 2.0;
-//    extern float gravity = 9.8f;
-//    extern float density0 = 1000.0f;
-//    extern float stiffness = 20.0f;
-//    extern float exponent = 7.0f;   // 求解方程中的指数项
-//    extern float viscosity = 8e-5f;
-//}
-
 namespace SPH2dPara {
     // 求解器参数
-    extern float dt = 4e-4;
-    extern int substep = 5;
-    extern float exponent = 7.0f;
+    extern float dt = 6e-4;
+    extern int substep = 3;
+    extern float maxVelocity = 100;
+    extern float velocityAttenuation = 0.7;
+    extern float eps = 1e-5;
+
     // 物理参数
+    extern float supportRadius = 0.04;// 0.025;
+    extern float particalRadius = 0.01;// 0.005;
+    extern float particalDiameter = particalRadius * 2.0;
     extern float gravity = 9.8f;
     extern float density = 1000.0f;
     extern float stiffness = 70.0f;
+    extern float exponent = 7.0f;   // 求解方程中的指数项
     extern float viscosity = 0.03f;
 }
+
+//namespace SPH2dPara {
+//    // 求解器参数
+//    extern float dt = 4e-4;
+//    extern int substep = 5;
+//    extern float exponent = 7.0f;
+//    // 物理参数
+//    extern float gravity = 9.8f;
+//    extern float density = 1000.0f;
+//    extern float stiffness = 70.0f;
+//    extern float viscosity = 0.03f;
+//}
 
 namespace SPH3dPara {
     // 求解器参数

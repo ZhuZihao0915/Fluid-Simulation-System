@@ -14,10 +14,11 @@ namespace FluidSimulation {
 
 		Renderer::Renderer(){
 
-            std::string particalVertShaderPath = shaderPath + "/DrawSmoke2d.vert";
-            std::string particalFragShaderPath = shaderPath + "/DrawSmoke2d.frag";
+			/*extern std::string shaderPath;
+            std::string vertShaderPath = shaderPath + "/DrawSmoke2d.vert";
+            std::string fragShaderPath = shaderPath + "/DrawSmoke2d.frag";
             shader = new Glb::Shader();
-            shader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
+            shader->buildFromFile(vertShaderPath, fragShaderPath);
 
             glGenVertexArrays(1, &VAO);
             glGenBuffers(1, &VBO);
@@ -36,12 +37,11 @@ namespace FluidSimulation {
 
             glGenTextures(1, &textureID);
             glBindTexture(GL_TEXTURE_2D, textureID);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-            glBindTexture(GL_TEXTURE_2D, 0);
 
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
@@ -56,17 +56,23 @@ namespace FluidSimulation {
             }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+			glDisable(GL_DEPTH_TEST);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			data = new float[4 * width * height];
+			data = new float[4 * width * height];*/
+
+
+
 			glViewport(0, 0, imageWidth, imageHeight);
+
 		}
 
 		void Renderer::draw(MACGrid2d& mGrid) {
 
-			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-			glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+			/*glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+			glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			for (int j = height; j >= 1; j--) {
@@ -90,28 +96,51 @@ namespace FluidSimulation {
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
+			glBindTexture(GL_TEXTURE_2D, 0);
 
 			shader->use();
-			glActiveTexture(GL_TEXTURE0);
 			glBindTexture(GL_TEXTURE_2D, texture);
 			glUniform1i(glGetUniformLocation(shader->getId(), "mTexture"), 0);
+
+			shader->use();
 			glBindVertexArray(VAO);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
+
+
+			std::vector<float> imageData;
+
+			for (int j = 1; j <= imageHeight; j++) {
+				for (int i = 1; i <= imageWidth; i++) {
+					float pt_x = i * mGrid.mU.mMax[0] / (imageWidth);
+					float pt_y = j * mGrid.mU.mMax[1] / (imageHeight);
+					glm::vec2 pt(pt_x, pt_y);
+					glm::vec4 color = mGrid.getRenderColor(pt);
+					imageData.push_back(color.x);
+					imageData.push_back(color.y);
+					imageData.push_back(color.z);
+				}
+			}
+
+			glGenTextures(1, &textureID);
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			// 设置纹理参数
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+			// 将颜色数据传递给纹理
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_FLOAT, imageData.data());
+			glBindTexture(GL_TEXTURE_2D, 0);
+
 		}
 
 		GLuint Renderer::getTextureID() {
+			
 			return textureID;
-		}
 
-		void Renderer::destroy() {
-			glDeleteVertexArrays(1, &VAO);
-			glDeleteBuffers(1, &VBO);
-			glDeleteFramebuffers(1, &FBO);
-			glDeleteRenderbuffers(1, &RBO);
-			delete shader;
 		}
 	}
 }

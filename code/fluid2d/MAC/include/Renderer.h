@@ -28,10 +28,10 @@ namespace FluidSimulation {
 			int width = 800;
 			int height = 800;
 
-			GLuint VAO;
-			GLuint VBO;
-			GLuint FBO;
-			GLuint RBO;
+			GLuint VAO = 0;
+			GLuint VBO = 0;
+			GLuint FBO = 0;
+			GLuint RBO = 0;
 
 			GLuint textureID = 0;
 		};

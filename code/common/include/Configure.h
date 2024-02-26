@@ -57,37 +57,37 @@ namespace MAC3dPara{
     
 }
 
-//namespace SPH2dPara {
-//    // 求解器参数
-//    extern float dt;
-//    extern int substep;
-//    extern float maxVelocity;
-//    extern float velocityAttenuation;
-//    extern float eps;
-//
-//    // 物理参数
-//    extern float supportRadius;
-//    extern float particalRadius;
-//    extern float particalDiameter;
-//    extern float gravity;
-//    extern float density0;
-//    extern float stiffness;
-//    extern float exponent;
-//    extern float viscosity;
-//}
-
 namespace SPH2dPara {
     // 求解器参数
     extern float dt;
     extern int substep;
+    extern float maxVelocity;
+    extern float velocityAttenuation;
+    extern float eps;
 
     // 物理参数
+    extern float supportRadius;
+    extern float particalRadius;
+    extern float particalDiameter;
     extern float gravity;
     extern float density;
     extern float stiffness;
     extern float exponent;
     extern float viscosity;
 }
+
+//namespace SPH2dPara {
+//    // 求解器参数
+//    extern float dt;
+//    extern int substep;
+//
+//    // 物理参数
+//    extern float gravity;
+//    extern float density;
+//    extern float stiffness;
+//    extern float exponent;
+//    extern float viscosity;
+//}
 
 namespace SPH3dPara {
     // 求解器参数

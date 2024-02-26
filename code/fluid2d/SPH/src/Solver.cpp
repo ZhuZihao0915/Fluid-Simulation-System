@@ -6,7 +6,7 @@
 namespace FluidSimulation {
 
     namespace SPH2d {
-        Solver::Solver(ParticalSystem2d& ps) : mPs(ps), mW(ps.supportRadius)
+        Solver::Solver(ParticalSystem2d& ps) : mPs(ps), mW(ps.mSupportRadius)
         {
 
         }
@@ -16,134 +16,151 @@ namespace FluidSimulation {
         }
 
         void Solver::solve() {
-            updateDensityAndPressure();
-            initAccleration();
-            updateViscosityAccleration();
-            updatePressureAccleration();
-            eulerIntegrate();
+            computeDensityAndPress();
+            computeAccleration();
+            eulerIntegration();
             boundaryCondition();
+            calculateBlockId();
         }
 
-        void Solver::updateDensityAndPressure() {
-            // initialized as normal condition
-            mPs.mDensity = std::vector<float>(mPs.positions.size(), SPH2dPara::density);
-            mPs.mPressure = std::vector<float>(mPs.positions.size(), 0.0f);
+        void Solver::computeAccleration(){
+            float dim = 2.0;
+            float constFactor = 2.0 * (dim + 2.0) * mPs.mViscosity;
+#pragma omp parallel for
+            for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
 
-            // caculate
-            for (int i = 0; i < mPs.positions.size(); i++) {
-                // if have neighbor(s) then we need to update the density
-                if (mPs.mNeighbors.size() != 0) {
-                    std::vector<Neighbor>& neighbors = mPs.mNeighbors[i];
-                    float density = 0;
-                    // calculate the contribution of the neighbors to density
-                    for (auto& nInfo : neighbors) {
-                        density += mW.Value(nInfo.distance);    // kernel function (interpolation)
+                mPs.mParticalInfos[i].accleration = SPH2dPara::gravity * -glm::vec2(0.0f, 1.0f);
+                //std::cout << mPs.mParticalInfos[i].accleration.z << std::endl;
+                // 计算 viscosity 和 pressure
+                glm::vec2 viscosityForce = glm::vec2(0.0);
+                glm::vec2 pressureForce = glm::vec2(0.0);
+                for (int k = 0; k < mPs.mBlockIdOffs.size(); k++) {
+                    int bIdj = mPs.mParticalInfos[i].blockId + mPs.mBlockIdOffs[k];
+                    
+                    if (bIdj >= 0 && bIdj < mPs.mBlockExtens.size()) {
+                        for (int j = mPs.mBlockExtens[bIdj].x; j < mPs.mBlockExtens[bIdj].y; j++) {
+                            if (j == i) { continue; }
+                            glm::vec2 radiusIj = mPs.mParticalInfos[i].position - mPs.mParticalInfos[j].position;
+                            float diatanceIj = length(radiusIj);
+                            if (diatanceIj <= SPH2dPara::supportRadius) {
+                                float dotDvToRad = glm::dot(mPs.mParticalInfos[i].velocity - mPs.mParticalInfos[j].velocity, radiusIj);
+                                float denom = diatanceIj * diatanceIj + 0.01 * SPH2dPara::supportRadius * SPH2dPara::supportRadius;
+                                glm::vec2 wGrad = mW.Grad(radiusIj);
+                                //std::cout << wGrad.x << " " << wGrad.y<< std::endl;
+                                viscosityForce += (mPs.mMass / mPs.mParticalInfos[j].density) * dotDvToRad * wGrad / denom;
+                                pressureForce += mPs.mParticalInfos[j].density * (mPs.mParticalInfos[i].pressDivDens2 + mPs.mParticalInfos[j].pressDivDens2) * wGrad;
+                            }
+                        }
                     }
-                    density *= (mPs.volume * SPH2dPara::density);
-                    mPs.mDensity[i] = density;
-                    mPs.mDensity[i] = max(density, SPH2dPara::density);        // 禁止膨胀
                 }
-                // pressure
-                mPs.mPressure[i] = SPH2dPara::stiffness * (std::powf(mPs.mDensity[i] / SPH2dPara::density, SPH2dPara::exponent) - 1.0f);
+                //std::cout << mPs.mParticalInfos[i].density << std::endl;
+                //std::cout << viscosityForce.x << " " << viscosityForce.y << std::endl;
+                //std::cout << pressureForce.x << " " << pressureForce.y << std::endl;
+                // 使用viscosity 和 pressure更新加速度
+                mPs.mParticalInfos[i].accleration += viscosityForce * constFactor;
+                //std::cout << mPs.mParticalInfos[i].accleration.y << std::endl;
+                mPs.mParticalInfos[i].accleration -= pressureForce * mPs.mVolume;
+                // std::cout << mPs.mParticalInfos[i].accleration.x << " " << mPs.mParticalInfos[i].accleration.y << " " << mPs.mParticalInfos[i].accleration.z << std::endl;
             }
         }
 
-        // initialize the accleration as gravity
-        void Solver::initAccleration() {
-            std::fill(mPs.accleration.begin() + mPs.mStartIndex, mPs.accleration.end(), glm::vec2(0.0f, -SPH2dPara::gravity));
-        }
-
-        // update accleration by viscosity
-        void Solver::updateViscosityAccleration() {
-            float dim = 2.0f;
-            float constFactor = 2.0f * (dim + 2.0f) * SPH2dPara::viscosity;
-            // traverse all particles
-            for (int i = mPs.mStartIndex; i < mPs.positions.size(); i++) {
-                // if have neighbor(s)
-                if (mPs.mNeighbors.size() != 0) {
-                    // caculate the viscous force which depend on the differences between two particles' velocity and position
-                    std::vector<Neighbor>& neighbors = mPs.mNeighbors[i];
-                    glm::vec2 viscosityForce(0.0f, 0.0f);
-                    for (auto& nInfo : neighbors) {
-                        int j = nInfo.index;
-                        float dotDvToRad = glm::dot(mPs.velocity[i] - mPs.velocity[j], nInfo.radius);
-
-                        float denom = nInfo.distance2 + 0.01f * mPs.supportRadius2;
-                        // 
-                        viscosityForce += (mPs.mass / mPs.mDensity[j]) * dotDvToRad * mW.Grad(nInfo.radius) / denom;
-                    }
-                    viscosityForce *= constFactor;
-                    mPs.accleration[i] += viscosityForce;
+        void Solver::eulerIntegration() {
+#pragma omp parallel for
+            for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
+                // 使用加速度（和dt）更新速度
+                mPs.mParticalInfos[i].velocity = mPs.mParticalInfos[i].velocity + SPH2dPara::dt * mPs.mParticalInfos[i].accleration;
+                // 限制速度在各方向的大小
+                glm::vec2 newVelocity;
+                for (int j = 0; j < 2; j++) {
+                    newVelocity[j] = max(-SPH2dPara::maxVelocity, min(mPs.mParticalInfos[i].velocity[j], SPH2dPara::maxVelocity));
                 }
+                mPs.mParticalInfos[i].velocity = newVelocity;
+                // 使用速度（和dt）更新位置
+                mPs.mParticalInfos[i].position = mPs.mParticalInfos[i].position + SPH2dPara::dt * mPs.mParticalInfos[i].velocity;
             }
         }
 
-        // update accleration by pressure
-        void Solver::updatePressureAccleration() {
-            // get p/(dens^2)
-            std::vector<float> pressDivDens2(mPs.positions.size(), 0);
-            for (int i = 0; i < mPs.positions.size(); i++) {
-                pressDivDens2[i] = mPs.mPressure[i] / std::powf(mPs.mDensity[i], 2);
-            }
-            // traverse all particles
-            for (int i = mPs.mStartIndex; i < mPs.positions.size(); i++) {
-                if (mPs.mNeighbors.size() != 0) {
-                    std::vector<Neighbor>& neighbors = mPs.mNeighbors[i];
-                    glm::vec2 pressureForce(0.0f, 0.0f);
-                    // traverse all neighbors, caculate pressure force
-                    for (auto& nInfo : neighbors) {
-                        int j = nInfo.index;
-                        pressureForce += mPs.mDensity[j] * (pressDivDens2[i] + pressDivDens2[j]) * mW.Grad(nInfo.radius);
-                    }
-                    mPs.accleration[i] -= pressureForce * mPs.volume;
-                }
-            }
-        }
-
-        // after dt time
-        void Solver::eulerIntegrate() {
-            // traverse all particles
-            for (int i = mPs.mStartIndex; i < mPs.positions.size(); i++) {
-                // use accleration update velocity
-                mPs.velocity[i] += SPH2dPara::dt * mPs.accleration[i];
-                // restrict
-                mPs.velocity[i] = glm::clamp(mPs.velocity[i], glm::vec2(-100.0f), glm::vec2(100.0f));
-                // use velocity update position
-                mPs.positions[i] += SPH2dPara::dt * mPs.velocity[i];
-            }
-        }
-
-        // 
         void Solver::boundaryCondition() {
-            // traverse all particles
-            for (int i = 0; i < mPs.positions.size(); i++) {
-                glm::vec2& position = mPs.positions[i];
+#pragma omp parallel for
+            for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
+
                 bool invFlag = false;
-                // if particles are approaching the boundary, reverse their direction in x(left/right) or y(up/down)
-                if (position.y < mPs.lowerLeftCorner.y + mPs.supportRadius) {
-                    mPs.velocity[i].y = std::abs(mPs.velocity[i].y);
+
+                if (mPs.mParticalInfos[i].position.x < mPs.mLowerBound.x + SPH2dPara::supportRadius) {
+                    mPs.mParticalInfos[i].velocity.x = abs(mPs.mParticalInfos[i].velocity.x);
                     invFlag = true;
                 }
 
-                if (position.y > mPs.upperRightCorner.y - mPs.supportRadius) {
-                    mPs.velocity[i].y = -std::abs(mPs.velocity[i].y);
+                if (mPs.mParticalInfos[i].position.y < mPs.mLowerBound.y + SPH2dPara::supportRadius) {
+                    mPs.mParticalInfos[i].velocity.y = abs(mPs.mParticalInfos[i].velocity.y);
                     invFlag = true;
                 }
 
-                if (position.x < mPs.lowerLeftCorner.x + mPs.supportRadius) {
-                    mPs.velocity[i].x = std::abs(mPs.velocity[i].x);
+                if (mPs.mParticalInfos[i].position.x > mPs.mUpperBound.x - SPH2dPara::supportRadius) {
+                    mPs.mParticalInfos[i].velocity.x = -abs(mPs.mParticalInfos[i].velocity.x);
                     invFlag = true;
                 }
 
-                if (position.x > mPs.upperRightCorner.x - mPs.supportRadius) {
-                    mPs.velocity[i].x = -std::abs(mPs.velocity[i].x);
+                if (mPs.mParticalInfos[i].position.y > mPs.mUpperBound.y - SPH2dPara::supportRadius) {
+                    mPs.mParticalInfos[i].velocity.y = -abs(mPs.mParticalInfos[i].velocity.y);
                     invFlag = true;
                 }
-                // if does, update their position by new velocities
+
                 if (invFlag) {
-                    mPs.positions[i] += SPH2dPara::dt * mPs.velocity[i];
-                    mPs.velocity[i] = glm::clamp(mPs.velocity[i], glm::vec2(-100.0f), glm::vec2(100.0f)); // restriction
+                    mPs.mParticalInfos[i].velocity *= SPH2dPara::velocityAttenuation;	// 到达边界，衰减速度
                 }
+
+                // 限制速度和位置
+                glm::vec2 newPosition, newVelocity;
+                for (int j = 0; j < 2; j++) {
+                    newPosition[j] = max((mPs.mLowerBound[j] + SPH2dPara::supportRadius + SPH2dPara::eps), min(mPs.mParticalInfos[i].position[j], (mPs.mUpperBound[j] - (SPH2dPara::supportRadius + SPH2dPara::eps))));
+                    newVelocity[j] = max(-SPH2dPara::maxVelocity, min(mPs.mParticalInfos[i].velocity[j], SPH2dPara::maxVelocity));
+                }
+                mPs.mParticalInfos[i].position = newPosition;
+                mPs.mParticalInfos[i].velocity = newVelocity;
+
+            }
+
+        }
+
+        void Solver::calculateBlockId() {
+#pragma omp parallel for
+            for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
+                // 相对于容器原点的位置
+                glm::vec2 deltePos = mPs.mParticalInfos[i].position - mPs.mLowerBound;
+                // 计算块的位置
+                glm::vec2 blockPosition = glm::floor(deltePos / mPs.mBlockSize);
+                // 更新块的ID
+                mPs.mParticalInfos[i].blockId = blockPosition.y * mPs.mBlockNum.x + blockPosition.x;
+            }
+        }
+
+        void Solver::computeDensityAndPress() {
+#pragma omp parallel for
+            for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
+                // 遍历邻近的块
+                for (int k = 0; k < mPs.mBlockIdOffs.size(); k++) {     // for all neighbor block
+                    int bIdj = mPs.mParticalInfos[i].blockId + mPs.mBlockIdOffs[k];
+                    if (bIdj >= 0 && bIdj < mPs.mBlockExtens.size()) {
+                        // 遍历块中的粒子
+                        for (int j = mPs.mBlockExtens[bIdj].x; j < mPs.mBlockExtens[bIdj].y; j++) {   // for all neighbor particals
+                            if (j == i) { continue; }
+                            // 根据粒子之间的距离，模拟密度
+                            glm::vec2 radiusIj = mPs.mParticalInfos[i].position - mPs.mParticalInfos[j].position;
+                            float diatanceIj = length(radiusIj);
+                            if (diatanceIj <= SPH2dPara::supportRadius) {
+                                mPs.mParticalInfos[i].density += mW.Value(diatanceIj);
+                            }
+                        }
+                    }
+                }
+
+                mPs.mParticalInfos[i].density *= (mPs.mVolume * SPH2dPara::density);
+                mPs.mParticalInfos[i].density = max(mPs.mParticalInfos[i].density, SPH2dPara::density);
+                //std::cout << mPs.mParticalInfos[i].density << std::endl << std::endl;
+                // 根据更新得到的密度，以及设定的stiffness、exponent参数计算得到pressure
+                mPs.mParticalInfos[i].pressure = SPH2dPara::stiffness * (std::powf(mPs.mParticalInfos[i].density / SPH2dPara::density, SPH2dPara::exponent) - 1.0);
+                mPs.mParticalInfos[i].pressDivDens2 = mPs.mParticalInfos[i].pressure / std::powf(mPs.mParticalInfos[i].density, 2);
             }
         }
     }

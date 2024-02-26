@@ -13,63 +13,51 @@ namespace FluidSimulation {
 
     namespace SPH2d {
 
-        struct Neighbor {
-            int index;
-            float distance;
-            float distance2;
-            glm::vec2 radius;
+        struct ParticalInfo2d
+        {
+            alignas(8) glm::vec2 position;
+            alignas(8) glm::vec2 velocity;
+            alignas(8) glm::vec2 accleration;
+            alignas(4) float density;
+            alignas(4) float pressure;
+            alignas(4) float pressDivDens2;;
+            alignas(4) uint32_t blockId;
         };
 
         class ParticalSystem2d {
         public:
 
-            ParticalSystem2d(glm::vec2 containerCorner, glm::vec2 containerSize);
+            ParticalSystem2d();
+            ~ParticalSystem2d();
 
+            void setContainerSize(glm::vec2 containerCorner, glm::vec2 containerSize);
             int32_t addFluidBlock(glm::vec2 corner, glm::vec2 size, glm::vec2 v0, float particalSpace);
-
-            void searchNeighbors();
-
-            size_t getBlockIdByPosition(glm::vec2 position);
-
-            void buildBlockStructure();
-
-        private:
-            int32_t addBoundary(glm::vec2 corner, glm::vec2 size);
+            uint32_t getBlockIdByPosition(glm::vec2 position);
+            void updateBlockInfo();
 
         public:
+            // 粒子参数
+            float mSupportRadius = SPH2dPara::supportRadius;    // 支撑半径
+            float mSupportRadius2 = mSupportRadius * mSupportRadius;
+            float mParticalRadius = SPH2dPara::particalRadius;   // 粒子半径
+            float mParticalDiameter = SPH2dPara::particalDiameter;
+            float mVolume =  mParticalDiameter * mParticalDiameter;    // 体积
+            float mMass = SPH2dPara::density * mVolume;  // 质量
+            float mViscosity = SPH2dPara::viscosity;            // 粘度系数
+            float mExponent = SPH2dPara::exponent;              // 压力指数
+            int mStiffness = SPH2dPara::stiffness;            // 刚度
+            std::vector<ParticalInfo2d> mParticalInfos;
+            int mMaxNeighbors = 128;
 
-            int mStartIndex = 0;
+            // 容器参数
+            glm::vec2 mLowerBound = glm::vec2(FLT_MAX);
+            glm::vec2 mUpperBound = glm::vec2(-FLT_MAX);
+            glm::vec2 mContainerCenter = glm::vec2(0.0f);
+            glm::uvec2 mBlockNum = glm::uvec2(0);    // XY 轴有几个block
+            glm::vec2 mBlockSize = glm::vec2(0.0f);
 
-            // particles' information
-            std::vector<glm::vec2> positions;
-            std::vector<glm::vec2> accleration;
-            std::vector<glm::vec2> velocity;
-
-            // physical attributes
-            std::vector<float> mDensity;
-            std::vector<float> mPressure;
-
-            // for search
-            std::vector<std::vector<Neighbor>> mNeighbors;
-
-            // define the position and size of a container
-            glm::vec2 lowerLeftCorner = glm::vec2(-1.0f, -1.0f);
-            glm::vec2 upperRightCorner = glm::vec2(1.0f, 1.0f);
-            glm::vec2 center = glm::vec2(0.0f, 0.0f);
-
-            // block structure
-            std::vector<int>* blocks;
-            glm::vec2 blockSize;
-            uint32_t blockRowNum;
-            uint32_t blockColNum;
-
-            // properties
-            float particalRadius = 0.01;
-            float particalDiameter = 2.0 * particalRadius;
-            float supportRadius = 0.025;
-            float supportRadius2 = supportRadius * supportRadius;
-            float volume = 0.8 * particalDiameter * particalDiameter;
-            float mass = SPH2dPara::density * volume;
+            std::vector<glm::uvec2> mBlockExtens;   // 记载着每个block含有那个索引区间的粒子（索引为mParticalInfos的索引）
+            std::vector<int32_t> mBlockIdOffs;
 
         };
     }

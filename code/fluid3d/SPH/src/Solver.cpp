@@ -52,7 +52,7 @@ namespace FluidSimulation {
 						}
 					}
 				}
-				//std::cout << viscosityForce.x << " " << viscosityForce.y << " " << viscosityForce.z << std::endl;
+				// std::cout << viscosityForce.x << " " << viscosityForce.y << " " << viscosityForce.z << std::endl;
 				// 使用viscosity 和 pressure更新加速度
 				mPs.mParticalInfos[i].accleration += viscosityForce * constFactor;
 				// std::cout << mPs.mParticalInfos[i].accleration.z << std::endl;
