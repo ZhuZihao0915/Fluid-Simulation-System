@@ -24,7 +24,6 @@ namespace FluidSimulation {
                 renderer = NULL;
                 solver = NULL;
                 ps = NULL;
-                camera = NULL;
                 is3D = true;
             }
             virtual void shutDown();

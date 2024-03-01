@@ -36,10 +36,10 @@ namespace FluidSimulation {
 		}
 
 		ImGui::SetNextItemWidth(300);
-		if (ImGui::Button(Manager::GetInstance().GetSceneView()->isRendering ? "Pause" : "Continue")) {
+		if (ImGui::Button(simulating ? "Pause" : "Continue")) {
 			// ÇÐ»»äÖÈ¾×´Ì¬
-			Manager::GetInstance().GetSceneView()->isRendering = !Manager::GetInstance().GetSceneView()->isRendering;
-			if (Manager::GetInstance().GetSceneView()->isRendering) {
+			simulating = !simulating;
+			if (simulating) {
 				Manager::GetInstance().pushMessage("Rendering...");
 			}
 			else {
@@ -52,7 +52,7 @@ namespace FluidSimulation {
 
 			Manager::GetInstance().GetSceneView()->currentMethod->init();
 
-			Manager::GetInstance().GetSceneView()->isRendering = false;
+			simulating = false;
 			Manager::GetInstance().GetSceneView()->texture = -1;
 
 			Manager::GetInstance().pushMessage("Reset succeeded.");
@@ -107,14 +107,14 @@ namespace FluidSimulation {
 			// sph 3d
 			case 2:
 				ImGui::Text("Camera:");
-				ImGui::InputFloat3("Position", &Manager::GetInstance().GetSceneView()->currentMethod->camera->mPosition.x);
-				ImGui::InputScalar("Fov", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->fovyDeg, &floatStep, NULL);
-				ImGui::InputScalar("Aspect", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->aspect, &floatStep, NULL);
-				ImGui::InputScalar("Near", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->nearPlane, &floatStep, NULL);
-				ImGui::InputScalar("Far", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->farPlane, &floatStep, NULL);
-				ImGui::InputScalar("Yaw", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mYaw, &floatStep, NULL);
-				ImGui::InputScalar("Pitch", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mPitch, &floatStep, NULL);
-				Manager::GetInstance().GetSceneView()->currentMethod->camera->UpdateView();
+				ImGui::InputFloat3("Position", &Glb::Camera::getInstance().mPosition.x);
+				ImGui::InputScalar("Fov", ImGuiDataType_Float, &Glb::Camera::getInstance().fovyDeg, &floatStep, NULL);
+				ImGui::InputScalar("Aspect", ImGuiDataType_Float, &Glb::Camera::getInstance().aspect, &floatStep, NULL);
+				ImGui::InputScalar("Near", ImGuiDataType_Float, &Glb::Camera::getInstance().nearPlane, &floatStep, NULL);
+				ImGui::InputScalar("Far", ImGuiDataType_Float, &Glb::Camera::getInstance().farPlane, &floatStep, NULL);
+				ImGui::InputScalar("Yaw", ImGuiDataType_Float, &Glb::Camera::getInstance().mYaw, &floatStep, NULL);
+				ImGui::InputScalar("Pitch", ImGuiDataType_Float, &Glb::Camera::getInstance().mPitch, &floatStep, NULL);
+				Glb::Camera::getInstance().UpdateView();
 
 				ImGui::Separator();
 
@@ -135,14 +135,14 @@ namespace FluidSimulation {
 			// mac 3d
 			case 3:
 				ImGui::Text("Camera:");
-				ImGui::InputFloat3("Position", &Manager::GetInstance().GetSceneView()->currentMethod->camera->mPosition.x);
-				ImGui::InputScalar("Fov", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->fovyDeg, &floatStep, NULL);
-				ImGui::InputScalar("Aspect", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->aspect, &floatStep, NULL);
-				ImGui::InputScalar("Near", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->nearPlane, &floatStep, NULL);
-				ImGui::InputScalar("Far", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->farPlane, &floatStep, NULL);
-				ImGui::InputScalar("Yaw", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mYaw, &floatStep, NULL);
-				ImGui::InputScalar("Pitch", ImGuiDataType_Float, &Manager::GetInstance().GetSceneView()->currentMethod->camera->mPitch, &floatStep, NULL);
-				Manager::GetInstance().GetSceneView()->currentMethod->camera->UpdateView();
+				ImGui::InputFloat3("Position", &Glb::Camera::getInstance().mPosition.x);
+				ImGui::InputScalar("Fov", ImGuiDataType_Float, &Glb::Camera::getInstance().fovyDeg, &floatStep, NULL);
+				ImGui::InputScalar("Aspect", ImGuiDataType_Float, &Glb::Camera::getInstance().aspect, &floatStep, NULL);
+				ImGui::InputScalar("Near", ImGuiDataType_Float, &Glb::Camera::getInstance().nearPlane, &floatStep, NULL);
+				ImGui::InputScalar("Far", ImGuiDataType_Float, &Glb::Camera::getInstance().farPlane, &floatStep, NULL);
+				ImGui::InputScalar("Yaw", ImGuiDataType_Float, &Glb::Camera::getInstance().mYaw, &floatStep, NULL);
+				ImGui::InputScalar("Pitch", ImGuiDataType_Float, &Glb::Camera::getInstance().mPitch, &floatStep, NULL);
+				Glb::Camera::getInstance().UpdateView();
 
 				ImGui::Separator();
 

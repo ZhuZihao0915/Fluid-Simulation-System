@@ -2,23 +2,6 @@
 #include <iostream>
 
 namespace Glb {
-    Camera::Camera() {
-        mYaw = 13.0f;
-        mPitch = 22.5f;
-
-        mWorldUp = glm::vec3(0.0, 0.0, 1.0);
-        mPosition = glm::vec3(2.0f, 1.0f, 1.178f);
-        UpdateView();
-
-        aspect = 1.0f;
-        nearPlane = 0.1f;
-        farPlane = 100.0f;
-        fovyDeg = 60.0f;
-    }
-
-    Camera::~Camera() {
-
-    }
 
     void Camera::ProcessMove(glm::vec2 offset) {
         mPosition -= offset.x * mSensitiveX * mRight;

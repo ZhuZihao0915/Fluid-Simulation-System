@@ -3,8 +3,10 @@
 int imageWidth = 800;
 int imageHeight = 800;
 
+bool simulating = false;
+
 namespace MAC2dPara {
-    extern int theDim2d[2] = { 100, 100};
+    extern int theDim2d[2] = { 200, 200 };
     extern float theCellSize2d = 0.5;
 
     extern float dt = 0.01;

@@ -3,7 +3,6 @@
 #define __MAC3D_MACGRID_3D_H__
 
 
-
 #include <windows.h>
 #include "GL/gl.h"
 #include <glm/glm.hpp>
@@ -25,6 +24,7 @@ namespace FluidSimulation {
             MACGrid3d& operator=(const MACGrid3d& orig);
 
             void reset();
+            void updateSources();
 
             glm::vec4 getRenderColor(int i, int j, int k);
             glm::vec4 getRenderColor(const glm::vec3& pt);
@@ -53,6 +53,7 @@ namespace FluidSimulation {
             glm::vec3 getFrontFace(int i, int j, int k);
             glm::vec3 getBackFace(int i, int j, int k);
 
+
             void getCell(int index, int& i, int& j, int& k);
             int getIndex(int i, int j, int k);
             bool isNeighbor(int i0, int j0, int k0, int i1, int j1, int k1);
@@ -64,10 +65,12 @@ namespace FluidSimulation {
             bool intersects(const glm::vec3& pt, const glm::vec3& dir, int i, int j, int k, double& time);
             int numSolidCells();
 
+
             double getPressureCoeffBetweenCells(int i0, int j0, int k0, int i1, int j1, int k1);
             double getDivergence(int i, int j, int k);  // At center
             double checkDivergence(int i, int j, int k);  // At center
             bool checkDivergence();
+
 
             double getBoussinesqForce(const glm::vec3& pt);
             glm::vec3 getVorticityN(int i, int j, int k);
@@ -82,6 +85,7 @@ namespace FluidSimulation {
             Glb::CubicGridData3d mD;    // density
             Glb::CubicGridData3d mT;    // temperature
             Glb::GridData3d mSolid;     // solid
+
         };
 
     }

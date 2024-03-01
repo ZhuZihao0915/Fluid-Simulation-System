@@ -13,15 +13,12 @@ namespace Glb {
 		int id;
 		bool is3D;
 		char* description;
-		Camera* camera;
 
 		Component() {
 			this->description = NULL;
-			this->camera = NULL;
 		}
 		Component(char* description) {
 			this->description = description;
-			this->camera = NULL;
 		}
 
 		virtual void cameraRotate(float x, float y) { if (!is3D)return; };

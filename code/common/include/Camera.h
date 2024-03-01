@@ -12,8 +12,11 @@
 namespace Glb {
     class Camera {
     public:
-        Camera();
-        ~Camera();
+
+        static Camera& getInstance() {
+            static Camera instance;
+            return instance;
+        }
 
         void ProcessMove(glm::vec2 offset);                //处理相机移动
         void ProcessRotate(glm::vec2 offset);              //处理相机旋转
@@ -28,6 +31,34 @@ namespace Glb {
 
         void UpdateView();                                //更新视图矩阵
 
+    private:
+        Camera() {
+            
+            mSensitiveYaw = 0.1;            
+            mSensitivePitch = 0.1;   
+            mSensitiveX = 0.001;                    
+            mSensitiveY = 0.001;                     
+            mSensitiveFront = 0.05;
+
+            mYaw = 13.0f;
+            mPitch = 22.5f;
+
+            mWorldUp = glm::vec3(0.0, 0.0, 1.0);
+            mPosition = glm::vec3(2.0f, 1.0f, 1.178f);
+            UpdateView();
+
+            aspect = 1.0f;
+            nearPlane = 0.1f;
+            farPlane = 100.0f;
+            fovyDeg = 60.0f;
+
+
+
+        };
+
+        Camera(const Camera&) = delete;
+        Camera& operator=(const Camera&) = delete;
+
     public:
         float_t mYaw;                                     //相机偏航角
         float_t mPitch;                                   //相机俯仰角
@@ -39,8 +70,7 @@ namespace Glb {
         float_t mSensitiveFront = 0.05;                  //相机缩放灵敏度
 
         glm::vec3 mPosition;                             //相机位置
-        //glm::vec3 mTargetPoint;                          //相机目标点
-        float mTargetDistance;                           //相机与目标点的距离
+        
         glm::vec3 mRight;                                 //相机右方向向量
         glm::vec3 mUp;                                   //相机上方向向量
         glm::vec3 mFront;                                 //相机前方向向量

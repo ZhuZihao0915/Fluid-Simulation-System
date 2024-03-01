@@ -30,8 +30,6 @@ namespace FluidSimulation {
 
 		Glb::Component* currentMethod;
 
-		bool isRendering;
-
 		// std::thread renderThread;
 
 		GLuint texture;
@@ -43,6 +41,7 @@ namespace FluidSimulation {
 		bool isRightMouseDragging = false;
 		double lastMouseX = 0.0;
 		double lastMouseY = 0.0;
+		double mouseX, mouseY;
 
 	public:
 		SceneView();

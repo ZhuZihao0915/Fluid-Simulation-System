@@ -23,8 +23,7 @@ namespace FluidSimulation {
             // TODO
             // 求解/模拟
 
-            // 密度源释放流体
-            updateSources();
+            target.reset();
             
             // advect 速度
             advectVelocity();
@@ -54,26 +53,6 @@ namespace FluidSimulation {
         for(int j = 0; j < MAC3dPara::theDim3d[MACGrid3d::Y] + 1; j++) \
             for(int i = 0; i < MAC3dPara::theDim3d[MACGrid3d::X] + 1; i++)
         // 分别加一，适配 y 方向和 x 方向的速度
-
-
-        void Solver::updateSources()
-        {
-            // 初始化更新时用到的临时场
-            target.reset();
-
-            // source的位置
-            int sourcei = (int)MAC3dPara::theDim3d[0] / 2;
-            int sourcej = (int)MAC3dPara::theDim3d[1] / 2;
-
-            mGrid.mT(sourcei, sourcej, 0) = 2.0f;
-            mGrid.mD(sourcei, sourcej, 0) = 2.0f;
-
-            for (int i = -1; i <= 1; i++) {
-                mGrid.mW(sourcei + i, sourcej, 0) = MAC3dPara::sourceVelocity;
-                mGrid.mW(sourcei, sourcej + i, 0) = MAC3dPara::sourceVelocity;
-            }
-        
-        }
 
         void Solver::advectVelocity()
         {

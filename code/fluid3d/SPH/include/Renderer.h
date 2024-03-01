@@ -25,7 +25,7 @@ namespace FluidSimulation {
         class Renderer
         {
         public:
-            Renderer(Glb::Camera& c) :mCamera(c) {};
+            Renderer(){};
 
             void Init();
 
@@ -45,9 +45,6 @@ namespace FluidSimulation {
             void MakeVertexArrays();
             void DrawParticals();
             int32_t Destroy();
-
-        public:
-            Glb::Camera& mCamera;
 
         private:
             // window

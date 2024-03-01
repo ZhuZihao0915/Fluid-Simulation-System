@@ -33,7 +33,7 @@ namespace FluidSimulation {
 			0.0f, 0.0f, 0.0f, 1.0f, 0.0f
 		};
 
-		Renderer::Renderer(MACGrid3d& grid, Glb::Camera& c) :mGrid(grid), mCamera(c)
+		Renderer::Renderer(MACGrid3d& grid) :mGrid(grid)
 		{
 
 			std::string particalVertShaderPath = shaderPath + "/DrawSmoke3d.vert";
@@ -183,8 +183,8 @@ namespace FluidSimulation {
 				glBindTexture(GL_TEXTURE_2D, texture);
 				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
 
-				glm::mat4 view = mCamera.GetView();
-				glm::mat4 projection = mCamera.GetProjection();
+				glm::mat4 view = Glb::Camera::getInstance().GetView();
+				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
 				model = glm::translate(model, glm::vec3(0.0f, 0.0f, k/ mGrid.mW.mMax[2]));
@@ -235,8 +235,8 @@ namespace FluidSimulation {
 				glBindTexture(GL_TEXTURE_2D, texture);
 				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
 
-				glm::mat4 view = mCamera.GetView();
-				glm::mat4 projection = mCamera.GetProjection();
+				glm::mat4 view = Glb::Camera::getInstance().GetView();
+				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
 				model = glm::translate(model, glm::vec3(i / mGrid.mU.mMax[2], 0.0f, 0.0f));
@@ -286,8 +286,8 @@ namespace FluidSimulation {
 				glBindTexture(GL_TEXTURE_2D, texture);
 				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
 
-				glm::mat4 view = mCamera.GetView();
-				glm::mat4 projection = mCamera.GetProjection();
+				glm::mat4 view = Glb::Camera::getInstance().GetView();
+				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
 				model = glm::translate(model, glm::vec3(0.0f, j / mGrid.mV.mMax[1], 0.0f));

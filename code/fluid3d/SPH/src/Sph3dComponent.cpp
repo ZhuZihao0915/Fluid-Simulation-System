@@ -19,8 +19,7 @@ namespace FluidSimulation {
                 ps = NULL;
             }
             
-            camera = new Glb::Camera();
-            renderer = new Renderer(*camera);
+            renderer = new Renderer();
             renderer->Init();
 
             ps = new ParticalSystem3d();
@@ -42,26 +41,25 @@ namespace FluidSimulation {
                 ps->updateBlockInfo();
                 solver->solve();
             }
-            renderer->load(*ps);
-            renderer->draw();
-            
         }
 
         GLuint Sph3dComponent::getRenderedTexture()
         {
+            renderer->load(*ps);
+            renderer->draw();
             return renderer->getRenderedTexture();
         }
 
         void Sph3dComponent::cameraMove(float x, float y) {
-            renderer->mCamera.ProcessMove(glm::vec2(x, y));
+            Glb::Camera::getInstance().ProcessMove(glm::vec2(x, y));
         }
 
         void Sph3dComponent::cameraRotate(float x, float y) {
-            renderer->mCamera.ProcessRotate(glm::vec2(x, y));
+            Glb::Camera::getInstance().ProcessRotate(glm::vec2(x, y));
         }
 
         void Sph3dComponent::cameraScale(float w) {
-            renderer->mCamera.ProcessScale(static_cast<float>(w));
+            Glb::Camera::getInstance().ProcessScale(static_cast<float>(w));
         }
     }
 }

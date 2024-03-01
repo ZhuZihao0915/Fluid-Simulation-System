@@ -15,14 +15,24 @@ namespace Glb {
     class Timer {
     private:
         std::chrono::system_clock::time_point mStartPoint;
+        long long log[10]{ 0 };
     public:
         void start() {
             mStartPoint = std::chrono::system_clock::now();
-        }
+        } 
 
         int getTime() {
             auto dur = std::chrono::system_clock::now() - mStartPoint;
             return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+        }
+
+        void plusTime(int index) {
+            auto dur = std::chrono::system_clock::now() - mStartPoint;
+            log[index] += std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+        }
+
+        long long getTime(int index) {
+            return log[index];
         }
     };
 

@@ -14,7 +14,7 @@ namespace FluidSimulation {
 	namespace MAC3d {
 		class Renderer {
 		public:
-			Renderer(MACGrid3d& grid, Glb::Camera& c);
+			Renderer(MACGrid3d& grid);
 
 			void draw();
 			void drawOneSheet();
@@ -23,8 +23,6 @@ namespace FluidSimulation {
 			void drawXZSheets();
 
 			GLuint getTextureID();
-
-			Glb::Camera& mCamera;
 
 		private:
 

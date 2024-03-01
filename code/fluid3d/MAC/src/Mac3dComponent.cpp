@@ -17,13 +17,13 @@ namespace FluidSimulation {
                 solver = NULL;
                 grid = NULL;
             }
-            camera = new Glb::Camera();
             grid = new MACGrid3d();
-            renderer = new Renderer(*grid, *camera);
+            renderer = new Renderer(*grid);
             solver = new Solver(*grid);
         }
 
         void Mac3dComponent::simulate() {
+            grid->updateSources();
             solver->solve();
         }
 
@@ -34,15 +34,15 @@ namespace FluidSimulation {
         }
 
         void Mac3dComponent::cameraMove(float x, float y) {
-            renderer->mCamera.ProcessMove(glm::vec2(x, y));
+            Glb::Camera::getInstance().ProcessMove(glm::vec2(x, y));
         }
 
         void Mac3dComponent::cameraRotate(float x, float y) {
-            renderer->mCamera.ProcessRotate(glm::vec2(x, y));
+            Glb::Camera::getInstance().ProcessRotate(glm::vec2(x, y));
         }
 
         void Mac3dComponent::cameraScale(float w) {
-            renderer->mCamera.ProcessScale(static_cast<float>(w));
+            Glb::Camera::getInstance().ProcessScale(static_cast<float>(w));
         }
 
     }

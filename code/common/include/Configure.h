@@ -18,6 +18,8 @@
 extern int imageWidth;
 extern int imageHeight;
 
+extern bool simulating;
+
 namespace MAC2dPara {
     extern int theDim2d[];
     extern float theCellSize2d;

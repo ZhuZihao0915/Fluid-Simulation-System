@@ -10,7 +10,6 @@ namespace FluidSimulation {
 		this->window = window;
         glfwMakeContextCurrent(window);
         currentMethod = NULL;
-        isRendering = false;
         texture = -1;   // no texture;
 	}
 
@@ -20,22 +19,21 @@ namespace FluidSimulation {
 
         ImVec2 windowSize = ImGui::GetWindowSize();
 
-
-
-        // run sph when rendering 
-        // or haven't started (don't have a picture to show) , just get one
-        if (currentMethod != NULL && (isRendering || texture == -1)) {
-
-            currentMethod->simulate();
-
-            texture = currentMethod->getRenderedTexture();
-
+        if (currentMethod != NULL) {
+            if (simulating || texture == -1) {
+                currentMethod->simulate();
+                texture = currentMethod->getRenderedTexture();
+            }
+            else if (!simulating) {
+                texture = currentMethod->getRenderedTexture();
+            }
         }
+
+
 
         // show image
         ImGui::SetCursorPosX((windowSize.x - imageWidth) * 0.5f);
         ImGui::SetCursorPosY(50);
-
         ImVec2 imageSize(imageWidth, imageHeight);
         if (currentMethod == NULL) {
             ImGui::Image(NULL, imageSize);
@@ -47,11 +45,12 @@ namespace FluidSimulation {
             ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y), ImVec2(ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y),
             ImVec2(0, 1), ImVec2(1, 0));
 
+
+
         // 如果鼠标停留在渲染界面上，将鼠标的运动报告给component
         if (ImGui::IsItemHovered() && currentMethod != NULL) {
 
             // 获取鼠标状态
-            double mouseX, mouseY;
             glfwGetCursorPos(window, &mouseX, &mouseY);
 
             // 检测滚轮
@@ -94,8 +93,8 @@ namespace FluidSimulation {
             else {
                 isRightMouseDragging = false;
             }
-
         }
+
 
 		ImGui::End();
 	}
