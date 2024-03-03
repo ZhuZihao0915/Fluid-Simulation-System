@@ -19,6 +19,8 @@ namespace FluidSimulation {
                 ps = NULL;
             }
 
+            Glb::Timer::getInstance().clear();
+
             // initialize renderer
             renderer = new Renderer();
             renderer->Init();

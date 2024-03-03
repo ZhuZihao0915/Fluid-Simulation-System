@@ -177,6 +177,10 @@ namespace FluidSimulation {
 				break;
 
 			}
+
+			if (!Glb::Timer::getInstance().empty()) {
+				ImGui::Text(Glb::Timer::getInstance().currentStatus().c_str());
+			}
 		}
 
 		ImGui::End();

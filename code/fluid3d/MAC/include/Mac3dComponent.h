@@ -8,7 +8,7 @@
 
 #include "Component.h"
 #include "Configure.h"
-
+#include "Global.h"
 
 namespace FluidSimulation {
     namespace MAC3d {

@@ -17,6 +17,9 @@ namespace FluidSimulation {
                 solver = NULL;
                 grid = NULL;
             }
+
+            Glb::Timer::getInstance().clear();
+
             grid = new MACGrid3d();
             renderer = new Renderer(*grid);
             solver = new Solver(*grid);

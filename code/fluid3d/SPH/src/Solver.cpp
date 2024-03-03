@@ -16,11 +16,17 @@ namespace FluidSimulation {
 		void Solver::solve() {
 			// TODO
 			// 求解/模拟
+			Glb::Timer::getInstance().start();
 			computeDensityAndPress();
+			Glb::Timer::getInstance().recordTime("density and press");
 			computeAccleration();
+			Glb::Timer::getInstance().recordTime("compute acc");
 			eulerIntegration();
+			Glb::Timer::getInstance().recordTime("euler intergration");
 			boundaryCondition();
+			Glb::Timer::getInstance().recordTime("boundary check");
 			calculateBlockId();
+			Glb::Timer::getInstance().recordTime("renew block id");
 		}
 
 		// 计算加速度

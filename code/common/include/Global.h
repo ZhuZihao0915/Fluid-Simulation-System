@@ -2,7 +2,9 @@
 #define GLOBAL_H
 #include <chrono>
 #include <random>
+#include <unordered_map>
 #include <glm/glm.hpp>
+#include <string>
 
 namespace Glb {
     const float_t EPS = 1e-5;
@@ -13,26 +15,66 @@ namespace Glb {
     const std::vector<glm::vec3> ORIGIN_COLORS = { COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 
     class Timer {
-    private:
-        std::chrono::system_clock::time_point mStartPoint;
-        long long log[10]{ 0 };
     public:
+        static Timer& getInstance() {
+            static Timer instance;
+            return instance;
+        }
+
+    private:
+        Timer() {
+
+        };
+
+        Timer(const Timer&) = delete;
+        Timer& operator=(const Timer&) = delete;
+
+
+        std::chrono::system_clock::time_point lastTime;
+        std::chrono::system_clock::time_point now;
+
+        std::unordered_map<std::string, unsigned long long int> record;
+
+    public:
+
+        bool empty() {
+            return record.empty();
+        }
+
+        void clear() {
+            record.clear();
+        }
+
         void start() {
-            mStartPoint = std::chrono::system_clock::now();
+            lastTime = std::chrono::system_clock::now();
         } 
 
-        int getTime() {
-            auto dur = std::chrono::system_clock::now() - mStartPoint;
-            return std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+        void recordTime(std::string str) {
+            now = std::chrono::system_clock::now();
+            auto dur = now - lastTime;
+            lastTime = now;
+            auto it = record.find(str);
+            if (it != record.end()) {
+                it->second += std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+            }
+            else {
+                record[str] = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+            }
         }
 
-        void plusTime(int index) {
-            auto dur = std::chrono::system_clock::now() - mStartPoint;
-            log[index] += std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
-        }
+        std::string currentStatus() {
+            std::string str;
+            int total_time = 0;
+            for (const auto& timing : record) {
+                total_time += timing.second;
+            }
 
-        long long getTime(int index) {
-            return log[index];
+            for (const auto& timing : record) {
+                float percentage = static_cast<float>(timing.second) / total_time * 100;
+                str += timing.first + ": " + std::to_string(percentage).substr(0, 5) + "% \n";
+            }
+
+            return str;
         }
     };
 

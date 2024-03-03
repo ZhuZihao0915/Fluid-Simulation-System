@@ -7,6 +7,7 @@
 #include <boost/numeric/ublas/matrix_sparse.hpp>
 
 #include "MAC/include/MACGrid2d.h"
+#include "Global.h"
 
 namespace FluidSimulation{
 	namespace MAC2d {

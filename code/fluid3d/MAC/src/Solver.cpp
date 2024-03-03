@@ -24,21 +24,30 @@ namespace FluidSimulation {
             // 求解/模拟
 
             target.reset();
-            
+            Glb::Timer::getInstance().start();
+
             // advect 速度
             advectVelocity();
+
+            Glb::Timer::getInstance().recordTime("vel advection");
 
             // 考虑浮力、涡度等因素
             addExternalForces();
 
+            Glb::Timer::getInstance().recordTime("external forces");
+
             // project 确保incompressible的特性
             project();
+
+            Glb::Timer::getInstance().recordTime("projection");
 
             // advect 温度
             advectTemperature();
 
             // advect 密度
             advectDensity();
+
+            Glb::Timer::getInstance().recordTime("temp & density advection");
 
         }
 
