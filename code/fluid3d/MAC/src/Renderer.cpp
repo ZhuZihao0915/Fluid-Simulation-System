@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Renderer.h"
 #include "Renderer.h"
+#include "Renderer.h"
 #include "fluid3d/MAC/include/Renderer.h"
 
 namespace FluidSimulation {
@@ -132,19 +133,166 @@ namespace FluidSimulation {
 			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			if (MAC3dPara::xySheetsON) {
-				drawXYSheets();
+			if (MAC3dPara::oneSheet) {
+				drawOneSheet();
 			}
-			if (MAC3dPara::yzSheetsON)
-			{
-				drawYZSheets();
-			}
-			if (MAC3dPara::xzSheetsON) {
-				drawXZSheets();
+			else {
+				if (MAC3dPara::xySheetsON) {
+					drawXYSheets();
+				}
+				if (MAC3dPara::yzSheetsON)
+				{
+					drawYZSheets();
+				}
+				if (MAC3dPara::xzSheetsON) {
+					drawXZSheets();
+				}
 			}
 
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			
+		}
+
+		void Renderer::drawOneSheet()
+		{
+			if (MAC3dPara::xySheetsON) {
+				for (int j = 1; j <= height; j++) {
+					for (int i = 1; i <= width; i++) {
+						float pt_x = i * mGrid.mU.mMax[0] / (width);
+						float pt_y = j * mGrid.mV.mMax[1] / (height);
+						float pt_z = MAC3dPara::distance * mGrid.mW.mMax[2];
+						glm::vec3 pt(pt_x, pt_y, pt_z);
+						glm::vec4 color = mGrid.getRenderColor(pt);
+						data[4 * ((j - 1) * width + (i - 1))] = color.r;
+						data[4 * ((j - 1) * width + (i - 1)) + 1] = color.g;
+						data[4 * ((j - 1) * width + (i - 1)) + 2] = color.b;
+						data[4 * ((j - 1) * width + (i - 1)) + 3] = color.a;
+					}
+				}
+
+				unsigned int texture;
+				glGenTextures(1, &texture);
+				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+				// set the texture wrapping parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				// set texture filtering parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				shader->use();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
+
+				glm::mat4 view = Glb::Camera::getInstance().GetView();
+				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(0.0f, 0.0f, MAC3dPara::distance));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+				glBindVertexArray(VAO_XY);
+				shader->use();
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+			}
+			if (MAC3dPara::yzSheetsON)
+			{
+				for (int k = height; k >= 1; k--) {
+					for (int j = 1; j <= width; j++) {
+						float pt_x = MAC3dPara::distance * mGrid.mU.mMax[0];
+						float pt_y = j * mGrid.mV.mMax[1] / (width);
+						float pt_z = k * mGrid.mW.mMax[2] / (height);
+						glm::vec3 pt(pt_x, pt_y, pt_z);
+						glm::vec4 color = mGrid.getRenderColor(pt);
+						data[4 * ((height - k) * width + (j - 1))] = color.r;
+						data[4 * ((height - k) * width + (j - 1)) + 1] = color.g;
+						data[4 * ((height - k) * width + (j - 1)) + 2] = color.b;
+						data[4 * ((height - k) * width + (j - 1)) + 3] = color.a;
+					}
+				}
+
+				unsigned int texture;
+				glGenTextures(1, &texture);
+				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+				// set the texture wrapping parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				// set texture filtering parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				shader->use();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
+
+				glm::mat4 view = Glb::Camera::getInstance().GetView();
+				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(MAC3dPara::distance, 0.0f, 0.0f));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+				glBindVertexArray(VAO_YZ);
+				shader->use();
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			}
+			if (MAC3dPara::xzSheetsON) {
+				for (int k = height; k >= 1; k--) {
+					for (int i = width; i >= 1; i--) {
+						float pt_x = i * mGrid.mU.mMax[0] / (width);
+						float pt_y = MAC3dPara::distance * mGrid.mV.mMax[1];
+						float pt_z = k * mGrid.mW.mMax[2] / (height);
+						glm::vec3 pt(pt_x, pt_y, pt_z);
+						glm::vec4 color = mGrid.getRenderColor(pt);
+						data[4 * ((height - k) * width + (width - i))] = color.r;
+						data[4 * ((height - k) * width + (width - i)) + 1] = color.g;
+						data[4 * ((height - k) * width + (width - i)) + 2] = color.b;
+						data[4 * ((height - k) * width + (width - i)) + 3] = color.a;
+					}
+				}
+
+				unsigned int texture;
+				glGenTextures(1, &texture);
+				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+				// set the texture wrapping parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				// set texture filtering parameters
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glGenerateMipmap(GL_TEXTURE_2D);
+
+				shader->use();
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texture);
+				glUniform1i(glGetUniformLocation(shader->getId(), "aTexture"), 0);
+
+				glm::mat4 view = Glb::Camera::getInstance().GetView();
+				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+				glm::mat4 model = glm::mat4(1.0f);
+				model = glm::translate(model, glm::vec3(0.0f, MAC3dPara::distance, 0.0f));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+				glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+				glBindVertexArray(VAO_XZ);
+				shader->use();
+				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+			}
 		}
 
 		void Renderer::drawXYSheets()

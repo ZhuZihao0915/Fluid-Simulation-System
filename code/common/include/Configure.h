@@ -39,6 +39,9 @@ namespace MAC3dPara{
     extern int theDim3d[];
     extern float theCellSize3d;
 
+    extern bool oneSheet;
+    extern float distance;
+
     extern bool xySheetsON;
     extern bool yzSheetsON;
     extern bool xzSheetsON;

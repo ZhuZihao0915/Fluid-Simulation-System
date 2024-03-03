@@ -6,7 +6,7 @@ int imageHeight = 800;
 bool simulating = false;
 
 namespace MAC2dPara {
-    extern int theDim2d[2] = { 200, 200 };
+    extern int theDim2d[2] = { 100, 100 };
     extern float theCellSize2d = 0.5;
 
     extern float dt = 0.01;
@@ -21,9 +21,13 @@ namespace MAC2dPara {
 }
 
 namespace MAC3dPara {
-    extern int theDim3d[3] = { 10, 10, 10 };
+    extern int theDim3d[3] = { 20, 20, 20 };
     extern float theCellSize3d = 0.5;
 
+
+    // Rendering
+    extern bool oneSheet = true;
+    extern float distance = 0.5;
     extern bool xySheetsON = false;
     extern bool yzSheetsON = true;
     extern bool xzSheetsON = false;

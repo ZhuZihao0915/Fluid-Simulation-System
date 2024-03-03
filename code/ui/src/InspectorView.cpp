@@ -147,12 +147,18 @@ namespace FluidSimulation {
 				ImGui::Separator();
 
 				ImGui::Text("Rendering:");
+				ImGui::Checkbox("One Sheet", &MAC3dPara::oneSheet);
 				ImGui::Checkbox("X-Y", &MAC3dPara::xySheetsON);
 				ImGui::Checkbox("Y-Z", &MAC3dPara::yzSheetsON);
 				ImGui::Checkbox("X-Z", &MAC3dPara::xzSheetsON);
-				ImGui::InputScalar("X-Y Sheets", ImGuiDataType_S32, &MAC3dPara::xySheetsNum, &intStep, NULL);
-				ImGui::InputScalar("Y-Z Sheets", ImGuiDataType_S32, &MAC3dPara::yzSheetsNum, &intStep, NULL);
-				ImGui::InputScalar("X-Z Sheets", ImGuiDataType_S32, &MAC3dPara::xzSheetsNum, &intStep, NULL);
+				if (MAC3dPara::oneSheet) {
+					ImGui::SliderFloat("Distance", &MAC3dPara::distance, 0.0f, 1.0f);
+				}
+				else {
+					ImGui::InputScalar("X-Y Sheets", ImGuiDataType_S32, &MAC3dPara::xySheetsNum, &intStep, NULL);
+					ImGui::InputScalar("Y-Z Sheets", ImGuiDataType_S32, &MAC3dPara::yzSheetsNum, &intStep, NULL);
+					ImGui::InputScalar("X-Z Sheets", ImGuiDataType_S32, &MAC3dPara::xzSheetsNum, &intStep, NULL);
+				}
 
 				ImGui::Separator();
 
