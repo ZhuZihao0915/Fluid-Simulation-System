@@ -81,18 +81,6 @@ namespace SPH2dPara {
     extern float viscosity;
 }
 
-//namespace SPH2dPara {
-//    // 求解器参数
-//    extern float dt;
-//    extern int substep;
-//
-//    // 物理参数
-//    extern float gravity;
-//    extern float density;
-//    extern float stiffness;
-//    extern float exponent;
-//    extern float viscosity;
-//}
 
 namespace SPH3dPara {
     // 求解器参数
@@ -132,6 +120,7 @@ namespace SPH3dPara {
 }
 
 extern std::string shaderPath;
+extern std::string picturePath;
 
 extern std::vector<Glb::Component*> methodComponents;
 

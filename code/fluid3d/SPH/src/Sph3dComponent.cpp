@@ -46,8 +46,10 @@ namespace FluidSimulation {
 
         GLuint Sph3dComponent::getRenderedTexture()
         {
+            Glb::Timer::getInstance().start();
             renderer->load(*ps);
             renderer->draw();
+            Glb::Timer::getInstance().recordTime("rendering");
             return renderer->getRenderedTexture();
         }
 

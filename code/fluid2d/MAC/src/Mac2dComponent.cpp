@@ -28,15 +28,16 @@ namespace FluidSimulation {
         }
 
         void Mac2dComponent::simulate() {
-
             grid->updateSources();
             solver->solve();
-            renderer->draw(*grid);
 
         }
 
         GLuint Mac2dComponent::getRenderedTexture()
         {
+            Glb::Timer::getInstance().start();
+            renderer->draw(*grid);
+            Glb::Timer::getInstance().recordTime("rendering");
             return renderer->getTextureID();
         }
     }

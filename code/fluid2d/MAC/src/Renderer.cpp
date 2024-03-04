@@ -3,34 +3,30 @@
 namespace FluidSimulation {
 	namespace MAC2d {
 
-		float vertices[] = {
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			 1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-			 1.0f,  1.0f, 0.0f, 1.0f, 1.0f,
-			-1.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f
+		float vertices[]{
+			//position	//texcood   //color
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+		};
+
+		unsigned int indices[] = {
+			0, 1, 2, // first triangle
+			0, 2, 3  // second triangle
 		};
 
 		Renderer::Renderer(){
 
-			/*extern std::string shaderPath;
-            std::string vertShaderPath = shaderPath + "/DrawSmoke2d.vert";
-            std::string fragShaderPath = shaderPath + "/DrawSmoke2d.frag";
+			extern std::string shaderPath;
+            std::string vertShaderPath = shaderPath + "/DrawSmokeTexture2d.vert";
+            std::string fragShaderPath = shaderPath + "/DrawSmokeTexture2d.frag";
             shader = new Glb::Shader();
             shader->buildFromFile(vertShaderPath, fragShaderPath);
 
             glGenVertexArrays(1, &VAO);
             glGenBuffers(1, &VBO);
-
-			glBindVertexArray(VAO);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-			glEnableVertexAttribArray(1);
-			glBindVertexArray(0);
+			glGenBuffers(1, &EBO);
 
             glGenFramebuffers(1, &FBO);
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
@@ -60,55 +56,103 @@ namespace FluidSimulation {
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			data = new float[4 * width * height];*/
-
 
 
 			glViewport(0, 0, imageWidth, imageHeight);
 
+			loadTexture();
+
+		}
+
+		void Renderer::loadTexture() {
+			glGenTextures(1, &smokeTexture);
+			glBindTexture(GL_TEXTURE_2D, smokeTexture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+			// set the texture wrapping parameters
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			// set texture filtering parameters
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			// load image, create texture and generate mipmaps
+			int width, height, nrChannels;
+
+			unsigned char* data = stbi_load((picturePath + "/smoke.png").c_str(), &width, &height, &nrChannels, 0);
+			if (data)
+			{
+				// 使用图像生成纹理
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+				// Mipmaps
+				glGenerateMipmap(GL_TEXTURE_2D);
+			}
+			else
+			{
+				std::cout << "Failed to load texture" << std::endl;
+			}
+			stbi_image_free(data);
 		}
 
 		void Renderer::draw(MACGrid2d& mGrid) {
 
-			/*glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-			glClearColor(0.25f, 0.25f, 0.25f, 1.0f);
+			glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			for (int j = height; j >= 1; j--) {
-				for (int i = width; i >= 1; i--) {
-					float pt_x = i * mGrid.mU.mMax[0] / (width);
-					float pt_y = j * mGrid.mU.mMax[1] / (height);
-					glm::vec2 pt(pt_x, pt_y);
-					glm::vec4 color = mGrid.getRenderColor(pt);
-					data[4 * ((height - j) * width + (width - i))] = color.r;
-					data[4 * ((height - j) * width + (width - i)) + 1] = color.g;
-					data[4 * ((height - j) * width + (width - i)) + 2] = color.b;
-					data[4 * ((height - j) * width + (width - i)) + 3] = color.a;
+			float dt_x = mGrid.mU.mMax[0] / (sample + 1);
+			float dt_y = mGrid.mV.mMax[1] / (sample + 1);
+
+			for (int j = sample; j >= 1; j--) {
+				for (int i = sample; i >= 1; i--) {
+					float pt_x = i * mGrid.mU.mMax[0] / (sample+1);
+					float pt_y = j * mGrid.mU.mMax[1] / (sample+1);
+
+					vertices[0] = pt_x - dt_x ;
+					vertices[1] = pt_y - dt_y ;
+					vertices[4] = mGrid.getDensity(glm::vec2(vertices[0], vertices[1]));
+
+					vertices[5] = pt_x + dt_x ;
+					vertices[6] = pt_y - dt_y ;
+					vertices[9] = mGrid.getDensity(glm::vec2(vertices[5], vertices[6]));
+
+					vertices[10] = pt_x + dt_x ;
+					vertices[11] = pt_y + dt_y ;
+					vertices[14] = mGrid.getDensity(glm::vec2(vertices[10], vertices[11]));
+
+					vertices[15] = pt_x - dt_x ;
+					vertices[16] = pt_y + dt_y ;
+					vertices[19] = mGrid.getDensity(glm::vec2(vertices[15], vertices[16]));
+
+					for (int k = 0; k <= 15; k += 5) {
+						vertices[k] = (vertices[k] / mGrid.mU.mMax[0]) * 2 - 1;
+						vertices[k+1] = (vertices[k+1] / mGrid.mV.mMax[1]) * 2 - 1;
+					}
+					
+					glBindVertexArray(VAO);
+					glBindBuffer(GL_ARRAY_BUFFER, VBO);
+					glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+					glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+					glEnableVertexAttribArray(0);
+					glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+					glEnableVertexAttribArray(1);
+					glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(4 * sizeof(float)));
+					glEnableVertexAttribArray(2);
+					glBindVertexArray(0);
+
+					shader->use();
+					glBindTexture(GL_TEXTURE_2D, smokeTexture);
+					glUniform1i(glGetUniformLocation(shader->getId(), "mTexture"), 0);
+
+					glBindVertexArray(VAO);
+					glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
 				}
 			}
 
-			unsigned int texture;
-			glGenTextures(1, &texture);
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
-			glBindTexture(GL_TEXTURE_2D, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			shader->use();
-			glBindTexture(GL_TEXTURE_2D, texture);
-			glUniform1i(glGetUniformLocation(shader->getId(), "mTexture"), 0);
-
-			shader->use();
-			glBindVertexArray(VAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
-
-
+			/*
 			std::vector<float> imageData;
 
 			for (int j = 1; j <= imageHeight; j++) {
@@ -134,6 +178,7 @@ namespace FluidSimulation {
 			// 将颜色数据传递给纹理
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_FLOAT, imageData.data());
 			glBindTexture(GL_TEXTURE_2D, 0);
+			*/
 
 		}
 

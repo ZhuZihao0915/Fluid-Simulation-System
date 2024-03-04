@@ -27,6 +27,7 @@ namespace FluidSimulation {
 		private:
 
 			GLuint textureID = 0;
+			GLuint smokeTexture = 0;
 
 			float eps = 0.05f;
 

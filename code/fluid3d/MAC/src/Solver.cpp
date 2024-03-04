@@ -171,7 +171,6 @@ namespace FluidSimulation {
         void Solver::project()
         {
             // Solve Ax = b for pressure
-            unsigned int numCells = MAC3dPara::theDim3d[0] * MAC3dPara::theDim3d[1] * MAC3dPara::theDim3d[2];
 
             // 共轭梯度法求解泊松方程 Ap=b
             // A是压力项的系数矩阵，是一个稀疏且对称的矩阵；b为负的散度
@@ -180,9 +179,9 @@ namespace FluidSimulation {
             // 为了进一步加快求解的收敛速度，可以采用预处理的共轭梯度法
 
             constructB(numCells);
-            ublas::vector<double> p = conjugateGradient(A, b, precon);
+            ublas::vector<double> p(numCells);// = conjugateGradient(A, b, precon);
 
-            //Glb::cg_psolve3d(A, precon, b, p, 500, 0.005);
+            Glb::cg_psolve3d(A, precon, b, p, 500, 0.005);
             // 
             //Glb::cg_solve3d(A, b, p, 500, 0.005);
 
@@ -249,10 +248,6 @@ namespace FluidSimulation {
                     }
                  }
             }
-
-                //std::cout << "u: " << target.mU.data() << std::endl;
-                //std::cout << "v: " << target.mV.data() << std::endl;
-                //std::cout << "w: " << target.mW.data() << std::endl;
 
             mGrid.mU = target.mU;
             mGrid.mV = target.mV;

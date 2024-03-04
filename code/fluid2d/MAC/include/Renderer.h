@@ -2,6 +2,8 @@
 #ifndef __MAC2D_RENDERER_H__
 #define __MAC2D_RENDERER_H__
 
+
+#include <stb_image.h>
 #include "MAC/include/MACGrid2d.h"
 #include <glfw3.h>
 #include "Configure.h"
@@ -10,6 +12,7 @@
 
 namespace FluidSimulation {
 	namespace MAC2d {
+
 		class Renderer {
 		public:
 			Renderer();
@@ -18,6 +21,8 @@ namespace FluidSimulation {
 
 			void destroy();
 
+			void loadTexture();
+
 			GLuint getTextureID();
 
 		private:
@@ -25,15 +30,20 @@ namespace FluidSimulation {
 			Glb::Shader* shader;
 			
 			float* data;
+
+			int sample = 100;
+
 			int width = 800;
 			int height = 800;
 
 			GLuint VAO = 0;
 			GLuint VBO = 0;
+			GLuint EBO = 0;
 			GLuint FBO = 0;
 			GLuint RBO = 0;
 
 			GLuint textureID = 0;
+			GLuint smokeTexture = 0;
 		};
 	}
 }

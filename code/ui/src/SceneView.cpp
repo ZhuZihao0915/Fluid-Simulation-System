@@ -23,17 +23,19 @@ namespace FluidSimulation {
             if (simulating || texture == -1) {
                 currentMethod->simulate();
                 texture = currentMethod->getRenderedTexture();
+                Glb::Timer::getInstance().timeFPS();
             }
             else if (!simulating) {
                 texture = currentMethod->getRenderedTexture();
+                Glb::Timer::getInstance().timeFPS();
             }
+            ImGui::Text(("FPS: " + Glb::Timer::getInstance().getFPS()).c_str());
         }
-
 
 
         // show image
         ImGui::SetCursorPosX((windowSize.x - imageWidth) * 0.5f);
-        ImGui::SetCursorPosY(50);
+        ImGui::SetCursorPosY(70);
         ImVec2 imageSize(imageWidth, imageHeight);
         if (currentMethod == NULL) {
             ImGui::Image(NULL, imageSize);

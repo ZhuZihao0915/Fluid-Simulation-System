@@ -29,6 +29,8 @@ namespace Glb {
         Timer(const Timer&) = delete;
         Timer& operator=(const Timer&) = delete;
 
+        std::chrono::system_clock::time_point fpsLastTime;
+        std::chrono::system_clock::time_point fpsNow;
 
         std::chrono::system_clock::time_point lastTime;
         std::chrono::system_clock::time_point now;
@@ -48,6 +50,23 @@ namespace Glb {
         void start() {
             lastTime = std::chrono::system_clock::now();
         } 
+
+        void timeFPS() {
+            fpsLastTime = fpsNow;
+            fpsNow = std::chrono::system_clock::now();
+        }
+
+        std::string getFPS() {
+            auto dur = fpsNow - fpsLastTime;
+            float dt = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+            if (dt >= 1000) {
+                return "0.00";
+            }
+            else if (dt <= 10) {
+                return "100.00";
+            }
+            return std::to_string(1000 / dt).substr(0, 5);
+        }
 
         void recordTime(std::string str) {
             now = std::chrono::system_clock::now();

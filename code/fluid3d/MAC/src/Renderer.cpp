@@ -156,6 +156,9 @@ namespace FluidSimulation {
 		void Renderer::drawOneSheet()
 		{
 			if (MAC3dPara::xySheetsON) {
+
+				Glb::Timer::getInstance().start();
+
 				for (int j = 1; j <= height; j++) {
 					for (int i = 1; i <= width; i++) {
 						float pt_x = i * mGrid.mU.mMax[0] / (width);
@@ -169,6 +172,8 @@ namespace FluidSimulation {
 						data[4 * ((j - 1) * width + (i - 1)) + 3] = color.a;
 					}
 				}
+
+				Glb::Timer::getInstance().recordTime("get texture");
 
 				unsigned int texture;
 				glGenTextures(1, &texture);
@@ -199,6 +204,9 @@ namespace FluidSimulation {
 				glBindVertexArray(VAO_XY);
 				shader->use();
 				glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				Glb::Timer::getInstance().recordTime("rendering");
+
 			}
 			if (MAC3dPara::yzSheetsON)
 			{

@@ -32,7 +32,9 @@ namespace FluidSimulation {
 
         GLuint Mac3dComponent::getRenderedTexture()
         {
+            Glb::Timer::getInstance().start();
             renderer->draw();
+            Glb::Timer::getInstance().recordTime("rendering");
             return renderer->getTextureID();
         }
 

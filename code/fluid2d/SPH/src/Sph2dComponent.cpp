@@ -46,13 +46,15 @@ namespace FluidSimulation {
                 ps->updateBlockInfo();
                 solver->solve();
             }
-
-            renderer->LoadVertexes(*ps);
-            renderer->draw();
         }
 
         GLuint Sph2dComponent::getRenderedTexture()
         {
+            Glb::Timer::getInstance().start();
+            renderer->LoadVertexes(*ps);
+            renderer->draw();
+            Glb::Timer::getInstance().recordTime("rendering");
+
             return renderer->GetRenderedTexture();
         }
     }

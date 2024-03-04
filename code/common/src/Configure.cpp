@@ -13,7 +13,7 @@ namespace MAC2dPara {
 
     extern float sourceVelocity = 1.0f;
 
-    extern float airDensity = 1.0; //(1.3 kg/m^2) in reality,
+    extern float airDensity = 1.0;  //(1.3 kg/m^2) in reality,
     extern float ambientTemp = 0.0;
     extern float boussinesqAlpha = 500.0;
     extern float boussinesqBeta = 2500.0;
@@ -21,7 +21,7 @@ namespace MAC2dPara {
 }
 
 namespace MAC3dPara {
-    extern int theDim3d[3] = { 20, 20, 20 };
+    extern int theDim3d[3] = { 24, 24, 24 };
     extern float theCellSize3d = 0.5;
 
 
@@ -40,7 +40,7 @@ namespace MAC3dPara {
 
     extern float sourceVelocity=1.0f;
 
-    extern float airDensity = 1.0; //(1.3 kg/m^2) in reality,
+    extern float airDensity = 1.0; 
     extern float ambientTemp = 0.0;
     extern float boussinesqAlpha = 500.0;
     extern float boussinesqBeta = 2500.0;
@@ -68,19 +68,7 @@ namespace SPH2dPara {
     extern float exponent = 7.0f;   // 求解方程中的指数项
     extern float viscosity = 0.03f;
 }
-
-//namespace SPH2dPara {
-//    // 求解器参数
-//    extern float dt = 4e-4;
-//    extern int substep = 5;
-//    extern float exponent = 7.0f;
-//    // 物理参数
-//    extern float gravity = 9.8f;
-//    extern float density = 1000.0f;
-//    extern float stiffness = 70.0f;
-//    extern float viscosity = 0.03f;
-//}
-
+  
 namespace SPH3dPara {
     // 求解器参数
     extern float dt = 0.002;
@@ -139,3 +127,4 @@ namespace SPH3dPara {
 std::vector<Glb::Component*> methodComponents;
 
 std::string shaderPath = "../../../../code/resources/shaders";
+std::string picturePath = "../../../../code/resources/pictures";
