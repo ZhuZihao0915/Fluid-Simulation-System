@@ -4,9 +4,11 @@
 namespace Glb {
 
     GridData3d::GridData3d() :
-        mDfltValue(0.0), mMax(0.0, 0.0, 0.0)
+        mDfltValue(0.0), mMax(0.0, 0.0, 0.0), cellSize(MAC3dPara::theCellSize3d)
     {
-
+        dim[0] = MAC3dPara::theDim3d[0];
+        dim[1] = MAC3dPara::theDim3d[1];
+        dim[2] = MAC3dPara::theDim3d[2];
     }
 
     GridData3d::GridData3d(const GridData3d& orig) :
@@ -14,6 +16,10 @@ namespace Glb {
     {
         mData = orig.mData;
         mMax = orig.mMax;
+        cellSize = orig.cellSize;
+        dim[0] = orig.dim[0];
+        dim[1] = orig.dim[1];
+        dim[2] = orig.dim[2];
     }
 
     GridData3d::~GridData3d()
@@ -33,16 +39,20 @@ namespace Glb {
         }
         mData = orig.mData;
         mMax = orig.mMax;
+        cellSize = orig.cellSize;
+        dim[0] = orig.dim[0];
+        dim[1] = orig.dim[1];
+        dim[2] = orig.dim[2];
         return *this;
     }
 
     void GridData3d::initialize(double dfltValue)
     {
         mDfltValue = dfltValue;
-        mMax[0] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[0];
-        mMax[1] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[1];
-        mMax[2] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[2];
-        mData.resize(MAC3dPara::theDim3d[0] * MAC3dPara::theDim3d[1] * MAC3dPara::theDim3d[2], false);
+        mMax[0] = cellSize * dim[0];
+        mMax[1] = cellSize * dim[1];
+        mMax[2] = cellSize * dim[2];
+        mData.resize(dim[0] * dim[1] * dim[2], false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
@@ -52,13 +62,13 @@ namespace Glb {
         dflt = mDfltValue;  // HACK: Protect against setting the default value
 
         if (i< 0 || j<0 || k<0 ||
-            i > MAC3dPara::theDim3d[0] - 1 ||
-            j > MAC3dPara::theDim3d[1] - 1 ||
-            k > MAC3dPara::theDim3d[2] - 1) return dflt;
+            i > dim[0] - 1 ||
+            j > dim[1] - 1 ||
+            k > dim[2] - 1) return dflt;
 
         int col = i;
-        int row = k * MAC3dPara::theDim3d[0];
-        int stack = j * MAC3dPara::theDim3d[0] * MAC3dPara::theDim3d[2];
+        int row = k * dim[0];
+        int stack = j * dim[0] * dim[2];
 
         return mData(col + row + stack);
     }
@@ -66,23 +76,23 @@ namespace Glb {
     void GridData3d::getCell(const glm::vec3& pt, int& i, int& j, int& k)
     {
         glm::vec3 pos = worldToSelf(pt);
-        i = (int)(pos[0] / MAC3dPara::theCellSize3d);
-        j = (int)(pos[1] / MAC3dPara::theCellSize3d);
-        k = (int)(pos[2] / MAC3dPara::theCellSize3d);
+        i = (int)(pos[0] / cellSize);
+        j = (int)(pos[1] / cellSize);
+        k = (int)(pos[2] / cellSize);
     }
 
     double GridData3d::interpolate(const glm::vec3& pt)
     {
         glm::vec3 pos = worldToSelf(pt);
 
-        int i = (int)(pos[0] / MAC3dPara::theCellSize3d);
-        int j = (int)(pos[1] / MAC3dPara::theCellSize3d);
-        int k = (int)(pos[2] / MAC3dPara::theCellSize3d);
+        int i = (int)(pos[0] / cellSize);
+        int j = (int)(pos[1] / cellSize);
+        int k = (int)(pos[2] / cellSize);
 
-        double scale = 1.0 / MAC3dPara::theCellSize3d;
-        double fractx = scale * (pos[0] - i * MAC3dPara::theCellSize3d);
-        double fracty = scale * (pos[1] - j * MAC3dPara::theCellSize3d);
-        double fractz = scale * (pos[2] - k * MAC3dPara::theCellSize3d);
+        double scale = 1.0 / cellSize;
+        double fractx = scale * (pos[0] - i * cellSize);
+        double fracty = scale * (pos[1] - j * cellSize);
+        double fractz = scale * (pos[2] - k * cellSize);
 
         assert(fractx < 1.0 && fractx >= 0);
         assert(fracty < 1.0 && fracty >= 0);
@@ -114,9 +124,9 @@ namespace Glb {
     glm::vec3 GridData3d::worldToSelf(const glm::vec3& pt) const
     {
         glm::vec3 out;
-        out[0] = min(max(0.0, pt[0] - MAC3dPara::theCellSize3d * 0.5), mMax[0]);
-        out[1] = min(max(0.0, pt[1] - MAC3dPara::theCellSize3d * 0.5), mMax[1]);
-        out[2] = min(max(0.0, pt[2] - MAC3dPara::theCellSize3d * 0.5), mMax[2]);
+        out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
+        out[1] = min(max(0.0, pt[1] - cellSize * 0.5), mMax[1]);
+        out[2] = min(max(0.0, pt[2] - cellSize * 0.5), mMax[2]);
         return out;
     }
 
@@ -131,10 +141,10 @@ namespace Glb {
     void GridData3dX::initialize(double dfltValue)
     {
         GridData3d::initialize(dfltValue);
-        mMax[0] = MAC3dPara::theCellSize3d * (MAC3dPara::theDim3d[0] + 1);
-        mMax[1] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[1];
-        mMax[2] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[2];
-        mData.resize((MAC3dPara::theDim3d[0] + 1) * MAC3dPara::theDim3d[1] * MAC3dPara::theDim3d[2], false);
+        mMax[0] = cellSize * (dim[0] + 1);
+        mMax[1] = cellSize * dim[1];
+        mMax[2] = cellSize * dim[2];
+        mData.resize((dim[0] + 1) * dim[1] * dim[2], false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
@@ -143,16 +153,16 @@ namespace Glb {
         static double dflt = 0;
         dflt = mDfltValue;  // Protect against setting the default value
 
-        if (i < 0 || i > MAC3dPara::theDim3d[0]) return dflt;
+        if (i < 0 || i > dim[0]) return dflt;
 
         if (j < 0) j = 0;
-        if (j > MAC3dPara::theDim3d[1] - 1) j = MAC3dPara::theDim3d[1] - 1;
+        if (j > dim[1] - 1) j = dim[1] - 1;
         if (k < 0) k = 0;
-        if (k > MAC3dPara::theDim3d[2] - 1) k = MAC3dPara::theDim3d[2] - 1;
+        if (k > dim[2] - 1) k = dim[2] - 1;
 
         int col = i;
-        int row = k * (MAC3dPara::theDim3d[0] + 1);
-        int stack = j * (MAC3dPara::theDim3d[0] + 1) * MAC3dPara::theDim3d[2];
+        int row = k * (dim[0] + 1);
+        int stack = j * (dim[0] + 1) * dim[2];
         return mData(stack + row + col);
     }
 
@@ -160,8 +170,8 @@ namespace Glb {
     {
         glm::vec3 out;
         out[0] = min(max(0.0, pt[0]), mMax[0]);
-        out[1] = min(max(0.0, pt[1] - MAC3dPara::theCellSize3d * 0.5), mMax[1]);
-        out[2] = min(max(0.0, pt[2] - MAC3dPara::theCellSize3d * 0.5), mMax[2]);
+        out[1] = min(max(0.0, pt[1] - cellSize * 0.5), mMax[1]);
+        out[2] = min(max(0.0, pt[2] - cellSize * 0.5), mMax[2]);
         return out;
     }
 
@@ -176,10 +186,10 @@ namespace Glb {
     void GridData3dY::initialize(double dfltValue)
     {
         GridData3d::initialize(dfltValue);
-        mMax[0] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[0];
-        mMax[1] = MAC3dPara::theCellSize3d * (MAC3dPara::theDim3d[1] + 1);
-        mMax[2] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[2];
-        mData.resize(MAC3dPara::theDim3d[0] * (MAC3dPara::theDim3d[1] + 1) * MAC3dPara::theDim3d[2], false);
+        mMax[0] = cellSize * dim[0];
+        mMax[1] = cellSize * (dim[1] + 1);
+        mMax[2] = cellSize * dim[2];
+        mData.resize(dim[0] * (dim[1] + 1) * dim[2], false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
@@ -188,25 +198,25 @@ namespace Glb {
         static double dflt = 0;
         dflt = mDfltValue;  // Protect against setting the default value
 
-        if (j < 0 || j > MAC3dPara::theDim3d[1]) return dflt;
+        if (j < 0 || j > dim[1]) return dflt;
 
         if (i < 0) i = 0;
-        if (i > MAC3dPara::theDim3d[0] - 1) i = MAC3dPara::theDim3d[0] - 1;
+        if (i > dim[0] - 1) i = dim[0] - 1;
         if (k < 0) k = 0;
-        if (k > MAC3dPara::theDim3d[2] - 1) k = MAC3dPara::theDim3d[2] - 1;
+        if (k > dim[2] - 1) k = dim[2] - 1;
 
         int col = i;
-        int row = k * MAC3dPara::theDim3d[0];
-        int stack = j * MAC3dPara::theDim3d[0] * MAC3dPara::theDim3d[2];
+        int row = k * dim[0];
+        int stack = j * dim[0] * dim[2];
         return mData(stack + row + col);
     }
 
     glm::vec3 GridData3dY::worldToSelf(const glm::vec3& pt) const
     {
         glm::vec3 out;
-        out[0] = min(max(0.0, pt[0] - MAC3dPara::theCellSize3d * 0.5), mMax[0]);
+        out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
         out[1] = min(max(0.0, pt[1]), mMax[1]);
-        out[2] = min(max(0.0, pt[2] - MAC3dPara::theCellSize3d * 0.5), mMax[2]);
+        out[2] = min(max(0.0, pt[2] - cellSize * 0.5), mMax[2]);
         return out;
     }
 
@@ -221,10 +231,10 @@ namespace Glb {
     void GridData3dZ::initialize(double dfltValue)
     {
         GridData3d::initialize(dfltValue);
-        mMax[0] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[0];
-        mMax[1] = MAC3dPara::theCellSize3d * MAC3dPara::theDim3d[1];
-        mMax[2] = MAC3dPara::theCellSize3d * (MAC3dPara::theDim3d[2] + 1);
-        mData.resize(MAC3dPara::theDim3d[0] * MAC3dPara::theDim3d[1] * (MAC3dPara::theDim3d[2] + 1), false);
+        mMax[0] = cellSize * dim[0];
+        mMax[1] = cellSize * dim[1];
+        mMax[2] = cellSize * (dim[2] + 1);
+        mData.resize(dim[0] * dim[1] * (dim[2] + 1), false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
@@ -233,16 +243,16 @@ namespace Glb {
         static double dflt = 0;
         dflt = mDfltValue;  // Protect against setting the default value
 
-        if (k < 0 || k > MAC3dPara::theDim3d[2]) return dflt;
+        if (k < 0 || k > dim[2]) return dflt;
 
         if (i < 0) i = 0;
-        if (i > MAC3dPara::theDim3d[0] - 1) i = MAC3dPara::theDim3d[0] - 1;
+        if (i > dim[0] - 1) i = dim[0] - 1;
         if (j < 0) j = 0;
-        if (j > MAC3dPara::theDim3d[1] - 1) j = MAC3dPara::theDim3d[1] - 1;
+        if (j > dim[1] - 1) j = dim[1] - 1;
 
         int col = i;
-        int row = k * MAC3dPara::theDim3d[0];
-        int stack = j * MAC3dPara::theDim3d[0] * (MAC3dPara::theDim3d[2] + 1);
+        int row = k * dim[0];
+        int stack = j * dim[0] * (dim[2] + 1);
 
         return mData(stack + row + col);
     }
@@ -250,8 +260,8 @@ namespace Glb {
     glm::vec3 GridData3dZ::worldToSelf(const glm::vec3& pt) const
     {
         glm::vec3 out;
-        out[0] = min(max(0.0, pt[0] - MAC3dPara::theCellSize3d * 0.5), mMax[0]);
-        out[1] = min(max(0.0, pt[1] - MAC3dPara::theCellSize3d * 0.5), mMax[1]);
+        out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
+        out[1] = min(max(0.0, pt[1] - cellSize * 0.5), mMax[1]);
         out[2] = min(max(0.0, pt[2]), mMax[2]);
         return out;
     }
@@ -312,14 +322,14 @@ namespace Glb {
     {
         glm::vec3 pos = worldToSelf(pt);
 
-        int i = (int)(pos[0] / MAC3dPara::theCellSize3d);
-        int j = (int)(pos[1] / MAC3dPara::theCellSize3d);
-        int k = (int)(pos[2] / MAC3dPara::theCellSize3d);
+        int i = (int)(pos[0] / cellSize);
+        int j = (int)(pos[1] / cellSize);
+        int k = (int)(pos[2] / cellSize);
 
-        double scale = 1.0 / MAC3dPara::theCellSize3d;
-        double fractx = scale * (pos[0] - i * MAC3dPara::theCellSize3d);
-        double fracty = scale * (pos[1] - j * MAC3dPara::theCellSize3d);
-        double fractz = scale * (pos[2] - k * MAC3dPara::theCellSize3d);
+        double scale = 1.0 / cellSize;
+        double fractx = scale * (pos[0] - i * cellSize);
+        double fracty = scale * (pos[1] - j * cellSize);
+        double fractz = scale * (pos[2] - k * cellSize);
 
         assert(fractx < 1.0 && fractx >= 0);
         assert(fracty < 1.0 && fracty >= 0);

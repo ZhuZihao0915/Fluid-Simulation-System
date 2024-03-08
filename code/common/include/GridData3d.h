@@ -54,6 +54,8 @@ namespace Glb {
 		virtual glm::vec3 worldToSelf(const glm::vec3& pt) const;
 		double mDfltValue;	// 默认值，用于初始化数据
 		ublas::vector<double> mData;	// 存储网格数据的一维数组
+		float cellSize;
+		int dim[3];
 	};
 
 	class GridData3dX : public GridData3d

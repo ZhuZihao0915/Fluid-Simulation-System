@@ -3,28 +3,85 @@
 namespace FluidSimulation {
 	namespace SPH3d {
 
+        const glm::vec3 vertexes[] = {
+            glm::vec3(0.0, 0.0, 0.0),
+            glm::vec3(1.0, 0.0, 0.0),
+            glm::vec3(0.0, 1.0, 0.0),
+            glm::vec3(0.0, 0.0, 1.0)
+        };
+
+        const GLuint indices[] = {
+            0, 1, 0, 2, 0, 3
+        };
+
+        std::vector<float_t> floorVertices = {
+            // vertex           texCoord
+             1.0f,  1.0f, 0.0f, 1.0, 1.0,
+            -1.0f,  1.0f, 0.0f, 0.0, 1.0,
+            -1.0f, -1.0f, 0.0f, 0.0, 0.0,
+             1.0f,  1.0f, 0.0f, 1.0, 1.0,
+            -1.0f, -1.0f, 0.0f, 0.0, 0.0,
+             1.0f, -1.0f, 0.0f, 1.0, 0.0,
+        };
+
         void Renderer::Init() {
 
-            BuildShaders();
-            GenerateFrameBuffers();
-            GenerateBuffers();
-            GenerateTextures();
+            // Build Shaders
+
+            mDrawColor3d = new Glb::Shader();
+            std::string drawColorVertPath = shaderPath + "/DrawColor3d.vert";
+            std::string drawColorFragPath = shaderPath + "/DrawColor3d.frag";
+            mDrawColor3d->buildFromFile(drawColorVertPath, drawColorFragPath);
+
+            // Generate Frame Buffers
+            // generate frame buffer object
+            glGenFramebuffers(1, &FBO);
+            // make it active
+            // start fbo
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+            // generate textures
+            glGenTextures(1, &textureID);
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 600, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+            glBindTexture(GL_TEXTURE_2D, 0);
+
+            // Texture2D绑定到FBO
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+
+            // generate render buffer object (RBO)
+            glGenRenderbuffers(1, &RBO);
+            glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, 600, 600);
+            glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+            // RBO绑定到FBO
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+                std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
+            }
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+            // Generate Buffer
+            glGenBuffers(1, &mBufferParticals);
+
+
+            // GenerateTextures();
+
             LoadSkyBox();
-            MakeVertexArrays(); // 生成画粒子的vao
+            
+            MakeVertexArrays();
 
             glGenVertexArrays(1, &mVaoNull);
             glEnable(GL_MULTISAMPLE);
 
             glViewport(0, 0, imageWidth, imageHeight);
 		}
-
-        void Renderer::BuildShaders() {
-            mDrawColor3d = new Glb::Shader();
-            std::string drawColorVertPath = shaderPath + "/DrawColor3d.vert";
-            std::string drawColorFragPath = shaderPath + "/DrawColor3d.frag";
-            //std::string drawColorGeomPath = shaderPath + "/DrawColor3d.geom";
-            mDrawColor3d->buildFromFile(drawColorVertPath, drawColorFragPath);// , drawColorGeomPath);
-        }
 
         void Renderer::GenerateFrameBuffers() {
             // NEW!!!
@@ -148,12 +205,12 @@ namespace FluidSimulation {
             mSkyBox->Create();
             std::vector<std::string> paths
             {
-                "../../../../code/resources/skybox/right.jpg",
-                "../../../../code/resources/skybox/left.jpg",
-                "../../../../code/resources/skybox/top.jpg",
-                "../../../../code/resources/skybox/bottom.jpg",
-                "../../../../code/resources/skybox/front.jpg",
-                "../../../../code/resources/skybox/back.jpg"
+                picturePath + "/right.jpg",
+                picturePath + "/left.jpg",
+                picturePath + "/top.jpg",
+                picturePath + "/bottom.jpg",
+                picturePath + "/front.jpg",
+                picturePath + "/back.jpg"
             };
             mSkyBox->LoadImages(paths);
             mSkyBox->BuildShader();
@@ -192,11 +249,11 @@ namespace FluidSimulation {
             mDrawColor3d->setMat4("projection", Glb::Camera::getInstance().GetProjection());
 
             glBindVertexArray(mVaoCoord);
-            glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, SPH3dPara::indices);
+            glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, indices);
             glBindVertexArray(VAO);
-            //glDrawArraysInstanced(GL_TRIANGLES, 0, 36, mParticalNum);
+            // glDrawArraysInstanced(GL_TRIANGLES, 0, 36, particalNum);
             glDrawArrays(GL_POINTS, 0, particalNum);
-            //mSkyBox->Draw(mWindow, mVaoNull, mCamera.GetView(), mCamera.GetProjection());
+            // mSkyBox->Draw(mWindow, mVaoNull, Glb::Camera::getInstance().GetView(), Glb::Camera::getInstance().GetProjection());
             mDrawColor3d->unUse();
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);

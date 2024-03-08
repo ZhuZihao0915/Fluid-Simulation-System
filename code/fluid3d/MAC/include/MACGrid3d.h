@@ -77,6 +77,8 @@ namespace FluidSimulation {
             glm::vec3 getVorticity(int i, int j, int k);
             glm::vec3 getConfinementForce(int i, int j, int k);
 
+            float cellSize;
+            int dim[3];
 
         public:
             Glb::GridData3dX mU;        // x
@@ -88,6 +90,16 @@ namespace FluidSimulation {
 
         };
 
+#define FOR_EACH_CELL \
+    for(int k =0; k < MAC3dPara::theDim3d[MACGrid3d::Z]; k++) \
+        for(int j = 0; j < MAC3dPara::theDim3d[MACGrid3d::Y]; j++) \
+            for(int i = 0; i < MAC3dPara::theDim3d[MACGrid3d::X]; i++) 
+
+
+#define FOR_EACH_FACE \
+    for(int k =0; k < MAC3dPara::theDim3d[MACGrid3d::Z] + 1; k++) \
+        for(int j = 0; j < MAC3dPara::theDim3d[MACGrid3d::Y] + 1; j++) \
+            for(int i = 0; i < MAC3dPara::theDim3d[MACGrid3d::X] + 1; i++)
     }
 }
 

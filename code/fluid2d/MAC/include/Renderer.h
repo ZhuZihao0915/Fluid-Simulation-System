@@ -31,8 +31,6 @@ namespace FluidSimulation {
 			
 			float* data;
 
-			int sample = 100;
-
 			int width = 800;
 			int height = 800;
 

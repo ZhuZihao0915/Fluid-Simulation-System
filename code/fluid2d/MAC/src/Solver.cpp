@@ -114,7 +114,7 @@ namespace FluidSimulation {
 
         void Solver::constructB(unsigned int numCells) {
             b.resize(numCells);
-            double constant = -(MAC2dPara::airDensity * MAC2dPara::theCellSize2d * MAC2dPara::theCellSize2d) / MAC2dPara::dt;
+            double constant = -(MAC2dPara::airDensity * mGrid.cellSize * mGrid.cellSize) / MAC2dPara::dt;
             for (unsigned int index = 0; index < numCells; index++)
             {
                 int i, j; mGrid.getCell(index, i, j);
@@ -123,14 +123,6 @@ namespace FluidSimulation {
                 else b(index) = 0;
             }
         }
-
-#define FOR_EACH_CELL \
-    for(int j = 0; j < MAC2dPara::theDim2d[MACGrid2d::Y]; j++) \
-        for(int i = 0; i < MAC2dPara::theDim2d[MACGrid2d::X]; i++) 
-
-#define FOR_EACH_LINE \
-    for(int j = 0; j < MAC2dPara::theDim2d[MACGrid2d::Y]+1; j++) \
-        for(int i = 0; i < MAC2dPara::theDim2d[MACGrid2d::X]+1; i++)
 
         void Solver::advectVelocity() {
             FOR_EACH_LINE
@@ -249,7 +241,7 @@ namespace FluidSimulation {
                   {
                      int index1 = mGrid.getIndex(i, j);
                      int index2 = mGrid.getIndex(i - 1, j);
-                     pressureChange = (p(index1) - p(index2)) / MAC2dPara::theCellSize2d;
+                     pressureChange = (p(index1) - p(index2)) / mGrid.cellSize;
                      double vel = mGrid.mU(i,j);
                      vel = vel - scaleConstant * pressureChange;
                      target.mU(i, j) = vel;
@@ -267,7 +259,7 @@ namespace FluidSimulation {
                    {
                       int index1 = mGrid.getIndex(i,j);
                       int index2 = mGrid.getIndex(i,j - 1);
-                      pressureChange = (p(index1) - p(index2)) / MAC2dPara::theCellSize2d;
+                      pressureChange = (p(index1) - p(index2)) / mGrid.cellSize;
                       double vel = mGrid.mV(i,j);
                       vel = vel - scaleConstant * pressureChange;
                       target.mV(i, j) = vel;

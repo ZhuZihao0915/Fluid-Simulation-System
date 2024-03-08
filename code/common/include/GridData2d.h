@@ -47,6 +47,8 @@ namespace Glb {
 		double mDfltValue;				// 默认值，用于初始化数据
 		glm::vec2 mMax;					// 二维空间中的最大坐标，表示网格的尺寸
 		ublas::vector<double> mData;	// 存储网格数据的一维数组
+		float cellSize;
+		int dim[2];
 	};
 
 	class GridData2dX : public GridData2d

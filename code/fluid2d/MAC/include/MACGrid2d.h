@@ -76,6 +76,8 @@ namespace FluidSimulation {
             glm::vec2 getVorticity(int i, int j);
             double getConfinementForce(int i, int j);
 
+            float cellSize;
+            int dim[2];
 
         public:
 
@@ -87,6 +89,14 @@ namespace FluidSimulation {
             Glb::GridData2d mSolid;     // solid
 
         };
+
+#define FOR_EACH_CELL \
+    for(int j = 0; j < MAC2dPara::theDim2d[MACGrid2d::Y]; j++) \
+        for(int i = 0; i < MAC2dPara::theDim2d[MACGrid2d::X]; i++) 
+
+#define FOR_EACH_LINE \
+    for(int j = 0; j < MAC2dPara::theDim2d[MACGrid2d::Y]+1; j++) \
+        for(int i = 0; i < MAC2dPara::theDim2d[MACGrid2d::X]+1; i++)
 
     }
 }

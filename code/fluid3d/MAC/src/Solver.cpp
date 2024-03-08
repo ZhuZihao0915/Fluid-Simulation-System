@@ -51,21 +51,9 @@ namespace FluidSimulation {
 
         }
 
-#define FOR_EACH_CELL \
-    for(int k =0; k < MAC3dPara::theDim3d[MACGrid3d::Z]; k++) \
-        for(int j = 0; j < MAC3dPara::theDim3d[MACGrid3d::Y]; j++) \
-            for(int i = 0; i < MAC3dPara::theDim3d[MACGrid3d::X]; i++) 
-
-
-#define FOR_EACH_FACE \
-    for(int k =0; k < MAC3dPara::theDim3d[MACGrid3d::Z] + 1; k++) \
-        for(int j = 0; j < MAC3dPara::theDim3d[MACGrid3d::Y] + 1; j++) \
-            for(int i = 0; i < MAC3dPara::theDim3d[MACGrid3d::X] + 1; i++)
-        // 分别加一，适配 y 方向和 x 方向的速度
 
         void Solver::advectVelocity()
         {
-#pragma omp parallel for
             FOR_EACH_FACE
             {
                if (mGrid.isFace(i,j,k,mGrid.X))
@@ -98,7 +86,6 @@ namespace FluidSimulation {
 
         void Solver::addExternalForces()
         {
-#pragma omp parallel for
             // 计算浮力，更新向上的速度
             FOR_EACH_FACE
             {
@@ -132,7 +119,6 @@ namespace FluidSimulation {
             }
 
                 // 使用计算好的约束力，更新速度场
-#pragma omp parallel for
             FOR_EACH_FACE
             {
                 if (mGrid.isFace(i, j, k, mGrid.X))
@@ -192,7 +178,6 @@ namespace FluidSimulation {
             double pressureChange;
 
             // 使用压力场更新速度场
-#pragma omp parallel for
             FOR_EACH_FACE
             {
                if (mGrid.isFace(i,j,k,mGrid.X))
@@ -286,12 +271,10 @@ namespace FluidSimulation {
             A.resize(numCells, numCells, false);
 
             // 矩阵A(r, c)存储着 cell r 接受到 cell c 带来的压力
-#pragma omp parallel for
             for (unsigned int row = 0; row < numCells; row++)
             {
                 int ri, rj, rk; mGrid.getCell(row, ri, rj, rk); // Each row corresponds to a cell
                 if (mGrid.isSolidCell(ri, rj, rk)) continue;
-#pragma omp parallel for
                 for (unsigned int col = 0; col < numCells; col++)
                 {
                     int ci, cj, ck; mGrid.getCell(col, ci, cj, ck); // Each col corresponds to a possible neighbor
@@ -309,7 +292,6 @@ namespace FluidSimulation {
         {
             b.resize(numCells);
             double constant = -(MAC3dPara::airDensity * MAC3dPara::theCellSize3d * MAC3dPara::theCellSize3d) / MAC3dPara::dt;
-#pragma omp parallel for
             for (unsigned int index = 0; index < numCells; index++)
             {
                 int i, j, k; 

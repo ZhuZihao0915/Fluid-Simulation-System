@@ -24,12 +24,13 @@ namespace MAC2dPara {
     extern int theDim2d[];
     extern float theCellSize2d;
 
+
     extern float dt;
 
     extern int drawModel;
-    
-    extern float sourceVelocity;
+    extern int gridNum;
 
+    extern float sourceVelocity;
     extern float airDensity;
     extern float ambientTemp;
     extern float boussinesqAlpha;
@@ -43,19 +44,20 @@ namespace MAC3dPara{
 
     extern bool oneSheet;
     extern float distance;
-
     extern bool xySheetsON;
     extern bool yzSheetsON;
     extern bool xzSheetsON;
-
     extern int xySheetsNum;
     extern int yzSheetsNum;
     extern int xzSheetsNum;
+    extern int drawModel;
+    extern int gridNumX;
+    extern int gridNumY;
+    extern int gridNumZ;
 
     extern float dt;
 
     extern float sourceVelocity;
-
     extern float airDensity;
     extern float ambientTemp;
     extern float boussinesqAlpha;

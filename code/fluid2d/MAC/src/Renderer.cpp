@@ -126,13 +126,13 @@ namespace FluidSimulation {
 				glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 				glClear(GL_COLOR_BUFFER_BIT);
 
-				float dt_x = mGrid.mU.mMax[0] / (sample);
-				float dt_y = mGrid.mV.mMax[1] / (sample);
+				float dt_x = mGrid.mU.mMax[0] / (MAC2dPara::gridNum);
+				float dt_y = mGrid.mV.mMax[1] / (MAC2dPara::gridNum);
 
-				for (int j = sample; j >= 1; j--) {
-					for (int i = sample; i >= 1; i--) {
-						float pt_x = i * mGrid.mU.mMax[0] / (sample);
-						float pt_y = j * mGrid.mU.mMax[1] / (sample);
+				for (int j = MAC2dPara::gridNum; j >= 1; j--) {
+					for (int i = MAC2dPara::gridNum; i >= 1; i--) {
+						float pt_x = i * mGrid.mU.mMax[0] / (MAC2dPara::gridNum);
+						float pt_y = j * mGrid.mU.mMax[1] / (MAC2dPara::gridNum);
 
 						vertices[0] = pt_x - dt_x / 2;
 						vertices[1] = pt_y - dt_y / 2;
