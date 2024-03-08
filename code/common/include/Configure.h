@@ -25,6 +25,8 @@ namespace MAC2dPara {
     extern float theCellSize2d;
 
     extern float dt;
+
+    extern int drawModel;
     
     extern float sourceVelocity;
 

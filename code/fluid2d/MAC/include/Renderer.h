@@ -42,7 +42,9 @@ namespace FluidSimulation {
 			GLuint FBO = 0;
 			GLuint RBO = 0;
 
-			GLuint textureID = 0;
+			GLuint textureGridID = 0;
+			GLuint texturePixelID = 0;
+
 			GLuint smokeTexture = 0;
 		};
 	}

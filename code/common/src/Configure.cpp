@@ -11,6 +11,8 @@ namespace MAC2dPara {
 
     extern float dt = 0.01;
 
+    extern int drawModel = 0;
+
     extern float sourceVelocity = 1.0f;
 
     extern float airDensity = 1.0;  //(1.3 kg/m^2) in reality,

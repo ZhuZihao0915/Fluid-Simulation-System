@@ -50,10 +50,10 @@ namespace FluidSimulation {
 
         GLuint Sph2dComponent::getRenderedTexture()
         {
-            Glb::Timer::getInstance().start();
+            if (simulating) { Glb::Timer::getInstance().start(); }
             renderer->LoadVertexes(*ps);
             renderer->draw();
-            Glb::Timer::getInstance().recordTime("rendering");
+            if (simulating) { Glb::Timer::getInstance().recordTime("rendering"); }
 
             return renderer->GetRenderedTexture();
         }

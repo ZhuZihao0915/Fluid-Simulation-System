@@ -17,9 +17,6 @@ namespace FluidSimulation {
 
         int32_t Renderer::Init() {
 
-            //glfwSetWindowUserPointer(window, this);
-            //glfwSetFramebufferSizeCallback(window, ResizeCallback);
-
             // ³õÊ¼»¯shader
 
             extern std::string shaderPath;
@@ -28,27 +25,6 @@ namespace FluidSimulation {
             std::string particalFragShaderPath = shaderPath + "/DrawParticals.frag";
             mParticalShader = new Glb::Shader();
             mParticalShader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
-
-            /*
-            std::string ballVertShaderPath = shaderPath + "/DrawSdf.vert";
-            std::string ballGeomShaderPath = shaderPath + "/DrawSdf.geom";
-            std::string ballFragShaderPath = shaderPath + "/DrawSdf.frag";
-            mSdfShader = new Glb::Shader();
-            mSdfShader->buildFromFile(ballVertShaderPath, ballFragShaderPath, ballGeomShaderPath);
-
-            std::string milkVertShaderPath = shaderPath + "/DrawMilk.vert";
-            std::string milkFragShaderPath = shaderPath + "/DrawMilk.frag";
-            mMilkShader = new Glb::Shader();
-            mMilkShader->buildFromFile(milkVertShaderPath, milkFragShaderPath);
-
-            glUseProgram(mMilkShader->getId());
-            glUniform1i(glGetUniformLocation(mMilkShader->getId(), "textureSdf"), 0);
-            */
-
-            GLenum error = glGetError();
-            if (error != GL_NO_ERROR) {
-                std::cerr << "OpenGL error: " << error << std::endl;
-            }
 
             // generate vertex array object
             glGenVertexArrays(1, &mVaoParticals);
@@ -89,12 +65,6 @@ namespace FluidSimulation {
             }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             // end fbo
-
-
-            error = glGetError();
-            if (error != GL_NO_ERROR) {
-                std::cerr << "OpenGL error: " << error << std::endl;
-            }
 
 
             glViewport(0, 0, imageWidth, imageHeight);

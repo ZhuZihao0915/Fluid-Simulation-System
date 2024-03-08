@@ -31,15 +31,15 @@ namespace FluidSimulation {
             glGenFramebuffers(1, &FBO);
             glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-            glGenTextures(1, &textureID);
-            glBindTexture(GL_TEXTURE_2D, textureID);
+            glGenTextures(1, &textureGridID);
+            glBindTexture(GL_TEXTURE_2D, textureGridID);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageWidth, imageHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureGridID, 0);
 
             glGenRenderbuffers(1, &RBO);
             glBindRenderbuffer(GL_RENDERBUFFER, RBO);
@@ -76,7 +76,7 @@ namespace FluidSimulation {
 			// load image, create texture and generate mipmaps
 			int width, height, nrChannels;
 
-			unsigned char* data = stbi_load((picturePath + "/smoke.png").c_str(), &width, &height, &nrChannels, 0);
+			unsigned char* data = stbi_load((picturePath + "/smoke2.png").c_str(), &width, &height, &nrChannels, 0);
 			if (data)
 			{
 				// 使用图像生成纹理
@@ -93,99 +93,100 @@ namespace FluidSimulation {
 
 		void Renderer::draw(MACGrid2d& mGrid) {
 
-			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+			if (MAC2dPara::drawModel==0) {
+				std::vector<float> imageData;
 
-			glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			float dt_x = mGrid.mU.mMax[0] / (sample + 1);
-			float dt_y = mGrid.mV.mMax[1] / (sample + 1);
-
-			for (int j = sample; j >= 1; j--) {
-				for (int i = sample; i >= 1; i--) {
-					float pt_x = i * mGrid.mU.mMax[0] / (sample+1);
-					float pt_y = j * mGrid.mU.mMax[1] / (sample+1);
-
-					vertices[0] = pt_x - dt_x ;
-					vertices[1] = pt_y - dt_y ;
-					vertices[4] = mGrid.getDensity(glm::vec2(vertices[0], vertices[1]));
-
-					vertices[5] = pt_x + dt_x ;
-					vertices[6] = pt_y - dt_y ;
-					vertices[9] = mGrid.getDensity(glm::vec2(vertices[5], vertices[6]));
-
-					vertices[10] = pt_x + dt_x ;
-					vertices[11] = pt_y + dt_y ;
-					vertices[14] = mGrid.getDensity(glm::vec2(vertices[10], vertices[11]));
-
-					vertices[15] = pt_x - dt_x ;
-					vertices[16] = pt_y + dt_y ;
-					vertices[19] = mGrid.getDensity(glm::vec2(vertices[15], vertices[16]));
-
-					for (int k = 0; k <= 15; k += 5) {
-						vertices[k] = (vertices[k] / mGrid.mU.mMax[0]) * 2 - 1;
-						vertices[k+1] = (vertices[k+1] / mGrid.mV.mMax[1]) * 2 - 1;
+				for (int j = 1; j <= imageHeight; j++) {
+					for (int i = 1; i <= imageWidth; i++) {
+						float pt_x = i * mGrid.mU.mMax[0] / (imageWidth);
+						float pt_y = j * mGrid.mU.mMax[1] / (imageHeight);
+						glm::vec2 pt(pt_x, pt_y);
+						glm::vec4 color = mGrid.getRenderColor(pt);
+						imageData.push_back(color.x);
+						imageData.push_back(color.y);
+						imageData.push_back(color.z);
 					}
-					
-					glBindVertexArray(VAO);
-					glBindBuffer(GL_ARRAY_BUFFER, VBO);
-					glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-					glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-					glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-					glEnableVertexAttribArray(0);
-					glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
-					glEnableVertexAttribArray(1);
-					glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(4 * sizeof(float)));
-					glEnableVertexAttribArray(2);
-					glBindVertexArray(0);
-
-					shader->use();
-					glBindTexture(GL_TEXTURE_2D, smokeTexture);
-					glUniform1i(glGetUniformLocation(shader->getId(), "mTexture"), 0);
-
-					glBindVertexArray(VAO);
-					glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-
 				}
+
+				glGenTextures(1, &texturePixelID);
+				glBindTexture(GL_TEXTURE_2D, texturePixelID);
+				// 设置纹理参数
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+				// 将颜色数据传递给纹理
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_FLOAT, imageData.data());
+				glBindTexture(GL_TEXTURE_2D, 0);
 			}
+			else {
+				glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+				glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
+				glClear(GL_COLOR_BUFFER_BIT);
 
-			/*
-			std::vector<float> imageData;
+				float dt_x = mGrid.mU.mMax[0] / (sample);
+				float dt_y = mGrid.mV.mMax[1] / (sample);
 
-			for (int j = 1; j <= imageHeight; j++) {
-				for (int i = 1; i <= imageWidth; i++) {
-					float pt_x = i * mGrid.mU.mMax[0] / (imageWidth);
-					float pt_y = j * mGrid.mU.mMax[1] / (imageHeight);
-					glm::vec2 pt(pt_x, pt_y);
-					glm::vec4 color = mGrid.getRenderColor(pt);
-					imageData.push_back(color.x);
-					imageData.push_back(color.y);
-					imageData.push_back(color.z);
+				for (int j = sample; j >= 1; j--) {
+					for (int i = sample; i >= 1; i--) {
+						float pt_x = i * mGrid.mU.mMax[0] / (sample);
+						float pt_y = j * mGrid.mU.mMax[1] / (sample);
+
+						vertices[0] = pt_x - dt_x / 2;
+						vertices[1] = pt_y - dt_y / 2;
+						vertices[4] = mGrid.getDensity(glm::vec2(vertices[0], vertices[1]));
+
+						vertices[5] = pt_x + dt_x / 2;
+						vertices[6] = pt_y - dt_y / 2;
+						vertices[9] = mGrid.getDensity(glm::vec2(vertices[5], vertices[6]));
+
+						vertices[10] = pt_x + dt_x / 2;
+						vertices[11] = pt_y + dt_y / 2;
+						vertices[14] = mGrid.getDensity(glm::vec2(vertices[10], vertices[11]));
+
+						vertices[15] = pt_x - dt_x / 2;
+						vertices[16] = pt_y + dt_y / 2;
+						vertices[19] = mGrid.getDensity(glm::vec2(vertices[15], vertices[16]));
+
+						for (int k = 0; k <= 15; k += 5) {
+							vertices[k] = (vertices[k] / mGrid.mU.mMax[0]) * 2 - 1;
+							vertices[k + 1] = (vertices[k + 1] / mGrid.mV.mMax[1]) * 2 - 1;
+						}
+
+						glBindVertexArray(VAO);
+						glBindBuffer(GL_ARRAY_BUFFER, VBO);
+						glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+						glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+						glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+						glEnableVertexAttribArray(0);
+						glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+						glEnableVertexAttribArray(1);
+						glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(4 * sizeof(float)));
+						glEnableVertexAttribArray(2);
+						glBindVertexArray(0);
+
+						shader->use();
+						glBindTexture(GL_TEXTURE_2D, smokeTexture);
+						glUniform1i(glGetUniformLocation(shader->getId(), "mTexture"), 0);
+
+						glBindVertexArray(VAO);
+						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+					}
 				}
+
+				glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			}
-
-			glGenTextures(1, &textureID);
-			glBindTexture(GL_TEXTURE_2D, textureID);
-			// 设置纹理参数
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-			// 将颜色数据传递给纹理
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_FLOAT, imageData.data());
-			glBindTexture(GL_TEXTURE_2D, 0);
-			*/
-
 		}
 
 		GLuint Renderer::getTextureID() {
-			
-			return textureID;
-
+			if (MAC2dPara::drawModel==0) {
+				return texturePixelID;
+			}
+			return textureGridID;
 		}
 	}
 }

@@ -103,6 +103,13 @@ namespace FluidSimulation {
 				ImGui::SliderFloat("Delta Time", &MAC2dPara::dt, 0.0f, 0.1f);
 				ImGui::SliderFloat("Source Velocity", &MAC2dPara::sourceVelocity, 0.0f, 5.0f);
 
+				ImGui::Separator();
+
+				ImGui::Text("Renderer:");
+				ImGui::RadioButton("Pixel", &MAC2dPara::drawModel, 0);
+				ImGui::RadioButton("Grid", &MAC2dPara::drawModel, 1);
+			
+
 				break;
 			// sph 3d
 			case 2:
