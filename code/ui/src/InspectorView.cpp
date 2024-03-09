@@ -14,6 +14,9 @@ namespace FluidSimulation {
 	void InspectorView::display() {
 		ImGui::Begin("Inspector", NULL, ImGuiWindowFlags_NoCollapse);
 
+		ImGui::PushItemWidth(200);
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20.0f, 7.0f));
+
 		if (ImGui::BeginCombo("methods", Manager::GetInstance().GetSceneView()->currentMethod == NULL ? NULL : Manager::GetInstance().GetSceneView()->currentMethod->description))
 		{
 			for (int i = 0; i < methodComponents.size(); i++)
@@ -34,6 +37,7 @@ namespace FluidSimulation {
 			}
 			ImGui::EndCombo();
 		}
+
 
 		ImGui::SetNextItemWidth(300);
 		if (ImGui::Button(simulating ? "Pause" : "Continue")) {
@@ -66,6 +70,11 @@ namespace FluidSimulation {
 		else{
 			int intStep = 1;
 			float floatStep = 0.1;
+			double doubleStep = 0.0001;
+			float fontSize = ImGui::GetFontSize();
+
+			// 设置新字体大小
+			
 			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
 			{
 			// TODO
@@ -73,35 +82,44 @@ namespace FluidSimulation {
 			
 			// sph 2d
 			case 0:
-
 				ImGui::Text("Physical Parameters:");
-				ImGui::SliderFloat("Gravity", &SPH2dPara::gravity, -10.0f, 20.0f);
-				ImGui::SliderFloat("Density", &SPH2dPara::density, 100.0f, 2000.0f);
+				ImGui::PushItemWidth(200);
+				ImGui::SliderFloat("Gravity.X", &SPH2dPara::gravityX, -10.0f, 20.0f);
+				ImGui::SliderFloat("Gravity.Y", &SPH2dPara::gravityY, -10.0f, 20.0f);
+				ImGui::SliderFloat("Density", &SPH2dPara::density, 500.0f, 1500.0f);
 				ImGui::SliderFloat("Stiffness", &SPH2dPara::stiffness, 10.0f, 100.0f);
-				ImGui::SliderFloat("Viscosity", &SPH2dPara::viscosity, 0.0f, 0.5f);
+				ImGui::SliderFloat("Viscosity", &SPH2dPara::viscosity, 0.0f, 1.0f);
+				ImGui::PopItemWidth();
 
+				ImGui::Spacing();
 				ImGui::Separator();
-
-				ImGui::Text("Solver:");
-				ImGui::SliderFloat("Delta Time", &SPH2dPara::dt, 0.0f, 6e-2f);
-				ImGui::InputScalar("Substep", ImGuiDataType_S32, &SPH2dPara::substep, &intStep, NULL);
+				ImGui::Spacing();
 				
+				ImGui::Text("Solver:");
+				ImGui::SliderFloat("Delta Time", &SPH2dPara::dt, 0.0f, 0.003f, "%.5f");
+				ImGui::PushItemWidth(150);
+				ImGui::InputScalar("Substep", ImGuiDataType_S32, &SPH2dPara::substep, &intStep, NULL);
+				ImGui::PopItemWidth();
 
 				break;
 			// mac 2d
 			case 1:
 				ImGui::Text("Physical Parameters:");
+				ImGui::PushItemWidth(200);
 				ImGui::SliderFloat("Air Density", &MAC2dPara::airDensity, 0.10f, 3.0f);
 				ImGui::SliderFloat("Ambient Temperature", &MAC2dPara::ambientTemp, 0.0f, 50.0f);
 				ImGui::SliderFloat("Boussinesq Alpha", &MAC2dPara::boussinesqAlpha, 100.0f, 1000.0f);
 				ImGui::SliderFloat("Boussinesq Beta", &MAC2dPara::boussinesqBeta, 1000.0f, 5000.0f);
 				ImGui::SliderFloat("Vorticity", &MAC2dPara::vorticityConst, 10.0f, 200.0f);
-				
+				ImGui::PopItemWidth();
+
 				ImGui::Separator();
 
 				ImGui::Text("Solver:");
-				ImGui::SliderFloat("Delta Time", &MAC2dPara::dt, 0.0f, 0.1f);
+				ImGui::SliderFloat("Delta Time", &MAC2dPara::dt, 0.0f, 0.1f, "%.5f");
+				ImGui::PushItemWidth(150);
 				ImGui::SliderFloat("Source Velocity", &MAC2dPara::sourceVelocity, 0.0f, 5.0f);
+				ImGui::PopItemWidth();
 
 				ImGui::Separator();
 
@@ -114,6 +132,7 @@ namespace FluidSimulation {
 			// sph 3d
 			case 2:
 				ImGui::Text("Camera:");
+				ImGui::PushItemWidth(250);
 				ImGui::InputFloat3("Position", &Glb::Camera::getInstance().mPosition.x);
 				ImGui::InputScalar("Fov", ImGuiDataType_Float, &Glb::Camera::getInstance().fovyDeg, &floatStep, NULL);
 				ImGui::InputScalar("Aspect", ImGuiDataType_Float, &Glb::Camera::getInstance().aspect, &floatStep, NULL);
@@ -121,14 +140,17 @@ namespace FluidSimulation {
 				ImGui::InputScalar("Far", ImGuiDataType_Float, &Glb::Camera::getInstance().farPlane, &floatStep, NULL);
 				ImGui::InputScalar("Yaw", ImGuiDataType_Float, &Glb::Camera::getInstance().mYaw, &floatStep, NULL);
 				ImGui::InputScalar("Pitch", ImGuiDataType_Float, &Glb::Camera::getInstance().mPitch, &floatStep, NULL);
+				ImGui::PopItemWidth();
 				Glb::Camera::getInstance().UpdateView();
 
 				ImGui::Separator();
 
 				ImGui::Text("Solver:");
-				ImGui::SliderFloat("Delta Time", &SPH3dPara::dt, 0.0f, 6e-2f);
+				ImGui::SliderFloat("Delta Time", &SPH3dPara::dt, 0.0f, 0.005f, "%.5f");
+				ImGui::PushItemWidth(150);
 				ImGui::InputScalar("Substep", ImGuiDataType_S32, &SPH3dPara::substep, &intStep, NULL);
 				ImGui::InputScalar("Velocity Attenuation", ImGuiDataType_Float, &SPH3dPara::velocityAttenuation, &floatStep, NULL);
+				ImGui::PopItemWidth();
 
 				ImGui::Separator();
 
@@ -136,7 +158,7 @@ namespace FluidSimulation {
 				ImGui::SliderFloat("Gravity", &SPH3dPara::gravity, -10.0f, 20.0f);
 				ImGui::SliderFloat("Density", &SPH3dPara::density0, 100.0f, 2000.0f);
 				ImGui::SliderFloat("Stiffness", &SPH3dPara::stiffness, 10.0f, 50.0f);
-				ImGui::SliderFloat("Viscosity", &SPH3dPara::viscosity, 0.0f, 8e-3f);
+				ImGui::SliderFloat("Viscosity", &SPH3dPara::viscosity, 0.0f, 8e-3f, "%.5f");
 
 				break;
 			// mac 3d
@@ -170,8 +192,10 @@ namespace FluidSimulation {
 				ImGui::Separator();
 
 				ImGui::Text("Solver:");
-				ImGui::SliderFloat("Delta Time", &MAC3dPara::dt, 0.0f, 0.1f);
+				ImGui::PushItemWidth(150);
+				ImGui::SliderFloat("Delta Time", &MAC3dPara::dt, 0.0f, 0.1f, "%.5f");
 				ImGui::SliderFloat("Source Velocity", &MAC3dPara::sourceVelocity, 0.0f, 5.0f);
+				ImGui::PopItemWidth();
 
 				ImGui::Separator();
 
@@ -184,15 +208,19 @@ namespace FluidSimulation {
 				break;
 
 			}
-
 			
-			
+			//ImGui::GetStyle().ScaleAllSizes(2.0f);
 			if (!Glb::Timer::getInstance().empty()) {
 				ImGui::Separator();
 				ImGui::Text("Timing:");
+				ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.8f, 1.0f, 1.0f));
 				ImGui::Text(Glb::Timer::getInstance().currentStatus().c_str());
+				ImGui::PopStyleColor();
 			}
 		}
+
+		ImGui::PopStyleVar();
+		ImGui::PopItemWidth();
 
 		ImGui::End();
 	}

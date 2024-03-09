@@ -35,7 +35,7 @@ namespace FluidSimulation {
 #pragma omp parallel for
             for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
 
-                mPs.mParticalInfos[i].accleration = SPH2dPara::gravity * -glm::vec2(0.0f, 1.0f);
+                mPs.mParticalInfos[i].accleration = -glm::vec2(SPH2dPara::gravityX, SPH2dPara::gravityY);
                 //std::cout << mPs.mParticalInfos[i].accleration.z << std::endl;
                 // 计算 viscosity 和 pressure
                 glm::vec2 viscosityForce = glm::vec2(0.0);
@@ -74,7 +74,7 @@ namespace FluidSimulation {
 #pragma omp parallel for
             for (int i = 0; i < mPs.mParticalInfos.size(); i++) {
                 // 使用加速度（和dt）更新速度
-                mPs.mParticalInfos[i].velocity = mPs.mParticalInfos[i].velocity + SPH2dPara::dt * mPs.mParticalInfos[i].accleration;
+                mPs.mParticalInfos[i].velocity = mPs.mParticalInfos[i].velocity + (float)SPH2dPara::dt * mPs.mParticalInfos[i].accleration;
                 // 限制速度在各方向的大小
                 glm::vec2 newVelocity;
                 for (int j = 0; j < 2; j++) {
@@ -82,7 +82,7 @@ namespace FluidSimulation {
                 }
                 mPs.mParticalInfos[i].velocity = newVelocity;
                 // 使用速度（和dt）更新位置
-                mPs.mParticalInfos[i].position = mPs.mParticalInfos[i].position + SPH2dPara::dt * mPs.mParticalInfos[i].velocity;
+                mPs.mParticalInfos[i].position = mPs.mParticalInfos[i].position + (float)SPH2dPara::dt * mPs.mParticalInfos[i].velocity;
             }
         }
 

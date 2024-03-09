@@ -90,7 +90,7 @@ namespace Glb {
 
             for (const auto& timing : record) {
                 float percentage = static_cast<float>(timing.second) / total_time * 100;
-                str += timing.first + ": " + std::to_string(percentage).substr(0, 5) + "% \n";
+                str += timing.first + ": " + std::to_string(percentage).substr(0, 5) + "%% \n";
             }
 
             return str;

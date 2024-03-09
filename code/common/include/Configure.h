@@ -78,7 +78,8 @@ namespace SPH2dPara {
     extern float supportRadius;
     extern float particalRadius;
     extern float particalDiameter;
-    extern float gravity;
+    extern float gravityX;
+    extern float gravityY;
     extern float density;
     extern float stiffness;
     extern float exponent;

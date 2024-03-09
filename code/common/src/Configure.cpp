@@ -67,7 +67,8 @@ namespace SPH2dPara {
     float supportRadius = 0.04;// 0.025;
     float particalRadius = 0.01;// 0.005;
     float particalDiameter = particalRadius * 2.0;
-    float gravity = 9.8f;
+    float gravityX = 0.0f;
+    float gravityY = 9.8f;
     float density = 1000.0f;
     float stiffness = 70.0f;
     float exponent = 7.0f;   // 求解方程中的指数项
