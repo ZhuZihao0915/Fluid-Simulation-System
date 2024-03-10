@@ -31,7 +31,7 @@ namespace FluidSimulation
 
 	class Manager {
 	public:
-		static Manager& GetInstance() {
+		static Manager& getInstance() {
 			static Manager instance;
 			return instance;
 		}
@@ -41,12 +41,14 @@ namespace FluidSimulation
 		void displayToolBar();
 		void pushMessage(char* message);
 
-		HierarchyView* GetHierachyView() const { return hierarchyView; };
-		SceneView* GetSceneView() const { return sceneView; };
-		InspectorView* GetInspectorView() const { return inspectorView; };
-		ProjectView* GetProjectView() const { return projectView; };
-		GLFWwindow* GetWindow() const { return window; };
-		std::vector<char*> GetLog() const { return log; };
+		HierarchyView* getHierachyView() const { return hierarchyView; };
+		SceneView* getSceneView() const { return sceneView; };
+		InspectorView* getInspectorView() const { return inspectorView; };
+		ProjectView* getProjectView() const { return projectView; };
+		GLFWwindow* getWindow() const { return window; };
+		Glb::Component* getMethod() const { return currentMethod; };
+		void setMethod(Glb::Component* method) { currentMethod = method; };
+		std::vector<char*> getLog() const { return log; };
 
 	private:
 
@@ -56,6 +58,7 @@ namespace FluidSimulation
 			sceneView = NULL;
 			inspectorView = NULL;
 			projectView = NULL;
+			currentMethod = NULL;
 		};
 
 		Manager(const Manager&) = delete;
@@ -66,6 +69,8 @@ namespace FluidSimulation
 		SceneView* sceneView;
 		InspectorView* inspectorView;
 		ProjectView* projectView;
+
+		Glb::Component* currentMethod;
 
 		std::vector<char*> log;
 		

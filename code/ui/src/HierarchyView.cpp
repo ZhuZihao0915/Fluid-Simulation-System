@@ -25,36 +25,36 @@ namespace FluidSimulation {
 		ImGui::Begin("Hierarchy", NULL, ImGuiWindowFlags_NoCollapse);
 
 
-		if (Manager::GetInstance().GetSceneView()->currentMethod == NULL) {
+		if (Manager::getInstance().getMethod() == NULL) {
 			ImGui::Text("No Simulation Method!\nPlease select a simulation method.");
 		}
 		else {
-			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
+			switch (Manager::getInstance().getMethod()->id)
 			{
 				// mac 3d
 			case 3:
 				bool itemSelected0 = false;
 				if (ImGui::Selectable("Camera", &itemSelected0)) {
-					if (itemSelected0) { Manager::GetInstance().GetInspectorView()->showID = 0; }
-					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+					if (itemSelected0) { Manager::getInstance().getInspectorView()->showID = 0; }
+					else { Manager::getInstance().getInspectorView()->showID = false; }
 				}
 
 				bool itemSelected1 = false;
 				if (ImGui::Selectable("Fluid", &itemSelected1)) {
-					if (itemSelected1) { Manager::GetInstance().GetInspectorView()->showID = 1; }
-					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+					if (itemSelected1) { Manager::getInstance().getInspectorView()->showID = 1; }
+					else { Manager::getInstance().getInspectorView()->showID = false; }
 				}
 
 				bool itemSelected2 = false;
 				if (ImGui::Selectable("Container", &itemSelected2)) {
-					if (itemSelected2) { Manager::GetInstance().GetInspectorView()->showID = 2; }
-					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+					if (itemSelected2) { Manager::getInstance().getInspectorView()->showID = 2; }
+					else { Manager::getInstance().getInspectorView()->showID = false; }
 				}
 
 				bool itemSelected3 = false;
 				if (ImGui::Selectable("Iteration", &itemSelected3)) {
-					if (itemSelected3) { Manager::GetInstance().GetInspectorView()->showID = 3; }
-					else { Manager::GetInstance().GetInspectorView()->showID = false; }
+					if (itemSelected3) { Manager::getInstance().getInspectorView()->showID = 3; }
+					else { Manager::getInstance().getInspectorView()->showID = false; }
 				}
 			}
 		}

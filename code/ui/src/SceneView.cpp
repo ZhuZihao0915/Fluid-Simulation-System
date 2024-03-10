@@ -9,7 +9,6 @@ namespace FluidSimulation {
 	SceneView::SceneView(GLFWwindow* window) {
 		this->window = window;
         glfwMakeContextCurrent(window);
-        currentMethod = NULL;
         texture = -1;   // no texture;
 	}
 
@@ -19,14 +18,14 @@ namespace FluidSimulation {
 
         ImVec2 windowSize = ImGui::GetWindowSize();
 
-        if (currentMethod != NULL) {
+        if (Manager::getInstance().getMethod() != NULL) {
             if (simulating || texture == -1) {
-                currentMethod->simulate();
-                texture = currentMethod->getRenderedTexture();
+                Manager::getInstance().getMethod()->simulate();
+                texture = Manager::getInstance().getMethod()->getRenderedTexture();
                 Glb::Timer::getInstance().timeFPS();
             }
             else if (!simulating) {
-                texture = currentMethod->getRenderedTexture();
+                texture = Manager::getInstance().getMethod()->getRenderedTexture();
                 Glb::Timer::getInstance().timeFPS();
             }
             ImGui::Text(("FPS: " + Glb::Timer::getInstance().getFPS()).c_str());
@@ -37,7 +36,7 @@ namespace FluidSimulation {
         ImGui::SetCursorPosX((windowSize.x - imageWidth) * 0.5f);
         ImGui::SetCursorPosY(70);
         ImVec2 imageSize(imageWidth, imageHeight);
-        if (currentMethod == NULL) {
+        if (Manager::getInstance().getMethod() == NULL) {
             ImGui::Image(NULL, imageSize);
         }
         else { 
@@ -50,13 +49,13 @@ namespace FluidSimulation {
 
 
         // 如果鼠标停留在渲染界面上，将鼠标的运动报告给component
-        if (ImGui::IsItemHovered() && currentMethod != NULL) {
+        if (ImGui::IsItemHovered() && Manager::getInstance().getMethod() != NULL) {
 
             // 获取鼠标状态
             glfwGetCursorPos(window, &mouseX, &mouseY);
 
             // 检测滚轮
-            currentMethod->cameraScale(ImGui::GetIO().MouseWheel);
+            Manager::getInstance().getMethod()->cameraScale(ImGui::GetIO().MouseWheel);
 
             // 检测鼠标左键拖动
             if (ImGui::IsMouseDragging(0, 0.0f)) {
@@ -68,7 +67,7 @@ namespace FluidSimulation {
                 float deltaX = (float)(mouseX - lastMouseX);
                 float deltaY = (float)(mouseY - lastMouseY);
 
-                currentMethod->cameraRotate(deltaX, deltaY);
+                Manager::getInstance().getMethod()->cameraRotate(deltaX, deltaY);
                 
                 lastMouseX = mouseX;
                 lastMouseY = mouseY;
@@ -87,7 +86,7 @@ namespace FluidSimulation {
                 float deltaX = (float)(mouseX - lastMouseX);
                 float deltaY = (float)(mouseY - lastMouseY);
 
-                currentMethod->cameraMove(deltaX, deltaY);
+                Manager::getInstance().getMethod()->cameraMove(deltaX, deltaY);
 
                 lastMouseX = mouseX;
                 lastMouseY = mouseY;

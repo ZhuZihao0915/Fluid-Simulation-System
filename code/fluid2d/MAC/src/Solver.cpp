@@ -36,7 +36,7 @@ namespace FluidSimulation {
             // project 确保incompressible的特性
             project();
 
-            Glb::Timer::getInstance().recordTime("projection f2");
+            Glb::Timer::getInstance().recordTime("projection");
 
             // advect 温度
             advectTemperature();
@@ -219,9 +219,6 @@ namespace FluidSimulation {
             // 为了进一步加快求解的收敛速度，可以采用预处理的共轭梯度法
             Glb::cg_psolve2d(A, precon, b, p, 500, 0.005);
             //Glb::cg_solve2d(A, b, p, 500, 0.005);
-
-            Glb::Timer::getInstance().recordTime("projection f1");
-
 
             // Subtract pressure from our velocity and save in target
             // u_new = u - dt*(1/theAirPressure)*((p_i+1-p_i)/theCellSize)

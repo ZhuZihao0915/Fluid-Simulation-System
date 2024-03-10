@@ -13,7 +13,7 @@ namespace FluidSimulation {
 	void ProjectView::display() {
 		ImGui::Begin("Project", NULL, ImGuiWindowFlags_NoCollapse);
 
-		for each (char* log in Manager::GetInstance().GetLog())
+		for each (char* log in Manager::getInstance().getLog())
 		{
 			ImGui::Text(log);
 		}

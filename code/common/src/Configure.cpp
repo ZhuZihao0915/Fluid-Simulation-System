@@ -23,7 +23,7 @@ namespace MAC2dPara {
 }
 
 namespace MAC3dPara {
-    int theDim3d[3] = { 24, 24, 24 };
+    int theDim3d[3] = { 8, 48, 48 };
     float theCellSize3d = 0.5;
 
     // Rendering
@@ -33,9 +33,9 @@ namespace MAC3dPara {
     bool yzSheetsON = true;
     bool xzSheetsON = false;
     int drawModel = 1;
-    int gridNumX = theDim3d[0];
-    int gridNumY = theDim3d[1];
-    int gridNumZ = theDim3d[2];
+    int gridNumX = 20;
+    int gridNumY = 100;
+    int gridNumZ = 100;
 
     int xySheetsNum = 5;
     int yzSheetsNum = 5;

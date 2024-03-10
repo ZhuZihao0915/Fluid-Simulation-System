@@ -28,8 +28,6 @@ namespace FluidSimulation {
 		GLFWwindow* window;
 		ImVec2 pos;
 
-		Glb::Component* currentMethod;
-
 		// std::thread renderThread;
 
 		GLuint texture;

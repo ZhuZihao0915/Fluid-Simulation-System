@@ -2,9 +2,9 @@
 #ifndef __MAC3D_RENDERER_H__
 #define __MAC3D_RENDERER_H__
 
+
 #include "glm/glm.hpp"
 #include <glfw3.h>
-
 #include "Shader.h"
 #include "MACGrid3d.h"
 #include "Camera.h"
@@ -16,8 +16,13 @@ namespace FluidSimulation {
 		public:
 			Renderer(MACGrid3d& grid);
 
+			void loadTexture();
+
 			void draw();
 			void drawOneSheet();
+			void drawOneSheetXY();
+			void drawOneSheetYZ();
+			void drawOneSheetXZ();
 			void drawXYSheets();	// 平行于XY面的切面
 			void drawYZSheets();
 			void drawXZSheets();
@@ -40,15 +45,20 @@ namespace FluidSimulation {
 			GLuint VAO_XZ;
 			GLuint VBO_XZ;
 
-			int width = 600;
-			int height = 600;
+			GLuint VAO = 0;
+			GLuint VBO = 0;
+			GLuint EBO = 0;
+			GLuint FBO = 0;
+			GLuint RBO = 0;
+
+			int width = imageWidth / 2;
+			int height = imageHeight / 2;
 			
 			float* data;
 
-			Glb::Shader* shader;
+			Glb::Shader* pixelShader;
+			Glb::Shader* gridShader;
 
-			GLuint FBO = 0;
-			GLuint RBO = 0;
 
 			MACGrid3d& mGrid;
 

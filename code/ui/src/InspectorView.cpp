@@ -17,19 +17,20 @@ namespace FluidSimulation {
 		ImGui::PushItemWidth(200);
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(20.0f, 7.0f));
 
-		if (ImGui::BeginCombo("methods", Manager::GetInstance().GetSceneView()->currentMethod == NULL ? NULL : Manager::GetInstance().GetSceneView()->currentMethod->description))
+		ImGui::Text("Simulation Method:");
+		if (ImGui::BeginCombo("methods", Manager::getInstance().getMethod() == NULL ? NULL : Manager::getInstance().getMethod()->description))
 		{
 			for (int i = 0; i < methodComponents.size(); i++)
 			{
-				bool is_selected = (Manager::GetInstance().GetSceneView()->currentMethod == methodComponents[i]); // You can store your selection however you want, outside or inside your objects
+				bool is_selected = (Manager::getInstance().getMethod() == methodComponents[i]); // You can store your selection however you want, outside or inside your objects
 				if (ImGui::Selectable(methodComponents[i]->description, is_selected)) {
-					if (Manager::GetInstance().GetSceneView()->currentMethod != methodComponents[i]) {
-						if (Manager::GetInstance().GetSceneView()->currentMethod != NULL) {
-							Manager::GetInstance().GetSceneView()->currentMethod->shutDown();  // 释放原来的模拟方法占用的内存
+					if (Manager::getInstance().getMethod() != methodComponents[i]) {
+						if (Manager::getInstance().getMethod() != NULL) {
+							Manager::getInstance().getMethod()->shutDown();  // 释放原来的模拟方法占用的内存
 						}
-						Manager::GetInstance().GetSceneView()->currentMethod = methodComponents[i];
-						Manager::GetInstance().GetSceneView()->currentMethod->init();
-						Manager::GetInstance().GetSceneView()->texture = -1;
+						Manager::getInstance().setMethod(methodComponents[i]);
+						Manager::getInstance().getMethod()->init();
+						Manager::getInstance().getSceneView()->texture = -1;
 					}
 				}
 				if (is_selected)
@@ -40,32 +41,32 @@ namespace FluidSimulation {
 
 
 		ImGui::SetNextItemWidth(300);
-		if (ImGui::Button(simulating ? "Pause" : "Continue")) {
+		if (ImGui::Button(simulating ? "Stop" : "Continue")) {
 			// 切换渲染状态
 			simulating = !simulating;
 			if (simulating) {
-				Manager::GetInstance().pushMessage("Rendering...");
+				Manager::getInstance().pushMessage("Rendering...");
 			}
 			else {
-				Manager::GetInstance().pushMessage("Stopped.");
+				Manager::getInstance().pushMessage("Stopped.");
 			}
 		}
 
-		if (ImGui::Button("Reset")) {
+		if (ImGui::Button("Rerun")) {
 			glfwMakeContextCurrent(window);
 
-			Manager::GetInstance().GetSceneView()->currentMethod->init();
+			Manager::getInstance().getMethod()->init();
 
 			simulating = false;
-			Manager::GetInstance().GetSceneView()->texture = -1;
+			Manager::getInstance().getSceneView()->texture = -1;
 
-			Manager::GetInstance().pushMessage("Reset succeeded.");
+			Manager::getInstance().pushMessage("Rerun succeeded.");
 		}
 
 		ImGui::Separator();
 
-		if (Manager::GetInstance().GetSceneView()->currentMethod==NULL) {
-			ImGui::Text("No Simulation Method!\nPlease select a simulation method.");
+		if (Manager::getInstance().getMethod() ==NULL) {
+			ImGui::Text("Please select a simulation method.");
 		}
 		else{
 			int intStep = 1;
@@ -75,7 +76,7 @@ namespace FluidSimulation {
 
 			// 设置新字体大小
 			
-			switch (Manager::GetInstance().GetSceneView()->currentMethod->id)
+			switch (Manager::getInstance().getMethod()->id)
 			{
 			// TODO
 			// 添加各算法的参数控制组件

@@ -31,9 +31,6 @@ namespace FluidSimulation {
 			
 			float* data;
 
-			int width = 800;
-			int height = 800;
-
 			GLuint VAO = 0;
 			GLuint VBO = 0;
 			GLuint EBO = 0;

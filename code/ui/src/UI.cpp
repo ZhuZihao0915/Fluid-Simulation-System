@@ -21,7 +21,7 @@ namespace FluidSimulation {
         // initialize glfw
         if (!glfwInit())
         {
-            Manager::GetInstance().pushMessage("GLFW initialization failed.");
+            Manager::getInstance().pushMessage("GLFW initialization failed.");
             return;
         }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -31,7 +31,7 @@ namespace FluidSimulation {
         // create window
         GLFWwindow* window = glfwCreateWindow(1440, 1100, "Fluid Simulation System", NULL, NULL);
         if (!window) {
-            Manager::GetInstance().pushMessage("Fail to create window.");
+            Manager::getInstance().pushMessage("Fail to create window.");
             glfwTerminate();
             return;
         }
@@ -44,11 +44,11 @@ namespace FluidSimulation {
 
         // initialize glad
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            Manager::GetInstance().pushMessage("GLAD initialization failed.");
+            Manager::getInstance().pushMessage("GLAD initialization failed.");
             return;
         }
 
-        Manager::GetInstance().pushMessage("GLFW and GLAD initialization succeeded.");
+        Manager::getInstance().pushMessage("GLFW and GLAD initialization succeeded.");
 
         // make imgui ready for glfw and OpenGL
         ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -56,8 +56,8 @@ namespace FluidSimulation {
         ImGui_ImplOpenGL3_CreateDeviceObjects();
 
         // init manager
-        Manager::GetInstance().init(window);
-        Manager::GetInstance().pushMessage("Start Main Render Loop.");
+        Manager::getInstance().init(window);
+        Manager::getInstance().pushMessage("Start Main Render Loop.");
 
         // main render loop
         while (!glfwWindowShouldClose(window)) {
@@ -73,7 +73,7 @@ namespace FluidSimulation {
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
-            Manager::GetInstance().displayViews();
+            Manager::getInstance().displayViews();
 
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
