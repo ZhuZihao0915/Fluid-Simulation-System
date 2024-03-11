@@ -43,7 +43,9 @@ namespace MAC3dPara{
     extern float theCellSize3d;
 
     extern bool oneSheet;
-    extern float distance;
+    extern float distanceX;
+    extern float distanceY;
+    extern float distanceZ;
     extern bool xySheetsON;
     extern bool yzSheetsON;
     extern bool xzSheetsON;

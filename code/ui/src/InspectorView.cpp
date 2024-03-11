@@ -22,11 +22,11 @@ namespace FluidSimulation {
 		{
 			for (int i = 0; i < methodComponents.size(); i++)
 			{
-				bool is_selected = (Manager::getInstance().getMethod() == methodComponents[i]); // You can store your selection however you want, outside or inside your objects
+				bool is_selected = (Manager::getInstance().getMethod() == methodComponents[i]);
 				if (ImGui::Selectable(methodComponents[i]->description, is_selected)) {
 					if (Manager::getInstance().getMethod() != methodComponents[i]) {
 						if (Manager::getInstance().getMethod() != NULL) {
-							Manager::getInstance().getMethod()->shutDown();  // 释放原来的模拟方法占用的内存
+							Manager::getInstance().getMethod()->shutDown();
 						}
 						Manager::getInstance().setMethod(methodComponents[i]);
 						Manager::getInstance().getMethod()->init();
@@ -34,7 +34,7 @@ namespace FluidSimulation {
 					}
 				}
 				if (is_selected)
-					ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+					ImGui::SetItemDefaultFocus();
 			}
 			ImGui::EndCombo();
 		}
@@ -177,12 +177,24 @@ namespace FluidSimulation {
 				ImGui::Separator();
 
 				ImGui::Text("Rendering:");
+
+				ImGui::RadioButton("Pixel", &MAC3dPara::drawModel, 0);
+				ImGui::RadioButton("Grid", &MAC3dPara::drawModel, 1);
+
 				ImGui::Checkbox("One Sheet", &MAC3dPara::oneSheet);
 				ImGui::Checkbox("X-Y", &MAC3dPara::xySheetsON);
 				ImGui::Checkbox("Y-Z", &MAC3dPara::yzSheetsON);
 				ImGui::Checkbox("X-Z", &MAC3dPara::xzSheetsON);
 				if (MAC3dPara::oneSheet) {
-					ImGui::SliderFloat("Distance", &MAC3dPara::distance, 0.0f, 1.0f);
+					if (MAC3dPara::xySheetsON) {
+						ImGui::SliderFloat("Distance Z", &MAC3dPara::distanceZ, 0.0f, 1.0f);
+					}
+					if (MAC3dPara::yzSheetsON) {
+						ImGui::SliderFloat("Distance X", &MAC3dPara::distanceX, 0.0f, 1.0f);
+					}
+					if (MAC3dPara::xzSheetsON) {
+						ImGui::SliderFloat("Distance Y", &MAC3dPara::distanceY, 0.0f, 1.0f);
+					}
 				}
 				else {
 					ImGui::InputScalar("X-Y Sheets", ImGuiDataType_S32, &MAC3dPara::xySheetsNum, &intStep, NULL);

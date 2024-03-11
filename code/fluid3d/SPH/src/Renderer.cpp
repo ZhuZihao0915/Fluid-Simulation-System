@@ -26,6 +26,10 @@ namespace FluidSimulation {
 
         void Renderer::Init() {
 
+
+            container = new Glb::Container();
+            container->init();
+
             // Build Shaders
 
             mDrawColor3d = new Glb::Shader();
@@ -255,6 +259,8 @@ namespace FluidSimulation {
             glDrawArrays(GL_POINTS, 0, particalNum);
             // mSkyBox->Draw(mWindow, mVaoNull, Glb::Camera::getInstance().GetView(), Glb::Camera::getInstance().GetProjection());
             mDrawColor3d->unUse();
+
+            container->draw();
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }

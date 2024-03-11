@@ -7,8 +7,8 @@
 
 #include <glad/glad.h>
 #include "glfw3.h"
-
 #include "Shader.h"
+#include "Container.h"
 
 #include "Camera.h"
 #include "SkyBox.h"
@@ -63,6 +63,9 @@ namespace FluidSimulation {
 
             // shaders
             Glb::Shader* mDrawColor3d = nullptr;
+
+            Glb::Container* container = nullptr;
+
             /*Glb::Shader* mScreenQuad = nullptr;
             Glb::Shader* mPointSpriteZValue = nullptr;
             Glb::Shader* mPointSpriteThickness = nullptr;

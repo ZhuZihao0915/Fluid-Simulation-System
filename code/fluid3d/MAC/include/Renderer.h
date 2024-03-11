@@ -6,6 +6,7 @@
 #include "glm/glm.hpp"
 #include <glfw3.h>
 #include "Shader.h"
+#include "Container.h"
 #include "MACGrid3d.h"
 #include "Camera.h"
 #include "Configure.h"
@@ -58,7 +59,7 @@ namespace FluidSimulation {
 
 			Glb::Shader* pixelShader;
 			Glb::Shader* gridShader;
-
+			Glb::Container* container;
 
 			MACGrid3d& mGrid;
 

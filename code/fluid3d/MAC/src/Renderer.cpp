@@ -47,6 +47,9 @@ namespace FluidSimulation {
 		Renderer::Renderer(MACGrid3d& grid) :mGrid(grid)
 		{
 
+			container = new Glb::Container();
+			container->init();
+
 			std::string particalVertShaderPath = shaderPath + "/DrawSmokePixel3d.vert";
 			std::string particalFragShaderPath = shaderPath + "/DrawSmokePixel3d.frag";
 			pixelShader = new Glb::Shader();
@@ -164,7 +167,7 @@ namespace FluidSimulation {
 					drawXZSheets();
 				}
 			}
-
+			container->draw();
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			
 		}
@@ -189,7 +192,7 @@ namespace FluidSimulation {
 					for (int i = 1; i <= width; i++) {
 						float pt_x = i * mGrid.mU.mMax[2] / (width);
 						float pt_y = j * mGrid.mV.mMax[1] / (height);
-						float pt_z = MAC3dPara::distance * mGrid.mW.mMax[2];
+						float pt_z = MAC3dPara::distanceZ * mGrid.mW.mMax[2];
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
 						data[4 * ((j - 1) * width + (i - 1))] = color.r;
@@ -220,7 +223,7 @@ namespace FluidSimulation {
 				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(0.0f, 0.0f, MAC3dPara::distance));
+				model = glm::translate(model, glm::vec3(0.0f, 0.0f, MAC3dPara::distanceZ));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -230,17 +233,65 @@ namespace FluidSimulation {
 				glDrawArrays(GL_TRIANGLES, 0, 6);
 			}
 			else if (MAC3dPara::drawModel == 1) {
-				for (int j = 1; j <= height; j++) {
-					for (int i = 1; i <= width; i++) {
-						float pt_x = i * mGrid.mU.mMax[2] / (width);
-						float pt_y = j * mGrid.mV.mMax[1] / (height);
-						float pt_z = MAC3dPara::distance * mGrid.mW.mMax[2];
-						glm::vec3 pt(pt_x, pt_y, pt_z);
-						glm::vec4 color = mGrid.getRenderColor(pt);
-						data[4 * ((j - 1) * width + (i - 1))] = color.r;
-						data[4 * ((j - 1) * width + (i - 1)) + 1] = color.g;
-						data[4 * ((j - 1) * width + (i - 1)) + 2] = color.b;
-						data[4 * ((j - 1) * width + (i - 1)) + 3] = color.a;
+				float dt_x = mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+				float dt_y = mGrid.mD.mMax[1] / (MAC3dPara::gridNumY);
+
+				for (int i = 1; i <= MAC3dPara::gridNumX; i++) {
+					for (int j = 1; j <= MAC3dPara::gridNumY; j++) {
+						float pt_x = i * mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+						float pt_y = j * mGrid.mD.mMax[1] / (MAC3dPara::gridNumY);
+						float pt_z = MAC3dPara::distanceZ * mGrid.mD.mMax[2];
+
+						vertices[0] = pt_x + dt_x / 2;
+						vertices[1] = pt_y - dt_y / 2;
+						vertices[5] = mGrid.getDensity(glm::vec3(vertices[0], vertices[1], pt_z));
+
+						vertices[6] = pt_x + dt_x / 2;
+						vertices[7] = pt_y + dt_y / 2;
+						vertices[11] = mGrid.getDensity(glm::vec3(vertices[6], vertices[7], pt_z));
+
+						vertices[12] = pt_x - dt_x / 2;
+						vertices[13] = pt_y + dt_y / 2;
+						vertices[17] = mGrid.getDensity(glm::vec3(vertices[12], vertices[13], pt_z));
+
+						vertices[18] = pt_x - dt_x / 2;
+						vertices[19] = pt_y - dt_y / 2;
+						vertices[23] = mGrid.getDensity(glm::vec3(vertices[18], vertices[19], pt_z));
+
+						for (int k = 0; k <= 18; k += 6) {
+							vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
+							vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[1]);
+							vertices[k + 2] = 0;
+						}
+
+						glBindVertexArray(VAO);
+						glBindBuffer(GL_ARRAY_BUFFER, VBO);
+						glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+						glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+						glEnableVertexAttribArray(0);
+						glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+						glEnableVertexAttribArray(1);
+						glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(5 * sizeof(float)));
+						glEnableVertexAttribArray(2);
+						glBindVertexArray(0);
+
+						gridShader->use();
+						glBindTexture(GL_TEXTURE_2D, smokeTexture);
+						glUniform1i(glGetUniformLocation(gridShader->getId(), "mTexture"), 0);
+
+						glm::mat4 view = Glb::Camera::getInstance().GetView();
+						glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+						glm::mat4 model = glm::mat4(1.0f);
+						model = glm::translate(model, glm::vec3(0.0f, 0.0f, MAC3dPara::distanceZ));
+						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+						glBindVertexArray(VAO);
+						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 					}
 				}
 			}
@@ -251,7 +302,7 @@ namespace FluidSimulation {
 				for (int k = height; k >= 1; k--) {
 					for (int i = width; i >= 1; i--) {
 						float pt_x = i * mGrid.mU.mMax[2] / (width);
-						float pt_y = MAC3dPara::distance * mGrid.mV.mMax[1];
+						float pt_y = MAC3dPara::distanceY * mGrid.mV.mMax[1];
 						float pt_z = k * mGrid.mW.mMax[2] / (height);
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
@@ -283,7 +334,7 @@ namespace FluidSimulation {
 				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(0.0f, MAC3dPara::distance, 0.0f));
+				model = glm::translate(model, glm::vec3(0.0f, MAC3dPara::distanceY, 0.0f));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -294,6 +345,68 @@ namespace FluidSimulation {
 			}
 			else if (MAC3dPara::drawModel == 1) {
 
+				float dt_x = mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+				float dt_z = mGrid.mD.mMax[2] / (MAC3dPara::gridNumZ);
+
+				for (int k = MAC3dPara::gridNumZ; k >= 1; k--) {
+					for (int i = MAC3dPara::gridNumX; i >= 1; i--) {
+						float pt_x = i * mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+						float pt_y = MAC3dPara::distanceY * mGrid.mD.mMax[1];
+						float pt_z = k * mGrid.mD.mMax[2] / (MAC3dPara::gridNumZ);
+
+						vertices[0] = pt_x + dt_x / 2;
+						vertices[2] = pt_z - dt_z / 2;
+						vertices[5] = mGrid.getDensity(glm::vec3(vertices[0], pt_y, vertices[2]));
+
+						vertices[6] = pt_x - dt_x / 2;
+						vertices[8] = pt_z - dt_z / 2;
+						vertices[11] = mGrid.getDensity(glm::vec3(vertices[6], pt_y, vertices[8]));
+
+						vertices[12] = pt_x - dt_x / 2;
+						vertices[14] = pt_z + dt_z / 2;
+						vertices[17] = mGrid.getDensity(glm::vec3(vertices[12], pt_y, vertices[14]));
+
+						vertices[18] = pt_x + dt_x / 2;
+						vertices[20] = pt_z + dt_z / 2;
+						vertices[23] = mGrid.getDensity(glm::vec3(vertices[18], pt_y, vertices[20]));
+
+						for (int k = 0; k <= 18; k += 6) {
+							vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
+							vertices[k + 1] = 0;
+							vertices[k + 2] = (vertices[k + 2] / mGrid.mD.mMax[2]);
+						}
+
+						glBindVertexArray(VAO);
+						glBindBuffer(GL_ARRAY_BUFFER, VBO);
+						glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+						glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+						glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+						glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+						glEnableVertexAttribArray(0);
+						glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+						glEnableVertexAttribArray(1);
+						glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(5 * sizeof(float)));
+						glEnableVertexAttribArray(2);
+						glBindVertexArray(0);
+
+						gridShader->use();
+						glBindTexture(GL_TEXTURE_2D, smokeTexture);
+						glUniform1i(glGetUniformLocation(gridShader->getId(), "mTexture"), 0);
+
+						glm::mat4 view = Glb::Camera::getInstance().GetView();
+						glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+						glm::mat4 model = glm::mat4(1.0f);
+						model = glm::translate(model, glm::vec3(0.0f, MAC3dPara::distanceY * mGrid.mD.mMax[1] / mGrid.mD.mMax[2], 0.0f));
+						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+						
+						glBindVertexArray(VAO);
+						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+					}
+				}
 			}
 		}
 
@@ -302,7 +415,7 @@ namespace FluidSimulation {
 
 				for (int k = height; k >= 1; k--) {
 					for (int j = 1; j <= width; j++) {
-						float pt_x = MAC3dPara::distance * mGrid.mU.mMax[0];
+						float pt_x = MAC3dPara::distanceX * mGrid.mU.mMax[0];
 						float pt_y = j * mGrid.mV.mMax[1] / (width);
 						float pt_z = k * mGrid.mW.mMax[2] / (height);
 						glm::vec3 pt(pt_x, pt_y, pt_z);
@@ -335,7 +448,7 @@ namespace FluidSimulation {
 				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(MAC3dPara::distance * mGrid.mU.mMax[0] / mGrid.mW.mMax[2], 0.0f, 0.0f));
+				model = glm::translate(model, glm::vec3((MAC3dPara::distanceX * mGrid.mU.mMax[0] / mGrid.mW.mMax[2]), 0.0f, 0.0f));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -351,7 +464,7 @@ namespace FluidSimulation {
 
 				for (int k = MAC3dPara::gridNumZ; k >= 1; k--) {
 					for (int j = 1; j <= MAC3dPara::gridNumY; j++) {
-						float pt_x = MAC3dPara::distance * mGrid.mD.mMax[0];
+						float pt_x = MAC3dPara::distanceX * mGrid.mD.mMax[0];
 						float pt_y = j * mGrid.mD.mMax[1] / (MAC3dPara::gridNumY);
 						float pt_z = k * mGrid.mD.mMax[2] / (MAC3dPara::gridNumZ);
 
@@ -361,19 +474,20 @@ namespace FluidSimulation {
 
 						vertices[7] = pt_y + dt_y / 2;
 						vertices[8] = pt_z - dt_z / 2;
-						vertices[11] = mGrid.getDensity(glm::vec3(pt_x, vertices[1], vertices[2]));
+						vertices[11] = mGrid.getDensity(glm::vec3(pt_x, vertices[7], vertices[8]));
 
 						vertices[13] = pt_y + dt_y / 2;
 						vertices[14] = pt_z + dt_z / 2;
-						vertices[17] = mGrid.getDensity(glm::vec3(pt_x, vertices[1], vertices[2]));
+						vertices[17] = mGrid.getDensity(glm::vec3(pt_x, vertices[13], vertices[14]));
 
 						vertices[19] = pt_y - dt_y / 2;
 						vertices[20] = pt_z + dt_z / 2;
-						vertices[23] = mGrid.getDensity(glm::vec3(pt_x, vertices[1], vertices[2]));
+						vertices[23] = mGrid.getDensity(glm::vec3(pt_x, vertices[19], vertices[20]));
 
 						for (int k = 1; k <= 19; k += 6) {
-							vertices[k] = (vertices[k] / mGrid.mD.mMax[1]) * 2 - 1;
-							vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[2]) * 2 - 1;
+							vertices[k - 1] = 0;
+							vertices[k] = (vertices[k] / mGrid.mD.mMax[1]);
+							vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[2]);
 						}
 
 						glBindVertexArray(VAO);
@@ -397,7 +511,7 @@ namespace FluidSimulation {
 						glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 						glm::mat4 model = glm::mat4(1.0f);
-						model = glm::translate(model, glm::vec3(MAC3dPara::distance * mGrid.mD.mMax[0] / mGrid.mD.mMax[2], 0.0f, 0.0f));
+						model = glm::translate(model, glm::vec3(MAC3dPara::distanceX * mGrid.mD.mMax[0] / mGrid.mD.mMax[2], 0.0f, 0.0f));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -440,156 +554,363 @@ namespace FluidSimulation {
 
 		void Renderer::drawXYSheets()
 		{
+			if (MAC3dPara::drawModel == 0) {
 
-			for (float k = eps; k <= mGrid.mW.mMax[2];k+=(mGrid.mW.mMax[2]-2*eps)/(MAC3dPara::xySheetsNum-1)) {
+				for (float k = eps; k <= mGrid.mW.mMax[2];k+=(mGrid.mW.mMax[2]-2*eps)/(MAC3dPara::xySheetsNum-1)) {
 				
-				for (int j = 1; j <= height; j++) {
-					for (int i = 1; i <= width; i++) {
-						float pt_x = i * mGrid.mU.mMax[0] / (width);
-						float pt_y = j * mGrid.mV.mMax[1] / (height);
-						float pt_z = k;
-						glm::vec3 pt(pt_x, pt_y, pt_z);
-						glm::vec4 color = mGrid.getRenderColor(pt);
-						data[4 * ((j - 1) * width + (i - 1))] = color.r;
-						data[4 * ((j - 1) * width + (i - 1))+1] = color.g;
-						data[4 * ((j - 1) * width + (i - 1))+2] = color.b;
-						data[4 * ((j - 1) * width + (i - 1))+3] = color.a;
+					for (int j = 1; j <= height; j++) {
+						for (int i = 1; i <= width; i++) {
+							float pt_x = i * mGrid.mU.mMax[0] / (width);
+							float pt_y = j * mGrid.mV.mMax[1] / (height);
+							float pt_z = k;
+							glm::vec3 pt(pt_x, pt_y, pt_z);
+							glm::vec4 color = mGrid.getRenderColor(pt);
+							data[4 * ((j - 1) * width + (i - 1))] = color.r;
+							data[4 * ((j - 1) * width + (i - 1))+1] = color.g;
+							data[4 * ((j - 1) * width + (i - 1))+2] = color.b;
+							data[4 * ((j - 1) * width + (i - 1))+3] = color.a;
+						}
 					}
+
+					unsigned int texture;
+					glGenTextures(1, &texture);
+					glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+					// set the texture wrapping parameters
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+					// set texture filtering parameters
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+					glGenerateMipmap(GL_TEXTURE_2D);
+
+					pixelShader->use();
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, texture);
+					glUniform1i(glGetUniformLocation(pixelShader->getId(), "aTexture"), 0);
+
+					glm::mat4 view = Glb::Camera::getInstance().GetView();
+					glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+					glm::mat4 model = glm::mat4(1.0f);
+					model = glm::translate(model, glm::vec3(0.0f, 0.0f, k/ mGrid.mW.mMax[2]));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+					glBindVertexArray(VAO_XY);
+					pixelShader->use();
+					glDrawArrays(GL_TRIANGLES, 0, 6);
 				}
 
-				unsigned int texture;
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-				// set the texture wrapping parameters
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				// set texture filtering parameters
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
-				glGenerateMipmap(GL_TEXTURE_2D);
-
-				pixelShader->use();
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, texture);
-				glUniform1i(glGetUniformLocation(pixelShader->getId(), "aTexture"), 0);
-
-				glm::mat4 view = Glb::Camera::getInstance().GetView();
-				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
-
-				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(0.0f, 0.0f, k/ mGrid.mW.mMax[2]));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-				glBindVertexArray(VAO_XY);
-				pixelShader->use();
-				glDrawArrays(GL_TRIANGLES, 0, 6);
-
 			}
+			else if (MAC3dPara::drawModel == 1) {
+				float dt_x = mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+				float dt_y = mGrid.mD.mMax[1] / (MAC3dPara::gridNumY);
+				float dt_z = 1.0f / (MAC3dPara::xySheetsNum + 1);
 
+				for (float k = dt_z; k < 1; k += dt_z) {
+					for (int i = 1; i <= MAC3dPara::gridNumX; i++) {
+						for (int j = 1; j <= MAC3dPara::gridNumY; j++) {
+							float pt_x = i * mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+							float pt_y = j * mGrid.mD.mMax[1] / (MAC3dPara::gridNumY);
+							float pt_z = k * mGrid.mD.mMax[2];
+
+							vertices[0] = pt_x + dt_x / 2;
+							vertices[1] = pt_y - dt_y / 2;
+							vertices[5] = mGrid.getDensity(glm::vec3(vertices[0], vertices[1], pt_z));
+
+							vertices[6] = pt_x + dt_x / 2;
+							vertices[7] = pt_y + dt_y / 2;
+							vertices[11] = mGrid.getDensity(glm::vec3(vertices[6], vertices[7], pt_z));
+
+							vertices[12] = pt_x - dt_x / 2;
+							vertices[13] = pt_y + dt_y / 2;
+							vertices[17] = mGrid.getDensity(glm::vec3(vertices[12], vertices[13], pt_z));
+
+							vertices[18] = pt_x - dt_x / 2;
+							vertices[19] = pt_y - dt_y / 2;
+							vertices[23] = mGrid.getDensity(glm::vec3(vertices[18], vertices[19], pt_z));
+
+							for (int k = 0; k <= 18; k += 6) {
+								vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
+								vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[1]);
+								vertices[k + 2] = 0;
+							}
+
+							glBindVertexArray(VAO);
+							glBindBuffer(GL_ARRAY_BUFFER, VBO);
+							glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+							glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+							glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+							glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+							glEnableVertexAttribArray(0);
+							glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+							glEnableVertexAttribArray(1);
+							glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(5 * sizeof(float)));
+							glEnableVertexAttribArray(2);
+							glBindVertexArray(0);
+
+							gridShader->use();
+							glBindTexture(GL_TEXTURE_2D, smokeTexture);
+							glUniform1i(glGetUniformLocation(gridShader->getId(), "mTexture"), 0);
+
+							glm::mat4 view = Glb::Camera::getInstance().GetView();
+							glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+							glm::mat4 model = glm::mat4(1.0f);
+							model = glm::translate(model, glm::vec3(0.0f, 0.0f, k));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+							glBindVertexArray(VAO);
+							glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+						}
+					}
+				}
+			}
 		}
 
 		void Renderer::drawYZSheets()
 		{
+			if (MAC3dPara::drawModel == 0) {
+				for (float i = eps; i <= mGrid.mU.mMax[0]; i += (mGrid.mU.mMax[0]-2*eps) / (MAC3dPara::yzSheetsNum - 1)) {
+					for (int k = height; k >= 1; k--) {
+						for (int j = 1; j <= width; j++) {
+							float pt_x = i;
+							float pt_y = j * mGrid.mV.mMax[1] / (width);
+							float pt_z = k * mGrid.mW.mMax[2] / (height);
+							glm::vec3 pt(pt_x, pt_y, pt_z);
+							glm::vec4 color = mGrid.getRenderColor(pt);
+							data[4 * ((height - k) * width + (j - 1))] = color.r;
+							data[4 * ((height - k) * width + (j - 1)) + 1] = color.g;
+							data[4 * ((height - k) * width + (j - 1)) + 2] = color.b;
+							data[4 * ((height - k) * width + (j - 1)) + 3] = color.a;
+						}
+					}
 
-			for (float i = eps; i <= mGrid.mU.mMax[0]; i += (mGrid.mU.mMax[0]-2*eps) / (MAC3dPara::yzSheetsNum - 1)) {
-				for (int k = height; k >= 1; k--) {
-					for (int j = 1; j <= width; j++) {
-						float pt_x = i;
-						float pt_y = j * mGrid.mV.mMax[1] / (width);
-						float pt_z = k * mGrid.mW.mMax[2] / (height);
-						glm::vec3 pt(pt_x, pt_y, pt_z);
-						glm::vec4 color = mGrid.getRenderColor(pt);
-						data[4 * ((height - k) * width + (j - 1))] = color.r;
-						data[4 * ((height - k) * width + (j - 1)) + 1] = color.g;
-						data[4 * ((height - k) * width + (j - 1)) + 2] = color.b;
-						data[4 * ((height - k) * width + (j - 1)) + 3] = color.a;
+					unsigned int texture;
+					glGenTextures(1, &texture);
+					glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+					// set the texture wrapping parameters
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+					// set texture filtering parameters
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+					glGenerateMipmap(GL_TEXTURE_2D);
+
+					pixelShader->use();
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, texture);
+					glUniform1i(glGetUniformLocation(pixelShader->getId(), "aTexture"), 0);
+
+					glm::mat4 view = Glb::Camera::getInstance().GetView();
+					glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+					glm::mat4 model = glm::mat4(1.0f);
+					model = glm::translate(model, glm::vec3(i / mGrid.mU.mMax[2], 0.0f, 0.0f));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+					glBindVertexArray(VAO_YZ);
+					pixelShader->use();
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				}
+			}
+			else if (MAC3dPara::drawModel == 1) {
+
+				float dt_y = mGrid.mD.mMax[1] / (MAC3dPara::gridNumY);
+				float dt_z = mGrid.mD.mMax[2] / (MAC3dPara::gridNumZ);
+
+				float dt_x = 1.0f / (MAC3dPara::yzSheetsNum + 1);
+				for (float i = dt_x; i < 0.999f; i += dt_x) {
+					for (int k = MAC3dPara::gridNumZ; k >= 1; k--) {
+						for (int j = 1; j <= MAC3dPara::gridNumY; j++) {
+							float pt_x = i * mGrid.mD.mMax[0];
+							float pt_y = j * mGrid.mD.mMax[1] / (MAC3dPara::gridNumY);
+							float pt_z = k * mGrid.mD.mMax[2] / (MAC3dPara::gridNumZ);
+
+							vertices[1] = pt_y - dt_y / 2;
+							vertices[2] = pt_z - dt_z / 2;
+							vertices[5] = mGrid.getDensity(glm::vec3(pt_x, vertices[1], vertices[2]));
+
+							vertices[7] = pt_y + dt_y / 2;
+							vertices[8] = pt_z - dt_z / 2;
+							vertices[11] = mGrid.getDensity(glm::vec3(pt_x, vertices[7], vertices[8]));
+
+							vertices[13] = pt_y + dt_y / 2;
+							vertices[14] = pt_z + dt_z / 2;
+							vertices[17] = mGrid.getDensity(glm::vec3(pt_x, vertices[13], vertices[14]));
+
+							vertices[19] = pt_y - dt_y / 2;
+							vertices[20] = pt_z + dt_z / 2;
+							vertices[23] = mGrid.getDensity(glm::vec3(pt_x, vertices[19], vertices[20]));
+
+							for (int k = 1; k <= 19; k += 6) {
+								vertices[k - 1] = 0;
+								vertices[k] = (vertices[k] / mGrid.mD.mMax[1]);
+								vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[2]);
+							}
+
+							glBindVertexArray(VAO);
+							glBindBuffer(GL_ARRAY_BUFFER, VBO);
+							glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+							glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+							glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+							glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+							glEnableVertexAttribArray(0);
+							glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+							glEnableVertexAttribArray(1);
+							glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(5 * sizeof(float)));
+							glEnableVertexAttribArray(2);
+							glBindVertexArray(0);
+
+							gridShader->use();
+							glBindTexture(GL_TEXTURE_2D, smokeTexture);
+							glUniform1i(glGetUniformLocation(gridShader->getId(), "mTexture"), 0);
+
+							glm::mat4 view = Glb::Camera::getInstance().GetView();
+							glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+							glm::mat4 model = glm::mat4(1.0f);
+							model = glm::translate(model, glm::vec3(i * mGrid.mD.mMax[0] / mGrid.mD.mMax[2], 0.0f, 0.0f));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+							glBindVertexArray(VAO);
+							glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+						}
 					}
 				}
-
-				unsigned int texture;
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-				// set the texture wrapping parameters
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				// set texture filtering parameters
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
-				glGenerateMipmap(GL_TEXTURE_2D);
-
-				pixelShader->use();
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, texture);
-				glUniform1i(glGetUniformLocation(pixelShader->getId(), "aTexture"), 0);
-
-				glm::mat4 view = Glb::Camera::getInstance().GetView();
-				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
-
-				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(i / mGrid.mU.mMax[2], 0.0f, 0.0f));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-				glBindVertexArray(VAO_YZ);
-				pixelShader->use();
-				glDrawArrays(GL_TRIANGLES, 0, 6);
-
 			}
 		}
 
 		void Renderer::drawXZSheets()
 		{
+			if (MAC3dPara::drawModel == 0) {
 
-			for (float j = eps; j <= mGrid.mV.mMax[1]; j += (mGrid.mV.mMax[1] - 2 * eps) / (MAC3dPara::xzSheetsNum - 1)) {
-				for (int k = height; k >= 1; k--) {
-					for (int i = width; i >= 1; i--) {
-						float pt_x = i * mGrid.mU.mMax[0] / (width);
-						float pt_y = j;
-						float pt_z = k * mGrid.mW.mMax[2] / (height);
-						glm::vec3 pt(pt_x, pt_y, pt_z);
-						glm::vec4 color = mGrid.getRenderColor(pt);
-						data[4 * ((height - k) * width + (width - i))] = color.r;
-						data[4 * ((height - k) * width + (width - i)) + 1] = color.g;
-						data[4 * ((height - k) * width + (width - i)) + 2] = color.b;
-						data[4 * ((height - k) * width + (width - i)) + 3] = color.a;
+				for (float j = eps; j <= mGrid.mV.mMax[1]; j += (mGrid.mV.mMax[1] - 2 * eps) / (MAC3dPara::xzSheetsNum - 1)) {
+					for (int k = height; k >= 1; k--) {
+						for (int i = width; i >= 1; i--) {
+							float pt_x = i * mGrid.mU.mMax[0] / (width);
+							float pt_y = j;
+							float pt_z = k * mGrid.mW.mMax[2] / (height);
+							glm::vec3 pt(pt_x, pt_y, pt_z);
+							glm::vec4 color = mGrid.getRenderColor(pt);
+							data[4 * ((height - k) * width + (width - i))] = color.r;
+							data[4 * ((height - k) * width + (width - i)) + 1] = color.g;
+							data[4 * ((height - k) * width + (width - i)) + 2] = color.b;
+							data[4 * ((height - k) * width + (width - i)) + 3] = color.a;
+						}
+					}
+
+					unsigned int texture;
+					glGenTextures(1, &texture);
+					glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+					// set the texture wrapping parameters
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+					// set texture filtering parameters
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+					glGenerateMipmap(GL_TEXTURE_2D);
+
+					pixelShader->use();
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, texture);
+					glUniform1i(glGetUniformLocation(pixelShader->getId(), "aTexture"), 0);
+
+					glm::mat4 view = Glb::Camera::getInstance().GetView();
+					glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+					glm::mat4 model = glm::mat4(1.0f);
+					model = glm::translate(model, glm::vec3(0.0f, j / mGrid.mV.mMax[1], 0.0f));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+					glBindVertexArray(VAO_XZ);
+					pixelShader->use();
+					glDrawArrays(GL_TRIANGLES, 0, 6);
+
+				}
+			}
+			else if (MAC3dPara::drawModel == 1) {
+
+				float dt_x = mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+				float dt_z = mGrid.mD.mMax[2] / (MAC3dPara::gridNumZ);
+
+				float dt_y = 1.0f / (MAC3dPara::xzSheetsNum + 1);
+
+				for (float j = dt_y; j < 1; j += dt_y) {
+
+					for (int k = MAC3dPara::gridNumZ; k >= 1; k--) {
+						for (int i = MAC3dPara::gridNumX; i >= 1; i--) {
+							float pt_x = i * mGrid.mD.mMax[0] / (MAC3dPara::gridNumX);
+							float pt_y = j * mGrid.mD.mMax[1];
+							float pt_z = k * mGrid.mD.mMax[2] / (MAC3dPara::gridNumZ);
+
+							vertices[0] = pt_x + dt_x / 2;
+							vertices[2] = pt_z - dt_z / 2;
+							vertices[5] = mGrid.getDensity(glm::vec3(vertices[0], pt_y, vertices[2]));
+
+							vertices[6] = pt_x - dt_x / 2;
+							vertices[8] = pt_z - dt_z / 2;
+							vertices[11] = mGrid.getDensity(glm::vec3(vertices[6], pt_y, vertices[8]));
+
+							vertices[12] = pt_x - dt_x / 2;
+							vertices[14] = pt_z + dt_z / 2;
+							vertices[17] = mGrid.getDensity(glm::vec3(vertices[12], pt_y, vertices[14]));
+
+							vertices[18] = pt_x + dt_x / 2;
+							vertices[20] = pt_z + dt_z / 2;
+							vertices[23] = mGrid.getDensity(glm::vec3(vertices[18], pt_y, vertices[20]));
+
+							for (int k = 0; k <= 18; k += 6) {
+								vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
+								vertices[k + 1] = 0;
+								vertices[k + 2] = (vertices[k + 2] / mGrid.mD.mMax[2]);
+							}
+
+							glBindVertexArray(VAO);
+							glBindBuffer(GL_ARRAY_BUFFER, VBO);
+							glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+							glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+							glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+							glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+							glEnableVertexAttribArray(0);
+							glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+							glEnableVertexAttribArray(1);
+							glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(5 * sizeof(float)));
+							glEnableVertexAttribArray(2);
+							glBindVertexArray(0);
+
+							gridShader->use();
+							glBindTexture(GL_TEXTURE_2D, smokeTexture);
+							glUniform1i(glGetUniformLocation(gridShader->getId(), "mTexture"), 0);
+
+							glm::mat4 view = Glb::Camera::getInstance().GetView();
+							glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
+
+							glm::mat4 model = glm::mat4(1.0f);
+							model = glm::translate(model, glm::vec3(0.0f, j, 0.0f));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+							glBindVertexArray(VAO);
+							glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+						}
 					}
 				}
-
-				unsigned int texture;
-				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-				// set the texture wrapping parameters
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-				// set texture filtering parameters
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
-				glGenerateMipmap(GL_TEXTURE_2D);
-
-				pixelShader->use();
-				glActiveTexture(GL_TEXTURE0);
-				glBindTexture(GL_TEXTURE_2D, texture);
-				glUniform1i(glGetUniformLocation(pixelShader->getId(), "aTexture"), 0);
-
-				glm::mat4 view = Glb::Camera::getInstance().GetView();
-				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
-
-				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3(0.0f, j / mGrid.mV.mMax[1], 0.0f));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
-				glBindVertexArray(VAO_XZ);
-				pixelShader->use();
-				glDrawArrays(GL_TRIANGLES, 0, 6);
-
 			}
 		}
 
