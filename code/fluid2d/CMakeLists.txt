@@ -1,3 +1,3 @@
 
-add_subdirectory("./SPH")
-add_subdirectory("./MAC")
+add_subdirectory("./Lagrangian")
+add_subdirectory("./Eulerian")

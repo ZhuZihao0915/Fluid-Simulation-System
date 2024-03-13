@@ -14,10 +14,10 @@ namespace FluidSimulation
         // TODO
         // Ìí¼Ó·½·¨
         int id = 0;
-        methodComponents.push_back(new SPH2d::Sph2dComponent("sph 2d", id++));
-        methodComponents.push_back(new MAC2d::Mac2dComponent("mac 2d", id++));
-        methodComponents.push_back(new SPH3d::Sph3dComponent("sph 3d", id++));
-        methodComponents.push_back(new MAC3d::Mac3dComponent("mac 3d", id++));
+        methodComponents.push_back(new Lagrangian2d::Lagrangian2dComponent("Lagrangian 2d", id++));
+        methodComponents.push_back(new Eulerian2d::Eulerian2dComponent("Eulerian 2d", id++));
+        methodComponents.push_back(new Lagrangian3d::Lagrangian3dComponent("Lagrangian 3d", id++));
+        methodComponents.push_back(new Eulerian3d::Eulerian3dComponent("Eulerian 3d", id++));
     }
 
 	void Manager::displayViews() {

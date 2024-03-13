@@ -34,7 +34,7 @@ namespace FluidSimulation {
 
         // show image
         ImGui::SetCursorPosX((windowSize.x - imageWidth) * 0.5f);
-        ImGui::SetCursorPosY(70);
+        ImGui::SetCursorPosY(55);
         ImVec2 imageSize(imageWidth, imageHeight);
         if (Manager::getInstance().getMethod() == NULL) {
             ImGui::Image(NULL, imageSize);

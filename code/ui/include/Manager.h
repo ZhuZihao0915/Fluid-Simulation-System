@@ -15,10 +15,10 @@
 #include "InspectorView.h"
 #include "ProjectView.h"
 
-#include "Sph2dComponent.h"
-#include "Mac2dComponent.h"
-#include "Sph3dComponent.h"
-#include "Mac3dComponent.h"
+#include "Lagrangian2dComponent.h"
+#include "Eulerian2dComponent.h"
+#include "Lagrangian3dComponent.h"
+#include "Eulerian3dComponent.h"
 
 #include <vector>
 

@@ -1,17 +1,16 @@
 #include "GridData2d.h"
 #include "Configure.h"
 
-namespace Glb {
+namespace Glb
+{
 
-    GridData2d::GridData2d() :
-        mDfltValue(0.0), mMax(0.0, 0.0), cellSize(MAC2dPara::theCellSize2d)
+    GridData2d::GridData2d() : mDfltValue(0.0), mMax(0.0, 0.0), cellSize(Eulerian2dPara::theCellSize2d)
     {
-        dim[0] = MAC2dPara::theDim2d[0];
-        dim[1] = MAC2dPara::theDim2d[1];
+        dim[0] = Eulerian2dPara::theDim2d[0];
+        dim[1] = Eulerian2dPara::theDim2d[1];
     }
 
-    GridData2d::GridData2d(const GridData2d& orig) :
-        mDfltValue(orig.mDfltValue)
+    GridData2d::GridData2d(const GridData2d &orig) : mDfltValue(orig.mDfltValue)
     {
         mData = orig.mData;
         mMax = orig.mMax;
@@ -24,12 +23,12 @@ namespace Glb {
     {
     }
 
-    ublas::vector<double>& GridData2d::data()
+    ublas::vector<double> &GridData2d::data()
     {
         return mData;
     }
 
-    GridData2d& GridData2d::operator=(const GridData2d& orig)
+    GridData2d &GridData2d::operator=(const GridData2d &orig)
     {
         if (this == &orig)
         {
@@ -52,14 +51,14 @@ namespace Glb {
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
-    double& GridData2d::operator()(int i, int j)
+    double &GridData2d::operator()(int i, int j)
     {
         static double dflt = 0;
-        dflt = mDfltValue;  // HACK: Protect against setting the default value
+        dflt = mDfltValue; // HACK: Protect against setting the default value
 
-        if (i< 0 || j<0 ||
+        if (i < 0 || j < 0 ||
             i > dim[0] - 1 ||
-            j > dim[1] - 1 )
+            j > dim[1] - 1)
             return dflt;
 
         int col = i;
@@ -68,14 +67,14 @@ namespace Glb {
         return mData(col + row);
     }
 
-    void GridData2d::getCell(const glm::vec2& pt, int& i, int& j)
+    void GridData2d::getCell(const glm::vec2 &pt, int &i, int &j)
     {
         glm::vec2 pos = worldToSelf(pt);
         i = (int)(pos[0] / cellSize);
         j = (int)(pos[1] / cellSize);
     }
 
-    double GridData2d::interpolate(const glm::vec2& pt)
+    double GridData2d::interpolate(const glm::vec2 &pt)
     {
         glm::vec2 pos = worldToSelf(pt);
 
@@ -101,7 +100,7 @@ namespace Glb {
         return tmp;
     }
 
-    glm::vec2 GridData2d::worldToSelf(const glm::vec2& pt) const
+    glm::vec2 GridData2d::worldToSelf(const glm::vec2 &pt) const
     {
         glm::vec2 out;
         out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
@@ -126,15 +125,18 @@ namespace Glb {
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
-    double& GridData2dX::operator()(int i, int j)
+    double &GridData2dX::operator()(int i, int j)
     {
         static double dflt = 0;
-        dflt = mDfltValue;  // Protect against setting the default value
+        dflt = mDfltValue; // Protect against setting the default value
 
-        if (i < 0 || i > dim[0]) return dflt;
+        if (i < 0 || i > dim[0])
+            return dflt;
 
-        if (j < 0) j = 0;
-        if (j > dim[1] - 1) j = dim[1] - 1;
+        if (j < 0)
+            j = 0;
+        if (j > dim[1] - 1)
+            j = dim[1] - 1;
 
         int col = i;
         int row = j * (dim[0] + 1);
@@ -142,7 +144,7 @@ namespace Glb {
         return mData(row + col);
     }
 
-    glm::vec2 GridData2dX::worldToSelf(const glm::vec2& pt) const
+    glm::vec2 GridData2dX::worldToSelf(const glm::vec2 &pt) const
     {
         glm::vec2 out;
         out[0] = min(max(0.0, pt[0]), mMax[0]);
@@ -167,15 +169,18 @@ namespace Glb {
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
-    double& GridData2dY::operator()(int i, int j)
+    double &GridData2dY::operator()(int i, int j)
     {
         static double dflt = 0;
-        dflt = mDfltValue;  // Protect against setting the default value
+        dflt = mDfltValue; // Protect against setting the default value
 
-        if (j < 0 || j > dim[1]) return dflt;
+        if (j < 0 || j > dim[1])
+            return dflt;
 
-        if (i < 0) i = 0;
-        if (i > dim[0] - 1) i = dim[0] - 1;
+        if (i < 0)
+            i = 0;
+        if (i > dim[0] - 1)
+            i = dim[0] - 1;
 
         int col = i;
         int row = j * dim[0];
@@ -183,7 +188,7 @@ namespace Glb {
         return mData(row + col);
     }
 
-    glm::vec2 GridData2dY::worldToSelf(const glm::vec2& pt) const
+    glm::vec2 GridData2dY::worldToSelf(const glm::vec2 &pt) const
     {
         glm::vec2 out;
         out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
@@ -195,7 +200,7 @@ namespace Glb {
     {
     }
 
-    CubicGridData2d::CubicGridData2d(const CubicGridData2d& orig) : GridData2d(orig)
+    CubicGridData2d::CubicGridData2d(const CubicGridData2d &orig) : GridData2d(orig)
     {
     }
 
@@ -236,14 +241,14 @@ namespace Glb {
 
     double CubicGridData2d::interpX(int i, int j, double fracty, double fractx)
     {
-        double tmp1 = interpY(i - 1 < 0 ? i : i - 1, j, fracty);  // hack
+        double tmp1 = interpY(i - 1 < 0 ? i : i - 1, j, fracty); // hack
         double tmp2 = interpY(i, j, fracty);
         double tmp3 = interpY(i + 1, j, fracty);
         double tmp4 = interpY(i + 2, j, fracty);
         return cubic(tmp1, tmp2, tmp3, tmp4, fractx);
     }
 
-    double CubicGridData2d::interpolate(const glm::vec2& pt)
+    double CubicGridData2d::interpolate(const glm::vec2 &pt)
     {
         // Bicubic Interpolation
         glm::vec2 pos = worldToSelf(pt);
@@ -257,7 +262,6 @@ namespace Glb {
 
         assert(fractx < 1.0 && fractx >= 0);
         assert(fracty < 1.0 && fracty >= 0);
-
 
         double tmp = interpX(i, j, fracty, fractx);
         return tmp;
@@ -277,4 +281,3 @@ namespace Glb {
         return tmp;*/
     }
 }
-

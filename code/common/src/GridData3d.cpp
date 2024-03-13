@@ -1,18 +1,17 @@
 #include "GridData3d.h"
 #include "Configure.h"
 
-namespace Glb {
+namespace Glb
+{
 
-    GridData3d::GridData3d() :
-        mDfltValue(0.0), mMax(0.0, 0.0, 0.0), cellSize(MAC3dPara::theCellSize3d)
+    GridData3d::GridData3d() : mDfltValue(0.0), mMax(0.0, 0.0, 0.0), cellSize(Eulerian3dPara::theCellSize3d)
     {
-        dim[0] = MAC3dPara::theDim3d[0];
-        dim[1] = MAC3dPara::theDim3d[1];
-        dim[2] = MAC3dPara::theDim3d[2];
+        dim[0] = Eulerian3dPara::theDim3d[0];
+        dim[1] = Eulerian3dPara::theDim3d[1];
+        dim[2] = Eulerian3dPara::theDim3d[2];
     }
 
-    GridData3d::GridData3d(const GridData3d& orig) :
-        mDfltValue(orig.mDfltValue)
+    GridData3d::GridData3d(const GridData3d &orig) : mDfltValue(orig.mDfltValue)
     {
         mData = orig.mData;
         mMax = orig.mMax;
@@ -26,12 +25,12 @@ namespace Glb {
     {
     }
 
-    ublas::vector<double>& GridData3d::data()
+    ublas::vector<double> &GridData3d::data()
     {
         return mData;
     }
 
-    GridData3d& GridData3d::operator=(const GridData3d& orig)
+    GridData3d &GridData3d::operator=(const GridData3d &orig)
     {
         if (this == &orig)
         {
@@ -56,15 +55,16 @@ namespace Glb {
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
-    double& GridData3d::operator()(int i, int j, int k)
+    double &GridData3d::operator()(int i, int j, int k)
     {
         static double dflt = 0;
-        dflt = mDfltValue;  // HACK: Protect against setting the default value
+        dflt = mDfltValue; // HACK: Protect against setting the default value
 
-        if (i< 0 || j<0 || k<0 ||
+        if (i < 0 || j < 0 || k < 0 ||
             i > dim[0] - 1 ||
             j > dim[1] - 1 ||
-            k > dim[2] - 1) return dflt;
+            k > dim[2] - 1)
+            return dflt;
 
         int col = i;
         int row = k * dim[0];
@@ -73,7 +73,7 @@ namespace Glb {
         return mData(col + row + stack);
     }
 
-    void GridData3d::getCell(const glm::vec3& pt, int& i, int& j, int& k)
+    void GridData3d::getCell(const glm::vec3 &pt, int &i, int &j, int &k)
     {
         glm::vec3 pos = worldToSelf(pt);
         i = (int)(pos[0] / cellSize);
@@ -81,7 +81,7 @@ namespace Glb {
         k = (int)(pos[2] / cellSize);
     }
 
-    double GridData3d::interpolate(const glm::vec3& pt)
+    double GridData3d::interpolate(const glm::vec3 &pt)
     {
         glm::vec3 pos = worldToSelf(pt);
 
@@ -121,7 +121,7 @@ namespace Glb {
         return tmp;
     }
 
-    glm::vec3 GridData3d::worldToSelf(const glm::vec3& pt) const
+    glm::vec3 GridData3d::worldToSelf(const glm::vec3 &pt) const
     {
         glm::vec3 out;
         out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
@@ -148,17 +148,22 @@ namespace Glb {
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
-    double& GridData3dX::operator()(int i, int j, int k)
+    double &GridData3dX::operator()(int i, int j, int k)
     {
         static double dflt = 0;
-        dflt = mDfltValue;  // Protect against setting the default value
+        dflt = mDfltValue; // Protect against setting the default value
 
-        if (i < 0 || i > dim[0]) return dflt;
+        if (i < 0 || i > dim[0])
+            return dflt;
 
-        if (j < 0) j = 0;
-        if (j > dim[1] - 1) j = dim[1] - 1;
-        if (k < 0) k = 0;
-        if (k > dim[2] - 1) k = dim[2] - 1;
+        if (j < 0)
+            j = 0;
+        if (j > dim[1] - 1)
+            j = dim[1] - 1;
+        if (k < 0)
+            k = 0;
+        if (k > dim[2] - 1)
+            k = dim[2] - 1;
 
         int col = i;
         int row = k * (dim[0] + 1);
@@ -166,7 +171,7 @@ namespace Glb {
         return mData(stack + row + col);
     }
 
-    glm::vec3 GridData3dX::worldToSelf(const glm::vec3& pt) const
+    glm::vec3 GridData3dX::worldToSelf(const glm::vec3 &pt) const
     {
         glm::vec3 out;
         out[0] = min(max(0.0, pt[0]), mMax[0]);
@@ -193,17 +198,22 @@ namespace Glb {
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
-    double& GridData3dY::operator()(int i, int j, int k)
+    double &GridData3dY::operator()(int i, int j, int k)
     {
         static double dflt = 0;
-        dflt = mDfltValue;  // Protect against setting the default value
+        dflt = mDfltValue; // Protect against setting the default value
 
-        if (j < 0 || j > dim[1]) return dflt;
+        if (j < 0 || j > dim[1])
+            return dflt;
 
-        if (i < 0) i = 0;
-        if (i > dim[0] - 1) i = dim[0] - 1;
-        if (k < 0) k = 0;
-        if (k > dim[2] - 1) k = dim[2] - 1;
+        if (i < 0)
+            i = 0;
+        if (i > dim[0] - 1)
+            i = dim[0] - 1;
+        if (k < 0)
+            k = 0;
+        if (k > dim[2] - 1)
+            k = dim[2] - 1;
 
         int col = i;
         int row = k * dim[0];
@@ -211,7 +221,7 @@ namespace Glb {
         return mData(stack + row + col);
     }
 
-    glm::vec3 GridData3dY::worldToSelf(const glm::vec3& pt) const
+    glm::vec3 GridData3dY::worldToSelf(const glm::vec3 &pt) const
     {
         glm::vec3 out;
         out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
@@ -238,17 +248,22 @@ namespace Glb {
         std::fill(mData.begin(), mData.end(), mDfltValue);
     }
 
-    double& GridData3dZ::operator()(int i, int j, int k)
+    double &GridData3dZ::operator()(int i, int j, int k)
     {
         static double dflt = 0;
-        dflt = mDfltValue;  // Protect against setting the default value
+        dflt = mDfltValue; // Protect against setting the default value
 
-        if (k < 0 || k > dim[2]) return dflt;
+        if (k < 0 || k > dim[2])
+            return dflt;
 
-        if (i < 0) i = 0;
-        if (i > dim[0] - 1) i = dim[0] - 1;
-        if (j < 0) j = 0;
-        if (j > dim[1] - 1) j = dim[1] - 1;
+        if (i < 0)
+            i = 0;
+        if (i > dim[0] - 1)
+            i = dim[0] - 1;
+        if (j < 0)
+            j = 0;
+        if (j > dim[1] - 1)
+            j = dim[1] - 1;
 
         int col = i;
         int row = k * dim[0];
@@ -257,7 +272,7 @@ namespace Glb {
         return mData(stack + row + col);
     }
 
-    glm::vec3 GridData3dZ::worldToSelf(const glm::vec3& pt) const
+    glm::vec3 GridData3dZ::worldToSelf(const glm::vec3 &pt) const
     {
         glm::vec3 out;
         out[0] = min(max(0.0, pt[0] - cellSize * 0.5), mMax[0]);
@@ -270,7 +285,7 @@ namespace Glb {
     {
     }
 
-    CubicGridData3d::CubicGridData3d(const CubicGridData3d& orig) : GridData3d(orig)
+    CubicGridData3d::CubicGridData3d(const CubicGridData3d &orig) : GridData3d(orig)
     {
     }
 
@@ -311,14 +326,14 @@ namespace Glb {
 
     double CubicGridData3d::interpX(int i, int j, int k, double fracty, double fractx)
     {
-        double tmp1 = interpY(i - 1 < 0 ? i : i - 1, j, k, fracty);  // hack
+        double tmp1 = interpY(i - 1 < 0 ? i : i - 1, j, k, fracty); // hack
         double tmp2 = interpY(i, j, k, fracty);
         double tmp3 = interpY(i + 1, j, k, fracty);
         double tmp4 = interpY(i + 2, j, k, fracty);
         return cubic(tmp1, tmp2, tmp3, tmp4, fractx);
     }
 
-    double CubicGridData3d::interpolate(const glm::vec3& pt)
+    double CubicGridData3d::interpolate(const glm::vec3 &pt)
     {
         glm::vec3 pos = worldToSelf(pt);
 
@@ -344,4 +359,3 @@ namespace Glb {
         return tmp;
     }
 }
-
