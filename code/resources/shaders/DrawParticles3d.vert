@@ -29,8 +29,8 @@ vec3 ValueToColor(float value) {
 }
 
 void main() {
-    gl_PointSize = 4;
-    gl_Position = projection * view * vec4(position, 1.0);
+    gl_PointSize = 3;
+    gl_Position = projection * view * vec4(position/2, 1.0);
 
     color = ValueToColor((density - 500.0) / 2000.0);
 }

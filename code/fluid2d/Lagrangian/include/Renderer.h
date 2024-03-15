@@ -2,7 +2,6 @@
 #ifndef __LAGRANGIAN_2D_RENDERER_H__
 #define __LAGRANGIAN_2D_RENDERER_H__
 
-
 #include <glad/glad.h>
 #include <glfw3.h>
 
@@ -11,18 +10,20 @@
 #include "Shader.h"
 #include <glm/glm.hpp>
 
-#include "ParticalSystem2d.h"
+#include "ParticleSystem2d.h"
 #include "Configure.h"
 
-namespace FluidSimulation {
+namespace FluidSimulation
+{
 
-    namespace Lagrangian2d {
+    namespace Lagrangian2d
+    {
         class Renderer
         {
         public:
             Renderer();
 
-            int32_t Init();
+            int32_t init();
 
             void draw();
 
@@ -30,25 +31,23 @@ namespace FluidSimulation {
 
             void PollEvents();
 
-            void LoadVertexes(ParticalSystem2d& ps);
+            void LoadVertexes(ParticleSystem2d &ps);
 
             GLuint GetRenderedTexture();
 
         private:
-
             float CalculateFPS();
 
-            static void ResizeCallback(GLFWwindow* window, int width, int height);
+            static void ResizeCallback(GLFWwindow *window, int width, int height);
 
         private:
+            GLFWwindow *mWindow = nullptr;
 
-            GLFWwindow* mWindow = nullptr;
+            Glb::Shader *mParticleShader = nullptr;
+            Glb::Shader *mSdfShader = nullptr;
+            Glb::Shader *mMilkShader = nullptr;
 
-            Glb::Shader* mParticalShader = nullptr;
-            Glb::Shader* mSdfShader = nullptr;
-            Glb::Shader* mMilkShader = nullptr;
-
-            GLuint mVaoParticals = 0;
+            GLuint mVaoParticles = 0;
             GLuint mPositionBuffer = 0;
             GLuint mDensityBuffer = 0;
 
@@ -56,14 +55,11 @@ namespace FluidSimulation {
             GLuint mTextureSdf = 0;
             GLuint mRboSdf = 0;
 
-            size_t mParticalNum = 0;
+            size_t mParticleNum = 0;
 
             std::chrono::system_clock::time_point mUpdateTime;
-
-
         };
     }
 }
 
 #endif
-

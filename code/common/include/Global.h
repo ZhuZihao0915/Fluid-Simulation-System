@@ -62,8 +62,8 @@ namespace Glb {
             if (dt >= 1000) {
                 return "0.00";
             }
-            else if (dt <= 10) {
-                return "100.00";
+            else if (dt <= 1) {
+                return "1000.00";
             }
             return std::to_string(1000 / dt).substr(0, 5);
         }

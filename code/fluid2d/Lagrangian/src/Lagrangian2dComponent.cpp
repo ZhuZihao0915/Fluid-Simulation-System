@@ -28,21 +28,20 @@ namespace FluidSimulation
 
             // initialize renderer
             renderer = new Renderer();
-            renderer->Init();
+            renderer->init();
 
             // initialize particle system
             // set the container's size
-            ps = new ParticalSystem2d();
-            ps->setContainerSize(glm::vec2(-1.0f, -1.0f), glm::vec2(2.0f, 2.0f));
+            ps = new ParticleSystem2d();
+            ps->setContainerSize(glm::vec2(-2.0f, -2.0f), glm::vec2(4.0f, 4.0f));
 
             // add a fluid block
-            ps->addFluidBlock(glm::vec2(-0.4, -0.4), glm::vec2(0.8, 0.8), glm::vec2(-0.0f, -0.0f), 0.02f);
+            ps->addFluidBlock(glm::vec2(-0.8, -0.8), glm::vec2(1.6, 1.6), glm::vec2(-0.0f, -0.0f), 0.02f);
 
             ps->updateBlockInfo();
 
-            std::cout << "partical num = " << ps->mParticalInfos.size() << std::endl;
+            std::cout << "particle num = " << ps->mParticleInfos.size() << std::endl;
 
-            // give the particle system to solver
             solver = new Solver(*ps);
         }
 

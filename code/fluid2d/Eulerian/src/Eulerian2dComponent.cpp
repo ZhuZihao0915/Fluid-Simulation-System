@@ -30,7 +30,6 @@ namespace FluidSimulation {
         void Eulerian2dComponent::simulate() {
             grid->updateSources();
             solver->solve();
-
         }
 
         GLuint Eulerian2dComponent::getRenderedTexture()

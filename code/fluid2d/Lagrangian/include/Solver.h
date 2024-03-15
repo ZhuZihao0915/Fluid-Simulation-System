@@ -2,17 +2,20 @@
 #ifndef __LAGRANGIAN_2D_SOLVER_H__
 #define __LAGRANGIAN_2D_SOLVER_H__
 
-#include "ParticalSystem2d.h"
+#include "ParticleSystem2d.h"
 #include "WCubicSpline.h"
 
 #include "Configure.h"
 
-namespace FluidSimulation {
+namespace FluidSimulation
+{
 
-    namespace Lagrangian2d {
-        class Solver {
+    namespace Lagrangian2d
+    {
+        class Solver
+        {
         public:
-            Solver(ParticalSystem2d& ps);
+            Solver(ParticleSystem2d &ps);
             ~Solver();
 
             void solve();
@@ -25,12 +28,10 @@ namespace FluidSimulation {
             void calculateBlockId();
 
         private:
-            ParticalSystem2d& mPs;
+            ParticleSystem2d &mPs;
             Glb::WCubicSpline2d mW;
-
         };
     }
 }
-
 
 #endif

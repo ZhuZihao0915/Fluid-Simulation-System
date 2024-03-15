@@ -2,7 +2,6 @@
 #ifndef __LAGRANGIAN_3D_RENDERER_H__
 #define __LAGRANGIAN_3D_RENDERER_H__
 
-
 #include <glm/glm.hpp>
 
 #include <glad/glad.h>
@@ -16,39 +15,40 @@
 
 #include "Configure.h"
 
-#include "ParticalSystem3d.h"
+#include "ParticleSystem3d.h"
 
-namespace FluidSimulation {
+namespace FluidSimulation
+{
 
-    namespace Lagrangian3d {
+    namespace Lagrangian3d
+    {
 
         class Renderer
         {
         public:
             Renderer(){};
 
-            void Init();
+            void init();
 
             GLuint getRenderedTexture();
 
-            // Çó½â¡¢äÖÈ¾
-            void load(ParticalSystem3d& ps);
+            // ï¿½ï¿½â¡¢ï¿½ï¿½È¾
+            void load(ParticleSystem3d &ps);
             void draw();
 
         private:
-            
             void BuildShaders();
             void GenerateFrameBuffers();
             void GenerateBuffers();
             void GenerateTextures();
             void LoadSkyBox();
             void MakeVertexArrays();
-            void DrawParticals();
+            void DrawParticles();
             int32_t Destroy();
 
         private:
             // window
-            GLFWwindow* mWindow = nullptr;
+            GLFWwindow *mWindow = nullptr;
             int mWindowWidth = 1000;
             int mWindowHeight = 1000;
 
@@ -62,9 +62,9 @@ namespace FluidSimulation {
             bool mPauseFlag = false;
 
             // shaders
-            Glb::Shader* mDrawColor3d = nullptr;
+            Glb::Shader *mDrawColor3d = nullptr;
 
-            Glb::Container* container = nullptr;
+            Glb::Container *container = nullptr;
 
             /*Glb::Shader* mScreenQuad = nullptr;
             Glb::Shader* mPointSpriteZValue = nullptr;
@@ -90,7 +90,7 @@ namespace FluidSimulation {
 
             // buffers
             GLuint mCoordVertBuffer = 0;
-            GLuint mBufferParticals = 0;
+            GLuint mBufferParticles = 0;
             GLuint mBufferBlocks = 0;
             GLuint mBufferFloor = 0;
 
@@ -101,13 +101,13 @@ namespace FluidSimulation {
             GLuint mTexZBlurTempBuffer = 0;
 
             // SkyBox
-            Glb::SkyBox* mSkyBox = nullptr;
+            Glb::SkyBox *mSkyBox = nullptr;
 
             // Materials
             // Material* mSlabWhite = nullptr;
 
             // time statistics
-            int32_t particalNum = 0;
+            int32_t particleNum = 0;
             float_t mUpdateTime = 0.0f;
             float_t updateTitleTime = 0.0f;
             float_t frameCount = 0.0f;
@@ -117,10 +117,9 @@ namespace FluidSimulation {
             Glb::ShadowMap* mShadowMap;
             Glb::DepthFilter* mDepthFilter;*/
 
-            glm::vec3 mExternelAccleration = { 0.0, 0.0, 0.0 };
+            glm::vec3 mExternelAccleration = {0.0, 0.0, 0.0};
         };
     }
 }
 
 #endif
-

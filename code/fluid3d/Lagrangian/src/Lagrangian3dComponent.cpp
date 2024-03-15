@@ -25,16 +25,15 @@ namespace FluidSimulation
             Glb::Timer::getInstance().clear();
 
             renderer = new Renderer();
-            renderer->Init();
+            renderer->init();
 
-            ps = new ParticalSystem3d();
-            ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1, 1, 1));
-            ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);
-            ps->addFluidBlock(glm::vec3(0.45, 0.45, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -3.0), 0.02);
+            ps = new ParticleSystem3d();
+            ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(2, 2, 2));
+            ps->addFluidBlock(glm::vec3(0.05 * 2, 0.05 * 2, 0.4 * 2), glm::vec3(0.4 * 2, 0.4 * 2, 0.4 * 2), glm::vec3(0.0, 0.0, -1.0), 0.02);
+            ps->addFluidBlock(glm::vec3(0.45 * 2, 0.45 * 2, 0.4 * 2), glm::vec3(0.4 * 2, 0.4 * 2, 0.4 * 2), glm::vec3(0.0, 0.0, -1.0), 0.02);
 
-            // ���������򣬲��齨block�ṹ
             ps->updateBlockInfo();
-            std::cout << "partical num = " << ps->mParticalInfos.size() << std::endl;
+            std::cout << "particle num = " << ps->mParticleInfos.size() << std::endl;
 
             solver = new Solver(*ps);
         }

@@ -13,7 +13,7 @@ namespace FluidSimulation
     namespace Lagrangian3d
     {
 
-        struct ParticalInfo3d
+        struct ParticleInfo3d
         {
             alignas(16) glm::vec3 position;
             alignas(16) glm::vec3 velocity;
@@ -24,14 +24,14 @@ namespace FluidSimulation
             alignas(4) uint32_t blockId;
         };
 
-        class ParticalSystem3d
+        class ParticleSystem3d
         {
         public:
-            ParticalSystem3d();
-            ~ParticalSystem3d();
+            ParticleSystem3d();
+            ~ParticleSystem3d();
 
             void setContainerSize(glm::vec3 corner, glm::vec3 size);
-            int32_t addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particalSpace);
+            int32_t addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particleSpace);
             uint32_t getBlockIdByPosition(glm::vec3 position);
             void updateBlockInfo();
 
@@ -39,11 +39,11 @@ namespace FluidSimulation
             // 粒子参数
             float mSupportRadius = Lagrangian3dPara::supportRadius; // 支撑半径
             float mSupportRadius2 = mSupportRadius * mSupportRadius;
-            float mParticalRadius = Lagrangian3dPara::particalRadius; // 粒子半径
-            float mParticalDiameter = Lagrangian3dPara::particalDiameter;
-            float mVolume = std::pow(mParticalDiameter, 3);     // 体积
-            
-            std::vector<ParticalInfo3d> mParticalInfos;
+            float mParticleRadius = Lagrangian3dPara::particleRadius; // 粒子半径
+            float mParticleDiameter = Lagrangian3dPara::particleDiameter;
+            float mVolume = std::pow(mParticleDiameter, 3); // 体积
+
+            std::vector<ParticleInfo3d> mParticleInfos;
             int mMaxNeighbors = 512;
 
             // 容器参数
@@ -52,7 +52,7 @@ namespace FluidSimulation
             glm::vec3 mContainerCenter = glm::vec3(0.0f);
             glm::uvec3 mBlockNum = glm::uvec3(0); // XYZ轴有几个block
             glm::vec3 mBlockSize = glm::vec3(0.0f);
-            std::vector<glm::uvec2> mBlockExtens; // 记载着每个block含有那个索引区间的粒子（索引为mParticalInfos的索引）
+            std::vector<glm::uvec2> mBlockExtens; // 记载着每个block含有那个索引区间的粒子（索引为mParticleInfos的索引）
             std::vector<int32_t> mBlockIdOffs;
         };
 

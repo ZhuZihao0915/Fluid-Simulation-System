@@ -11,8 +11,7 @@ namespace FluidSimulation
 			0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 			0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-		};
+			0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 
 		unsigned int indices[] = {
 			0, 1, 2, // first triangle
@@ -25,8 +24,7 @@ namespace FluidSimulation
 			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 			0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 0.0f
-		};
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
 		float verticesYZ[] = {
 			0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
@@ -34,8 +32,7 @@ namespace FluidSimulation
 			0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
 			0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-			0.0f, 0.0f, 0.0f, 0.0f, 0.0f
-		};
+			0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 
 		float verticesXZ[] = {
 			0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
@@ -43,8 +40,7 @@ namespace FluidSimulation
 			1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 			1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 			0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-			0.0f, 0.0f, 0.0f, 1.0f, 0.0f
-		};
+			0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 
 		Renderer::Renderer(MACGrid3d &grid) : mGrid(grid)
 		{
@@ -52,15 +48,15 @@ namespace FluidSimulation
 			container = new Glb::Container();
 			container->init();
 
-			std::string particalVertShaderPath = shaderPath + "/DrawSmokePixel3d.vert";
-			std::string particalFragShaderPath = shaderPath + "/DrawSmokePixel3d.frag";
+			std::string particleVertShaderPath = shaderPath + "/DrawSmokePixel3d.vert";
+			std::string particleFragShaderPath = shaderPath + "/DrawSmokePixel3d.frag";
 			pixelShader = new Glb::Shader();
-			pixelShader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
+			pixelShader->buildFromFile(particleVertShaderPath, particleFragShaderPath);
 
-			particalVertShaderPath = shaderPath + "/DrawSmokeTexture3d.vert";
-			particalFragShaderPath = shaderPath + "/DrawSmokeTexture3d.frag";
+			particleVertShaderPath = shaderPath + "/DrawSmokeTexture3d.vert";
+			particleFragShaderPath = shaderPath + "/DrawSmokeTexture3d.frag";
 			gridShader = new Glb::Shader();
-			gridShader->buildFromFile(particalVertShaderPath, particalFragShaderPath);
+			gridShader->buildFromFile(particleVertShaderPath, particleFragShaderPath);
 
 			glGenVertexArrays(1, &VAO);
 			glGenBuffers(1, &VBO);
@@ -132,11 +128,10 @@ namespace FluidSimulation
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-			// ���������Ȳ��ԣ���ֻ�ܻ���һ�������ƽ��
 			glDisable(GL_DEPTH_TEST);
 
-			glEnable(GL_BLEND);								   // �������ģʽ
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); // ���û�Ϻ���
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 			data = new float[4 * width * height];
 
@@ -149,7 +144,7 @@ namespace FluidSimulation
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-			glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+			glClearColor(0.05f, 0.05f, 0.05f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			if (Eulerian3dPara::oneSheet)

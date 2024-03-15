@@ -60,16 +60,15 @@ namespace Eulerian3dPara
 namespace Lagrangian2dPara
 {
 
-    float dt = 6e-4;
-    int substep = 3;
+    float dt = 0.0016;
+    int substep = 1;
     float maxVelocity = 100;
     float velocityAttenuation = 0.7;
     float eps = 1e-5;
 
-
     float supportRadius = 0.04;  // 0.025;
-    float particalRadius = 0.01; // 0.005;
-    float particalDiameter = particalRadius * 2.0;
+    float particleRadius = 0.01; // 0.005;
+    float particleDiameter = particleRadius * 2.0;
     float gravityX = 0.0f;
     float gravityY = 9.8f;
     float density = 1000.0f;
@@ -87,8 +86,8 @@ namespace Lagrangian3dPara
     float eps = 1e-5;
 
     float supportRadius = 0.04;  // 0.025;
-    float particalRadius = 0.01; // 0.005;
-    float particalDiameter = particalRadius * 2.0;
+    float particleRadius = 0.01; // 0.005;
+    float particleDiameter = particleRadius * 2.0;
 
     float gravityX = 0.0f;
     float gravityY = 0.0f;

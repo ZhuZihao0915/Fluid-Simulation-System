@@ -1,0 +1,129 @@
+#include "ParticleSystem2d.h"
+#include <iostream>
+#include "Global.h"
+#include <unordered_set>
+
+namespace FluidSimulation
+{
+
+    namespace Lagrangian2d
+    {
+        ParticleSystem2d::ParticleSystem2d()
+        {
+        }
+        ParticleSystem2d::~ParticleSystem2d()
+        {
+        }
+
+        void ParticleSystem2d::setContainerSize(glm::vec2 corner, glm::vec2 size)
+        {
+            mLowerBound = corner - mSupportRadius + mParticleDiameter;
+            mUpperBound = corner + size + mSupportRadius - mParticleDiameter;
+            mContainerCenter = (mLowerBound + mUpperBound) / 2.0f;
+            size = mUpperBound - mLowerBound;
+
+            // ���������block����
+            mBlockNum.x = floor(size.x / mSupportRadius);
+            mBlockNum.y = floor(size.y / mSupportRadius);
+
+            // һ��block�Ĵ�С
+            mBlockSize = glm::vec2(size.x / mBlockNum.x, size.y / mBlockNum.y);
+
+            mBlockIdOffs.resize(9);
+            int p = 0;
+            for (int j = -1; j <= 1; j++)
+            {
+                for (int i = -1; i <= 1; i++)
+                {
+                    mBlockIdOffs[p] = mBlockNum.x * j + i;
+                    p++;
+                }
+            }
+
+            mParticleInfos.clear();
+        }
+
+        int ParticleSystem2d::addFluidBlock(glm::vec2 corner, glm::vec2 size, glm::vec2 v0, float particleSpace)
+        {
+            glm::vec2 blockLowerBound = corner;
+            glm::vec2 blockUpperBound = corner + size;
+
+            if (blockLowerBound.x < mLowerBound.x ||
+                blockLowerBound.y < mLowerBound.y ||
+                blockUpperBound.x > mUpperBound.x ||
+                blockUpperBound.y > mUpperBound.y)
+            {
+                return 0;
+            }
+
+            glm::uvec2 particleNum = glm::uvec2(size.x / particleSpace, size.y / particleSpace);
+            std::vector<ParticleInfo2d> particles(particleNum.x * particleNum.y);
+
+            Glb::RandomGenerator rand;
+            int p = 0;
+            for (int idX = 0; idX < particleNum.x; idX++)
+            {
+                for (int idY = 0; idY < particleNum.y; idY++)
+                {
+                    float x = (idX + rand.GetUniformRandom()) * particleSpace;
+                    float y = (idY + rand.GetUniformRandom()) * particleSpace;
+
+                    particles[p].position = corner + glm::vec2(x, y);
+                    particles[p].blockId = getBlockIdByPosition(particles[p].position);
+                    particles[p].velocity = v0;
+                    p++;
+                }
+            }
+
+            mParticleInfos.insert(mParticleInfos.end(), particles.begin(), particles.end());
+            return particles.size();
+        }
+
+        uint32_t ParticleSystem2d::getBlockIdByPosition(glm::vec2 position)
+        {
+            if (position.x < mLowerBound.x ||
+                position.y < mLowerBound.y ||
+                position.x > mUpperBound.x ||
+                position.y > mUpperBound.y)
+            {
+                return -1;
+            }
+
+            glm::vec2 deltePos = position - mLowerBound;
+            uint32_t c = floor(deltePos.x / mBlockSize.x);
+            uint32_t r = floor(deltePos.y / mBlockSize.y);
+            return r * mBlockNum.x + c;
+        }
+
+        void ParticleSystem2d::updateBlockInfo()
+        {
+
+            // ��blockId��˳�򣬶����ӽ�������
+            // ����ǰҪ��������ӵ�blockID�Ѿ�����ȷ����
+            // ��addFluidBlock�У������ӵ�blockID��ʼ��
+            // ֮���ģ������У�Slover::calculateBlockId()��������blockID
+            std::sort(mParticleInfos.begin(), mParticleInfos.end(),
+                      [=](ParticleInfo2d &first, ParticleInfo2d &second)
+                      {
+                          return first.blockId < second.blockId;
+                      });
+
+            // ����ÿ��block�����������������е���ʼ�ͽ�������
+            mBlockExtens = std::vector<glm::uvec2>(mBlockNum.x * mBlockNum.y, glm::uvec2(0, 0));
+            int curBlockId = 0;
+            int left = 0;
+            int right;
+            for (right = 0; right < mParticleInfos.size(); right++)
+            {
+                if (mParticleInfos[right].blockId != curBlockId)
+                {
+                    mBlockExtens[curBlockId] = glm::uvec2(left, right); // ����ҿ�
+                    left = right;
+                    curBlockId = mParticleInfos[right].blockId;
+                }
+            }
+            mBlockExtens[curBlockId] = glm::uvec2(left, right);
+        }
+
+    }
+}

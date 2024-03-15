@@ -4,21 +4,24 @@
 
 #include "Renderer.h"
 #include "Solver.h"
-#include "ParticalSystem3d.h"
+#include "ParticleSystem3d.h"
 
 #include "Component.h"
 #include "Configure.h"
 
-
-namespace FluidSimulation {
-    namespace Lagrangian3d {
-        class Lagrangian3dComponent : public Glb::Component {
+namespace FluidSimulation
+{
+    namespace Lagrangian3d
+    {
+        class Lagrangian3dComponent : public Glb::Component
+        {
         public:
-            Renderer* renderer;
-            Solver* solver;
-            ParticalSystem3d* ps;
+            Renderer *renderer;
+            Solver *solver;
+            ParticleSystem3d *ps;
 
-            Lagrangian3dComponent(char* description, int id) {
+            Lagrangian3dComponent(char *description, int id)
+            {
                 this->description = description;
                 this->id = id;
                 renderer = NULL;
@@ -36,6 +39,5 @@ namespace FluidSimulation {
         };
     }
 }
-
 
 #endif

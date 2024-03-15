@@ -78,8 +78,8 @@ namespace Lagrangian2dPara
     extern float eps;
 
     extern float supportRadius;
-    extern float particalRadius;
-    extern float particalDiameter;
+    extern float particleRadius;
+    extern float particleDiameter;
     extern float gravityX;
     extern float gravityY;
     extern float density;
@@ -97,9 +97,9 @@ namespace Lagrangian3dPara
     extern float eps;
 
     extern float supportRadius;
-    extern float particalRadius;
-    extern float particalDiameter;
-    
+    extern float particleRadius;
+    extern float particleDiameter;
+
     extern float gravityX;
     extern float gravityY;
     extern float gravityZ;
