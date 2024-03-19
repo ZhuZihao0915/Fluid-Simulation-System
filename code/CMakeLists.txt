@@ -11,7 +11,6 @@ include_directories(
 	"./third_party/glfw/include"
 	"./third_party/glad/include"
 	"./third_party/boost_1_83_0"
-	"./third_party/freeglut"
 	"./third_party/glm"
 	"./third_party/stb"
 	"./common/include"

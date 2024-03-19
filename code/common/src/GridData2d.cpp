@@ -119,7 +119,7 @@ namespace Glb
     void GridData2dX::initialize(double dfltValue)
     {
         GridData2d::initialize(dfltValue);
-        mMax[0] = cellSize * (dim[0] + 1);
+        mMax[0] = cellSize * (dim[0] + 1); // plus one
         mMax[1] = cellSize * dim[1];
         mData.resize((dim[0] + 1) * dim[1], false);
         std::fill(mData.begin(), mData.end(), mDfltValue);
@@ -128,7 +128,7 @@ namespace Glb
     double &GridData2dX::operator()(int i, int j)
     {
         static double dflt = 0;
-        dflt = mDfltValue; // Protect against setting the default value
+        dflt = mDfltValue;
 
         if (i < 0 || i > dim[0])
             return dflt;
@@ -267,7 +267,8 @@ namespace Glb
         return tmp;
 
         // Bilinear Interpolation
-        /*float x = (pos[0] / theCellSize2d);
+        /*
+        float x = (pos[0] / theCellSize2d);
         float y = (pos[1] / theCellSize2d);
 
         i = (int)(x);
@@ -278,6 +279,7 @@ namespace Glb
 
         double tmp = s0 * t0 * (*this)(i, j) + s0 * t1 * (*this)(i, j + 1) + s1 * t0 * (*this)(i + 1, j) + s1 * t1 * (*this)(i + 1, j + 1);
 
-        return tmp;*/
+        return tmp;
+        */
     }
 }

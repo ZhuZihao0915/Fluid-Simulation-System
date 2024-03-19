@@ -1,4 +1,6 @@
 #include "Configure.h"
+// TODO
+// add yor parameters
 
 int imageWidth = 800;
 int imageHeight = 800;
@@ -25,7 +27,7 @@ namespace Eulerian2dPara
 
 namespace Eulerian3dPara
 {
-    int theDim3d[3] = {32, 32, 32};
+    int theDim3d[3] = {30, 30, 30};
     float theCellSize3d = 0.5;
 
     // Rendering

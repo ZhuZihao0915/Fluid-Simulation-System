@@ -1,5 +1,4 @@
 #include "fluid3d/Eulerian/include/Solver.h"
-#include <GL/glut.h>
 #include "ConjGrad3d.h"
 #include "Configure.h"
 #include "Global.h"
@@ -22,30 +21,28 @@ namespace FluidSimulation
         void Solver::solve()
         {
             // TODO
-            // ���/ģ��
+            // Solves the fluid simulation by performing some steps, which may include:
+            // 1. advection
+            // 2. compute external forces
+            // 3. projection
+            // ...
 
             target.reset();
             Glb::Timer::getInstance().start();
 
-            // advect �ٶ�
             advectVelocity();
 
             Glb::Timer::getInstance().recordTime("vel advection");
-
-            // ���Ǹ������жȵ�����
             addExternalForces();
 
             Glb::Timer::getInstance().recordTime("external forces");
 
-            // project ȷ��incompressible������
             project();
 
             Glb::Timer::getInstance().recordTime("projection");
 
-            // advect �¶�
             advectTemperature();
 
-            // advect �ܶ�
             advectDensity();
 
             Glb::Timer::getInstance().recordTime("temp & density advection");
@@ -57,21 +54,21 @@ namespace FluidSimulation
             {
                 if (mGrid.isFace(i, j, k, mGrid.X))
                 {
-                    glm::vec3 pos = mGrid.getLeftFace(i, j, k);
+                    glm::vec3 pos = mGrid.getBackFace(i, j, k);
                     glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
                     glm::vec3 newvel = mGrid.getVelocity(newpos);
                     target.mU(i, j, k) = newvel[mGrid.X];
                 }
                 if (mGrid.isFace(i, j, k, mGrid.Y))
                 {
-                    glm::vec3 pos = mGrid.getBottomFace(i, j, k);
+                    glm::vec3 pos = mGrid.getLeftFace(i, j, k);
                     glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
                     glm::vec3 newvel = mGrid.getVelocity(newpos);
                     target.mV(i, j, k) = newvel[mGrid.Y];
                 }
                 if (mGrid.isFace(i, j, k, mGrid.Z))
                 {
-                    glm::vec3 pos = mGrid.getBackFace(i, j, k);
+                    glm::vec3 pos = mGrid.getBottomFace(i, j, k);
                     glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
                     glm::vec3 newvel = mGrid.getVelocity(newpos);
                     target.mW(i, j, k) = newvel[mGrid.Z];
@@ -85,7 +82,6 @@ namespace FluidSimulation
 
         void Solver::addExternalForces()
         {
-            // ���㸡�����������ϵ��ٶ�
             FOR_EACH_FACE
             {
                 if (mGrid.isFace(i, j, k, mGrid.Z))
@@ -99,15 +95,13 @@ namespace FluidSimulation
             }
             mGrid.mW = target.mW;
 
-            // �����жȣ����¸�������ٶ�
-
-            // ��ʼ����������
+            
+            
             Glb::GridData3d forcesX, forcesY, forcesZ;
             forcesX.initialize();
             forcesY.initialize();
             forcesZ.initialize();
 
-            // �������񣬼����ж�Լ����
             FOR_EACH_CELL
             {
                 glm::vec3 force = mGrid.getConfinementForce(i, j, k);
@@ -116,22 +110,21 @@ namespace FluidSimulation
                 forcesZ(i, j, k) = force[2];
             }
 
-            // ʹ�ü���õ�Լ�����������ٶȳ�
             FOR_EACH_FACE
             {
                 if (mGrid.isFace(i, j, k, mGrid.X))
                 {
-                    glm::vec3 pos = mGrid.getLeftFace(i, j, k);
+                    glm::vec3 pos = mGrid.getBackFace(i, j, k);
                     double vel = mGrid.mU(i, j, k);
-                    double xforce = 0.5 * (forcesX(i, j, k) - forcesX(i - 1, j, k));
+                    double xforce = 0.2 * (forcesX(i, j, k) - forcesX(i - 1, j, k));
                     vel = vel + Eulerian3dPara::dt * xforce;
                     target.mU(i, j, k) = vel;
                 }
 
                 if (mGrid.isFace(i, j, k, mGrid.Y))
                 {
-                    glm::vec3 pos = mGrid.getBottomFace(i, j, k);
-                    double yforce = 0.5 * (forcesY(i, j, k) - forcesY(i, j - 1, k));
+                    glm::vec3 pos = mGrid.getLeftFace(i, j, k);
+                    double yforce = 0.2 * (forcesY(i, j, k) - forcesY(i, j - 1, k));
                     double vel = mGrid.mV(i, j, k);
                     vel = vel + Eulerian3dPara::dt * yforce;
                     target.mV(i, j, k) = vel;
@@ -139,8 +132,8 @@ namespace FluidSimulation
 
                 if (mGrid.isFace(i, j, k, mGrid.Z))
                 {
-                    glm::vec3 pos = mGrid.getBackFace(i, j, k);
-                    double zforce = 0.5 * (forcesZ(i, j, k) - forcesZ(i, j, k - 1));
+                    glm::vec3 pos = mGrid.getBottomFace(i, j, k);
+                    double zforce = 0.2 * (forcesZ(i, j, k) - forcesZ(i, j, k - 1));
                     double vel = mGrid.mW(i, j, k);
                     vel = vel + Eulerian3dPara::dt * zforce;
                     target.mW(i, j, k) = vel;
@@ -150,17 +143,14 @@ namespace FluidSimulation
             mGrid.mU = target.mU;
             mGrid.mV = target.mV;
             mGrid.mW = target.mW;
+
         }
 
         void Solver::project()
         {
             // Solve Ax = b for pressure
 
-            // �����ݶȷ���Ⲵ�ɷ��� Ap=b
-            // A��ѹ�����ϵ��������һ��ϡ���ҶԳƵľ���bΪ����ɢ��
-            // �ҵ�һ��ѹ����p��ʹ��Ӧ����ɢ������˹����A �󣬵õ��Ľ����Ap�����ٶȳ���ɢ�ȣ�b���㹻�ӽ�
-            // ��ز��ͣ�https://yangwc.com/2019/08/03/MakingFluidImcompressible/
-            // Ϊ�˽�һ���ӿ����������ٶȣ����Բ���Ԥ�����Ĺ����ݶȷ�
+            // https://yangwc.com/2019/08/03/MakingFluidImcompressible/
 
             constructB(numCells);
             ublas::vector<double> p(numCells); // = conjugateGradient(A, b, precon);
@@ -174,7 +164,6 @@ namespace FluidSimulation
             double scaleConstant = Eulerian3dPara::dt / Eulerian3dPara::airDensity;
             double pressureChange;
 
-            // ʹ��ѹ���������ٶȳ�
             FOR_EACH_FACE
             {
                 if (mGrid.isFace(i, j, k, mGrid.X))
@@ -265,7 +254,6 @@ namespace FluidSimulation
             unsigned int numCells = mGrid.mSolid.data().size();
             A.resize(numCells, numCells, false);
 
-            // ����A(r, c)�洢�� cell r ���ܵ� cell c ������ѹ��
             for (unsigned int row = 0; row < numCells; row++)
             {
                 int ri, rj, rk;
@@ -307,7 +295,6 @@ namespace FluidSimulation
         }
 
 #define VALA(r, c) (r != -1 && c != -1) ? A(r, c) : 0
-        // ����Ԥ������Preconditioning�����������Ƶ������������������
         void Solver::constructPrecon()
         {
             precon.resize(A.size1());

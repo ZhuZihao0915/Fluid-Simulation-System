@@ -30,9 +30,6 @@ namespace FluidSimulation {
             virtual void init();
             virtual void simulate();
             virtual GLuint getRenderedTexture();
-            virtual void cameraRotate(float x, float y);
-            virtual void cameraMove(float x, float y);
-            virtual void cameraScale(float w);
         };
     }
 }

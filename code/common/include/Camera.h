@@ -51,9 +51,6 @@ namespace Glb {
             nearPlane = 0.1f;
             farPlane = 100.0f;
             fovyDeg = 60.0f;
-
-
-
         };
 
         Camera(const Camera&) = delete;

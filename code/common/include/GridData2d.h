@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __GRID_DATA_2D_H__
 #define __GRID_DATA_2D_H__
 

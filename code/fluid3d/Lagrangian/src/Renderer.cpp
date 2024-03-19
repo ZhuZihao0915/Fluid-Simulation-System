@@ -155,9 +155,9 @@ namespace FluidSimulation
             glGenVertexArrays(1, &VAO);
             glBindVertexArray(VAO);
             glBindBuffer(GL_ARRAY_BUFFER, mBufferParticles);
-            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo3d), (void *)offsetof(ParticleInfo3d, position));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(particle3d), (void *)offsetof(particle3d, position));
             glEnableVertexAttribArray(0); // location = 0
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo3d), (void *)offsetof(ParticleInfo3d, density));
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(particle3d), (void *)offsetof(particle3d, density));
             glEnableVertexAttribArray(1); // location = 1
             glBindVertexArray(0);
         }
@@ -165,8 +165,8 @@ namespace FluidSimulation
         void Renderer::load(ParticleSystem3d &ps)
         {
             glBindBuffer(GL_SHADER_STORAGE_BUFFER, mBufferParticles);
-            glBufferData(GL_SHADER_STORAGE_BUFFER, ps.mParticleInfos.size() * sizeof(ParticleInfo3d), ps.mParticleInfos.data(), GL_DYNAMIC_COPY);
-            particleNum = ps.mParticleInfos.size();
+            glBufferData(GL_SHADER_STORAGE_BUFFER, ps.particles.size() * sizeof(particle3d), ps.particles.data(), GL_DYNAMIC_COPY);
+            particleNum = ps.particles.size();
         }
 
         void Renderer::draw()

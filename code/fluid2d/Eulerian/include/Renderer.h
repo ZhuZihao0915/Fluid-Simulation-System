@@ -5,6 +5,7 @@
 
 #include <stb_image.h>
 #include "Eulerian/include/MACGrid2d.h"
+#include <glad/glad.h>
 #include <glfw3.h>
 #include "Configure.h"
 #include "glm/glm.hpp"

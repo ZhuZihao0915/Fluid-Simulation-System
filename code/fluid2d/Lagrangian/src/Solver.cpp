@@ -18,6 +18,16 @@ namespace FluidSimulation
 
         void Solver::solve()
         {
+            // TODO
+            // Solves the fluid simulation by performing some steps, which may include:
+            // 1. compute density 
+            // 2. compute press
+            // 3. compute accleration
+            // 4. update velocity and position
+            // 5. check boundary
+            // 6. update block id
+            // ...
+
             Glb::Timer::getInstance().start();
             computeDensityAndPress();
             Glb::Timer::getInstance().recordTime("density and press");
@@ -70,14 +80,8 @@ namespace FluidSimulation
                         }
                     }
                 }
-                // std::cout << mPs.mParticleInfos[i].density << std::endl;
-                // std::cout << viscosityForce.x << " " << viscosityForce.y << std::endl;
-                // std::cout << pressureForce.x << " " << pressureForce.y << std::endl;
-                //  ʹ��viscosity �� pressure���¼��ٶ�
                 mPs.mParticleInfos[i].accleration += viscosityForce * constFactor;
-                // std::cout << mPs.mParticleInfos[i].accleration.y << std::endl;
                 mPs.mParticleInfos[i].accleration -= pressureForce * mPs.mVolume;
-                // std::cout << mPs.mParticleInfos[i].accleration.x << " " << mPs.mParticleInfos[i].accleration.y << " " << mPs.mParticleInfos[i].accleration.z << std::endl;
             }
         }
 
@@ -134,7 +138,6 @@ namespace FluidSimulation
                     mPs.mParticleInfos[i].velocity *= Lagrangian2dPara::velocityAttenuation; // ����߽磬˥���ٶ�
                 }
 
-                // �����ٶȺ�λ��
                 glm::vec2 newPosition, newVelocity;
                 for (int j = 0; j < 2; j++)
                 {
@@ -148,7 +151,6 @@ namespace FluidSimulation
 
         void Solver::calculateBlockId()
         {
-#pragma omp parallel for
             for (int i = 0; i < mPs.mParticleInfos.size(); i++)
             {
                 glm::vec2 deltePos = mPs.mParticleInfos[i].position - mPs.mLowerBound;
@@ -159,7 +161,6 @@ namespace FluidSimulation
 
         void Solver::computeDensityAndPress()
         {
-#pragma omp parallel for
             for (int i = 0; i < mPs.mParticleInfos.size(); i++)
             {
                 for (int k = 0; k < mPs.mBlockIdOffs.size(); k++)

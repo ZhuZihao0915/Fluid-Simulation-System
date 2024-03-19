@@ -4,6 +4,7 @@
 
 
 #include "glm/glm.hpp"
+#include <glad/glad.h>
 #include <glfw3.h>
 #include "Shader.h"
 #include "Container.h"
@@ -52,8 +53,8 @@ namespace FluidSimulation {
 			GLuint FBO = 0;
 			GLuint RBO = 0;
 
-			int width = imageWidth / 2;
-			int height = imageHeight / 2;
+			int width = imageWidth;
+			int height = imageHeight;
 			
 			float* data;
 

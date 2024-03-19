@@ -18,10 +18,7 @@ namespace FluidSimulation
 
             if (renderer != NULL || solver != NULL || ps != NULL)
             {
-                delete renderer, solver, ps;
-                renderer = NULL;
-                solver = NULL;
-                ps = NULL;
+                shutDown();
             }
 
             Glb::Timer::getInstance().clear();

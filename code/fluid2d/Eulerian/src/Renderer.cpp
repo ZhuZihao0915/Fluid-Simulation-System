@@ -77,7 +77,7 @@ namespace FluidSimulation
 			// load image, create texture and generate mipmaps
 			int width, height, nrChannels;
 
-			unsigned char *data = stbi_load((picturePath + "/smoke2.png").c_str(), &width, &height, &nrChannels, 0);
+			unsigned char *data = stbi_load((picturePath + "/white.png").c_str(), &width, &height, &nrChannels, 0);
 			if (data)
 			{
 				// ʹ��ͼ����������

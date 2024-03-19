@@ -13,10 +13,7 @@ namespace FluidSimulation {
         void Eulerian2dComponent::init() {
 
             if (renderer != NULL || solver != NULL || grid != NULL) {
-                delete renderer, solver, grid;
-                renderer = NULL;
-                solver = NULL;
-                grid = NULL;
+                shutDown();
             }
 
             Glb::Timer::getInstance().clear();

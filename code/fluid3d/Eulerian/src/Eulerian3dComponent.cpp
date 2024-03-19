@@ -12,10 +12,7 @@ namespace FluidSimulation {
         void Eulerian3dComponent::init() {
 
             if (renderer != NULL || solver != NULL || grid != NULL) {
-                delete renderer, solver, grid;
-                renderer = NULL;
-                solver = NULL;
-                grid = NULL;
+                shutDown();
             }
 
             Glb::Timer::getInstance().clear();
@@ -37,18 +34,6 @@ namespace FluidSimulation {
             if (simulating) { Glb::Timer::getInstance().recordTime("rendering"); }
             
             return renderer->getTextureID();
-        }
-
-        void Eulerian3dComponent::cameraMove(float x, float y) {
-            Glb::Camera::getInstance().ProcessMove(glm::vec2(x, y));
-        }
-
-        void Eulerian3dComponent::cameraRotate(float x, float y) {
-            Glb::Camera::getInstance().ProcessRotate(glm::vec2(x, y));
-        }
-
-        void Eulerian3dComponent::cameraScale(float w) {
-            Glb::Camera::getInstance().ProcessScale(static_cast<float>(w));
         }
 
     }

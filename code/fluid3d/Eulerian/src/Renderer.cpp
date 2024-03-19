@@ -267,7 +267,7 @@ namespace FluidSimulation
 
 						for (int k = 0; k <= 18; k += 6)
 						{
-							vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
+							vertices[k] = (vertices[k] / mGrid.mD.mMax[0]);
 							vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[1]);
 							vertices[k + 2] = 0;
 						}
@@ -313,7 +313,7 @@ namespace FluidSimulation
 				{
 					for (int i = width; i >= 1; i--)
 					{
-						float pt_x = i * mGrid.mU.mMax[2] / (width);
+						float pt_x = i * mGrid.mU.mMax[0] / (width);
 						float pt_y = Eulerian3dPara::distanceY * mGrid.mV.mMax[1];
 						float pt_z = k * mGrid.mW.mMax[2] / (height);
 						glm::vec3 pt(pt_x, pt_y, pt_z);
@@ -387,7 +387,7 @@ namespace FluidSimulation
 
 						for (int k = 0; k <= 18; k += 6)
 						{
-							vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
+							vertices[k] = (vertices[k] / mGrid.mD.mMax[0]);
 							vertices[k + 1] = 0;
 							vertices[k + 2] = (vertices[k + 2] / mGrid.mD.mMax[2]);
 						}
@@ -559,7 +559,7 @@ namespace FluidSimulation
 			// load image, create texture and generate mipmaps
 			int width, height, nrChannels;
 
-			unsigned char *data = stbi_load((picturePath + "/smoke2.png").c_str(), &width, &height, &nrChannels, 0);
+			unsigned char *data = stbi_load((picturePath + "/white.png").c_str(), &width, &height, &nrChannels, 0);
 			if (data)
 			{
 				// ʹ��ͼ����������

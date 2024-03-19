@@ -13,7 +13,7 @@ namespace FluidSimulation
     namespace Lagrangian3d
     {
 
-        struct ParticleInfo3d
+        struct particle3d
         {
             alignas(16) glm::vec3 position;
             alignas(16) glm::vec3 velocity;
@@ -43,8 +43,8 @@ namespace FluidSimulation
             float mParticleDiameter = Lagrangian3dPara::particleDiameter;
             float mVolume = std::pow(mParticleDiameter, 3); // 体积
 
-            std::vector<ParticleInfo3d> mParticleInfos;
-            int mMaxNeighbors = 512;
+            std::vector<particle3d> particles;
+            int maxNeighborNum = 512;
 
             // 容器参数
             glm::vec3 mLowerBound = glm::vec3(FLT_MAX);

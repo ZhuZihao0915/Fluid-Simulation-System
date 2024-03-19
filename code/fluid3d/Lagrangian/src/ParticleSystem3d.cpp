@@ -44,7 +44,7 @@ namespace FluidSimulation
                 }
             }
 
-            mParticleInfos.clear();
+            particles.clear();
         }
 
         int32_t ParticleSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particleSpace)
@@ -63,7 +63,7 @@ namespace FluidSimulation
             }
 
             glm::uvec3 particleNum = glm::uvec3(size.x / particleSpace, size.y / particleSpace, size.z / particleSpace);
-            std::vector<ParticleInfo3d> particles(particleNum.x * particleNum.y * particleNum.z);
+            std::vector<particle3d> tempParticles(particleNum.x * particleNum.y * particleNum.z);
 
             Glb::RandomGenerator rand;
             int p = 0;
@@ -76,15 +76,15 @@ namespace FluidSimulation
                         float x = (idX + rand.GetUniformRandom()) * particleSpace;
                         float y = (idY + rand.GetUniformRandom()) * particleSpace;
                         float z = (idZ + rand.GetUniformRandom()) * particleSpace;
-                        particles[p].position = corner + glm::vec3(x, y, z);
-                        particles[p].blockId = getBlockIdByPosition(particles[p].position);
-                        particles[p].velocity = v0;
+                        tempParticles[p].position = corner + glm::vec3(x, y, z);
+                        tempParticles[p].blockId = getBlockIdByPosition(tempParticles[p].position);
+                        tempParticles[p].velocity = v0;
                         p++;
                     }
                 }
             }
 
-            mParticleInfos.insert(mParticleInfos.end(), particles.begin(), particles.end());
+            particles.insert(particles.end(), tempParticles.begin(), tempParticles.end());
             return particles.size();
         }
 
@@ -114,8 +114,8 @@ namespace FluidSimulation
             // 排序前要求各个粒子的blockID已经被正确更新
             // 在addFluidBlock中，对粒子的blockID初始化
             // 之后的模拟过程中，Slover::calculateBlockId()用来更新blockID
-            std::sort(mParticleInfos.begin(), mParticleInfos.end(),
-                      [=](ParticleInfo3d &first, ParticleInfo3d &second)
+            std::sort(particles.begin(), particles.end(),
+                      [=](particle3d &first, particle3d &second)
                       {
                           return first.blockId < second.blockId;
                       });
@@ -125,13 +125,13 @@ namespace FluidSimulation
             int curBlockId = 0;
             int left = 0;
             int right;
-            for (right = 0; right < mParticleInfos.size(); right++)
+            for (right = 0; right < particles.size(); right++)
             {
-                if (mParticleInfos[right].blockId != curBlockId)
+                if (particles[right].blockId != curBlockId)
                 {
                     mBlockExtens[curBlockId] = glm::uvec2(left, right); // 左闭右开
                     left = right;
-                    curBlockId = mParticleInfos[right].blockId;
+                    curBlockId = particles[right].blockId;
                 }
             }
             mBlockExtens[curBlockId] = glm::uvec2(left, right);

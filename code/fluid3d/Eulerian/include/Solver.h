@@ -1,3 +1,4 @@
+#pragma once
 #ifndef __EULERIAN_3D_SOLVER_H__
 #define __EULERIAN_3D_SOLVER_H__
 

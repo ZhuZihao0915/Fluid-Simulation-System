@@ -3,7 +3,6 @@
 #define __MACGRID_2D_H__
 
 #include <windows.h>
-#include "GL/gl.h"
 #include <glm/glm.hpp>
 #include "GridData2d.h"
 
@@ -83,7 +82,7 @@ namespace FluidSimulation
 
             glm::vec2 getVorticityN(int i, int j);
             glm::vec2 getVorticity(int i, int j);
-            double getConfinementForce(int i, int j);
+            glm::vec2 getConfinementForce(int i, int j);
 
             float cellSize;
             int dim[2];

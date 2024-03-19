@@ -47,7 +47,6 @@ namespace FluidSimulation {
             ImVec2(0, 1), ImVec2(1, 0));
 
 
-
         // 如果鼠标停留在渲染界面上，将鼠标的运动报告给component
         if (ImGui::IsItemHovered() && Manager::getInstance().getMethod() != NULL) {
 
@@ -55,7 +54,7 @@ namespace FluidSimulation {
             glfwGetCursorPos(window, &mouseX, &mouseY);
 
             // 检测滚轮
-            Manager::getInstance().getMethod()->cameraScale(ImGui::GetIO().MouseWheel);
+            Glb::Camera::getInstance().ProcessScale(static_cast<float>(ImGui::GetIO().MouseWheel));
 
             // 检测鼠标左键拖动
             if (ImGui::IsMouseDragging(0, 0.0f)) {
@@ -67,7 +66,7 @@ namespace FluidSimulation {
                 float deltaX = (float)(mouseX - lastMouseX);
                 float deltaY = (float)(mouseY - lastMouseY);
 
-                Manager::getInstance().getMethod()->cameraRotate(deltaX, deltaY);
+                Glb::Camera::getInstance().ProcessRotate(glm::vec2(deltaX, deltaY));
                 
                 lastMouseX = mouseX;
                 lastMouseY = mouseY;
@@ -86,7 +85,7 @@ namespace FluidSimulation {
                 float deltaX = (float)(mouseX - lastMouseX);
                 float deltaY = (float)(mouseY - lastMouseY);
 
-                Manager::getInstance().getMethod()->cameraMove(deltaX, deltaY);
+                Glb::Camera::getInstance().ProcessMove(glm::vec2(deltaX, deltaY));
 
                 lastMouseX = mouseX;
                 lastMouseY = mouseY;

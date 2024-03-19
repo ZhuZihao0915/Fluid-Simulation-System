@@ -1,4 +1,5 @@
-﻿#ifndef W_CUBE_SPLINE_H
+﻿#pragma once
+#ifndef W_CUBE_SPLINE_H
 #define W_CUBE_SPLINE_H
 
 #include <glm/glm.hpp>

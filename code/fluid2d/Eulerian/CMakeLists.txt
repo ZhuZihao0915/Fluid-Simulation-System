@@ -16,7 +16,3 @@ target_link_libraries(eulerian2d common)
 
 # glfw
 target_link_libraries(eulerian2d "${PROJECT_SOURCE_DIR}/third_party/glfw/lib/glfw3.lib")
-
-# freeglut
-target_link_libraries(eulerian2d "${PROJECT_SOURCE_DIR}/third_party/freeglut/lib/freeglut.lib")
-target_link_libraries(eulerian2d "${PROJECT_SOURCE_DIR}/third_party/freeglut/lib/freeglutd.lib")

@@ -3,7 +3,6 @@
 #define __EULERIAN_3D_MACGRID_3D_H__
 
 #include <windows.h>
-#include "GL/gl.h"
 #include <glm/glm.hpp>
 #include "GridData3d.h"
 
@@ -12,14 +11,6 @@ namespace FluidSimulation
     namespace Eulerian3d
     {
         using namespace boost::numeric;
-
-        enum RenderMode
-        {
-            NONE,
-            DENSITY,
-            TEMPERATURE,
-            PRESSURE
-        };
 
         class MACGrid3d
         {
@@ -41,7 +32,6 @@ namespace FluidSimulation
             void initialize();
             void createSolids();
 
-            // ����λ�û�øõ������ֵ
             glm::vec3 traceBack(const glm::vec3 &pt, double dt);
             glm::vec3 getVelocity(const glm::vec3 &pt);
             double getVelocityX(const glm::vec3 &pt);
@@ -57,7 +47,6 @@ namespace FluidSimulation
                 Z
             };
 
-            // ��������������ȡ���ĵ�λ���Լ���������
             glm::vec3 getCenter(int i, int j, int k);
             glm::vec3 getLeftFace(int i, int j, int k);
             glm::vec3 getRightFace(int i, int j, int k);

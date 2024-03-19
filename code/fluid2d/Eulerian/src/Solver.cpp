@@ -1,5 +1,4 @@
 #include "Eulerian/include/Solver.h"
-#include <GL/glut.h>
 #include "ConjGrad2d.h"
 #include "Configure.h"
 
@@ -16,36 +15,41 @@ namespace FluidSimulation
 
         Solver::~Solver()
         {
+
         }
 
         void Solver::solve()
         {
+            // TODO
+            // Solves the fluid simulation by performing some steps, which may include:
+            // 1. advection
+            // 2. compute external forces
+            // 3. projection
+            // ...
+
             Glb::Timer::getInstance().start();
 
             target.reset();
 
-            // advect �ٶ�
             advectVelocity();
 
             Glb::Timer::getInstance().recordTime("vel advection");
 
-            // ���Ǹ������жȵ�����
+
             addExternalForces();
 
             Glb::Timer::getInstance().recordTime("external forces");
 
-            // project ȷ��incompressible������
             project();
 
             Glb::Timer::getInstance().recordTime("projection");
 
-            // advect �¶�
             advectTemperature();
 
-            // advect �ܶ�
             advectDensity();
 
             Glb::Timer::getInstance().recordTime("temp & density advection");
+            
         }
 
         void Solver::constructA()
@@ -53,7 +57,6 @@ namespace FluidSimulation
             unsigned int numCells = mGrid.mSolid.data().size();
             A.resize(numCells, numCells, false);
 
-            // ����A(r, c)�洢�� cell r ���ܵ� cell c ������ѹ��
             for (unsigned int row = 0; row < numCells; row++)
             {
                 int ri, rj;
@@ -138,12 +141,12 @@ namespace FluidSimulation
             FOR_EACH_LINE
             {
                 // advect u
-                if (mGrid.isFace(i, j, mGrid.X)) // ȷ����ˮƽ����Ľ���
+                if (mGrid.isFace(i, j, mGrid.X))
                 {
-                    glm::vec2 pos = mGrid.getLeftLine(i, j);                     // ����е㣬���洢x�����ٶȵĵ�
-                    glm::vec2 newpos = mGrid.traceBack(pos, Eulerian2dPara::dt); // ����λ��
-                    glm::vec2 newvel = mGrid.getVelocity(newpos);                // �õ����ݵ�λ�õ��ٶ�
-                    target.mU(i, j) = newvel[mGrid.X];                           // ��ֵ����ֻʹ��ˮƽ����ķ�������ֵ
+                    glm::vec2 pos = mGrid.getLeftLine(i, j);                     
+                    glm::vec2 newpos = mGrid.traceBack(pos, Eulerian2dPara::dt);
+                    glm::vec2 newvel = mGrid.getVelocity(newpos);                
+                    target.mU(i, j) = newvel[mGrid.X];                       
                 }
                 // advect v
                 if (mGrid.isFace(i, j, mGrid.Y))
@@ -161,7 +164,6 @@ namespace FluidSimulation
 
         void Solver::addExternalForces()
         {
-            // ����
             FOR_EACH_LINE
             {
                 if (mGrid.isFace(i, j, mGrid.Y))
@@ -174,27 +176,24 @@ namespace FluidSimulation
                 }
             }
             mGrid.mV = target.mV;
-
-            // �ж�
-            // ��ʼ����������
+            
             Glb::GridData2d forcesX, forcesY;
             forcesX.initialize();
             forcesY.initialize();
 
-            // �������񣬼����ж�Լ����
             FOR_EACH_CELL
             {
-                double force = mGrid.getConfinementForce(i, j);
-                forcesX(i, j) = force;
-                forcesY(i, j) = force;
+                glm::vec2 force = mGrid.getConfinementForce(i, j);
+                forcesX(i, j) = force[0];
+                forcesY(i, j) = force[1];
             }
 
-            // ʹ�ü���õ�Լ�����������ٶȳ�
+
             FOR_EACH_LINE
             {
                 if (mGrid.isFace(i, j, mGrid.X))
                 {
-                    glm::vec2 pos = mGrid.getLeftLine(i, j); // �õ�����е�
+                    glm::vec2 pos = mGrid.getLeftLine(i, j);
                     double vel = mGrid.mU(i, j);
                     double xforce = 0.5 * (forcesX(i, j) - forcesX(i - 1, j));
                     vel = vel + Eulerian2dPara::dt * xforce;
@@ -222,11 +221,6 @@ namespace FluidSimulation
 
             ublas::vector<double> p(numCells);
 
-            // �����ݶȷ���Ⲵ�ɷ��� Ap=b
-            // A��ѹ�����ϵ��������һ��ϡ���ҶԳƵľ���bΪ����ɢ��
-            // �ҵ�һ��ѹ����p��ʹ��Ӧ����ɢ������˹����A �󣬵õ��Ľ����Ap�����ٶȳ���ɢ�ȣ�b���㹻�ӽ�
-            // ��ز��ͣ�https://yangwc.com/2019/08/03/MakingFluidImcompressible/
-            // Ϊ�˽�һ���ӿ����������ٶȣ����Բ���Ԥ�����Ĺ����ݶȷ�
             Glb::cg_psolve2d(A, precon, b, p, 500, 0.005);
             // Glb::cg_solve2d(A, b, p, 500, 0.005);
 
@@ -235,7 +229,6 @@ namespace FluidSimulation
             double scaleConstant = Eulerian2dPara::dt / Eulerian2dPara::airDensity;
             double pressureChange;
 
-            // ʹ��ѹ���������ٶȳ�
             FOR_EACH_LINE
             {
                 if (mGrid.isFace(i, j, mGrid.X))

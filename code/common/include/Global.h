@@ -1,4 +1,5 @@
-﻿#ifndef GLOBAL_H
+﻿#pragma once
+#ifndef GLOBAL_H
 #define GLOBAL_H
 #include <chrono>
 #include <random>

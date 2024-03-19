@@ -4,6 +4,7 @@ namespace FluidSimulation
 {
 	InspectorView::InspectorView()
 	{
+
 	}
 
 	InspectorView::InspectorView(GLFWwindow *window)
@@ -85,9 +86,7 @@ namespace FluidSimulation
 
 			switch (Manager::getInstance().getMethod()->id)
 			{
-			// TODO
-
-			// sph 2d
+			// lagrangian 2d
 			case 0:
 				ImGui::Text("Physical Parameters:");
 				ImGui::PushItemWidth(200);
@@ -109,7 +108,7 @@ namespace FluidSimulation
 				ImGui::PopItemWidth();
 
 				break;
-			// mac 2d
+			// eulerian 2d
 			case 1:
 				ImGui::Text("Physical Parameters:");
 				ImGui::PushItemWidth(200);
@@ -135,7 +134,7 @@ namespace FluidSimulation
 				ImGui::RadioButton("Grid", &Eulerian2dPara::drawModel, 1);
 
 				break;
-			// sph 3d
+			// lagrangian 3d
 			case 2:
 				ImGui::Text("Camera:");
 				ImGui::PushItemWidth(250);
@@ -169,7 +168,7 @@ namespace FluidSimulation
 				ImGui::SliderFloat("Viscosity", &Lagrangian3dPara::viscosity, 0.0f, 0.0006f, "%.5f");
 
 				break;
-			// mac 3d
+			// eulerian 3d
 			case 3:
 				ImGui::Text("Camera:");
 				ImGui::InputFloat3("Position", &Glb::Camera::getInstance().mPosition.x);
@@ -231,9 +230,16 @@ namespace FluidSimulation
 				ImGui::SliderFloat("Boussinesq Beta", &Eulerian3dPara::boussinesqBeta, 1000.0f, 5000.0f);
 				ImGui::SliderFloat("Vorticity", &Eulerian3dPara::vorticityConst, 10.0f, 200.0f);
 				break;
+
+			case 4:
+				// TODO(selectable)
+				// add other method's parameters
+
+				break;
 			}
 
-			// ImGui::GetStyle().ScaleAllSizes(2.0f);
+
+
 			if (!Glb::Timer::getInstance().empty())
 			{
 				ImGui::Separator();
