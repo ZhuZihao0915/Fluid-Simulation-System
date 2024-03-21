@@ -9,6 +9,7 @@
 #include "Component.h"
 #include "Configure.h"
 
+#include "Logger.h"
 
 namespace FluidSimulation {
     namespace Eulerian2d {

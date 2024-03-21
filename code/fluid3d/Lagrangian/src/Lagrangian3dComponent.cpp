@@ -26,8 +26,8 @@ namespace FluidSimulation
 
             ps = new ParticleSystem3d();
             ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1, 1, 1));
-            ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.4 ), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -1.0), 0.02);
-            ps->addFluidBlock(glm::vec3(0.45, 0.45, 0.4), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -1.0), 0.02);
+            ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.3 ), glm::vec3(0.4, 0.4, 0.5), glm::vec3(0.0, 0.0, -1.0), 0.02);
+            ps->addFluidBlock(glm::vec3(0.45, 0.45, 0.3), glm::vec3(0.4, 0.4, 0.5), glm::vec3(0.0, 0.0, -1.0), 0.02);
 
             ps->updateBlockInfo();
             std::cout << "particle num = " << ps->particles.size() << std::endl;

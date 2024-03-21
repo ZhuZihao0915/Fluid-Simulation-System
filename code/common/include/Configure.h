@@ -27,6 +27,7 @@ namespace Eulerian2dPara
 
     extern float dt;
 
+    extern float contrast;
     extern int drawModel;
     extern int gridNum;
 
@@ -43,6 +44,7 @@ namespace Eulerian3dPara
     extern int theDim3d[];
     extern float theCellSize3d;
 
+    extern float contrast;
     extern bool oneSheet;
     extern float distanceX;
     extern float distanceY;
@@ -71,6 +73,7 @@ namespace Eulerian3dPara
 
 namespace Lagrangian2dPara
 {
+    extern float scale;
     extern float dt;
     extern int substep;
     extern float maxVelocity;
@@ -90,6 +93,7 @@ namespace Lagrangian2dPara
 
 namespace Lagrangian3dPara
 {
+    extern float scale;
     extern float dt;
     extern int substep;
     extern float maxVelocity;
@@ -104,7 +108,7 @@ namespace Lagrangian3dPara
     extern float gravityY;
     extern float gravityZ;
 
-    extern float density0;
+    extern float density;
     extern float stiffness;
     extern float exponent;
     extern float viscosity;

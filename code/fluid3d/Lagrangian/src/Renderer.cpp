@@ -181,6 +181,7 @@ namespace FluidSimulation
             mDrawColor3d->use();
             mDrawColor3d->setMat4("view", Glb::Camera::getInstance().GetView());
             mDrawColor3d->setMat4("projection", Glb::Camera::getInstance().GetProjection());
+            mDrawColor3d->setFloat("scale", Lagrangian3dPara::scale);
 
             glBindVertexArray(mVaoCoord);
             glDrawElements(GL_LINES, 6, GL_UNSIGNED_INT, indices);

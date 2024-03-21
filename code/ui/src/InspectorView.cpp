@@ -48,15 +48,14 @@ namespace FluidSimulation
 		ImGui::SetNextItemWidth(300);
 		if (ImGui::Button(simulating ? "Stop" : "Continue"))
 		{
-			// �л���Ⱦ״̬
 			simulating = !simulating;
 			if (simulating)
 			{
-				Manager::getInstance().pushMessage("Rendering...");
+				Glb::Logger::getInstance().addLog("Rendering...");
 			}
 			else
 			{
-				Manager::getInstance().pushMessage("Stopped.");
+				Glb::Logger::getInstance().addLog("Stopped.");
 			}
 		}
 
@@ -68,8 +67,7 @@ namespace FluidSimulation
 
 			simulating = false;
 			Manager::getInstance().getSceneView()->texture = -1;
-
-			Manager::getInstance().pushMessage("Rerun succeeded.");
+			Glb::Logger::getInstance().addLog("Rerun succeeded.");
 		}
 
 		ImGui::Separator();
@@ -132,6 +130,7 @@ namespace FluidSimulation
 				ImGui::Text("Renderer:");
 				ImGui::RadioButton("Pixel", &Eulerian2dPara::drawModel, 0);
 				ImGui::RadioButton("Grid", &Eulerian2dPara::drawModel, 1);
+				ImGui::SliderFloat("Contrast", &Eulerian2dPara::contrast, 0.0f, 3.0f);
 
 				break;
 			// lagrangian 3d
@@ -163,7 +162,7 @@ namespace FluidSimulation
 				ImGui::SliderFloat("Gravity.x", &Lagrangian3dPara::gravityX, -20.0f, 20.0f);
 				ImGui::SliderFloat("Gravity.y", &Lagrangian3dPara::gravityY, -20.0f, 20.0f);
 				ImGui::SliderFloat("Gravity.z", &Lagrangian3dPara::gravityZ, -20.0f, 20.0f);
-				ImGui::SliderFloat("Density", &Lagrangian3dPara::density0, 100.0f, 2000.0f);
+				ImGui::SliderFloat("Density", &Lagrangian3dPara::density, 100.0f, 2000.0f);
 				ImGui::SliderFloat("Stiffness", &Lagrangian3dPara::stiffness, 10.0f, 50.0f);
 				ImGui::SliderFloat("Viscosity", &Lagrangian3dPara::viscosity, 0.0f, 0.0006f, "%.5f");
 
@@ -186,6 +185,8 @@ namespace FluidSimulation
 
 				ImGui::RadioButton("Pixel", &Eulerian3dPara::drawModel, 0);
 				ImGui::RadioButton("Grid", &Eulerian3dPara::drawModel, 1);
+
+				ImGui::SliderFloat("Contrast", &Eulerian3dPara::contrast, 0.0f, 3.0f);
 
 				ImGui::Checkbox("One Sheet", &Eulerian3dPara::oneSheet);
 				ImGui::Checkbox("X-Y", &Eulerian3dPara::xySheetsON);
@@ -232,7 +233,7 @@ namespace FluidSimulation
 				break;
 
 			case 4:
-				// TODO(selectable)
+				// TODO(optional)
 				// add other method's parameters
 
 				break;

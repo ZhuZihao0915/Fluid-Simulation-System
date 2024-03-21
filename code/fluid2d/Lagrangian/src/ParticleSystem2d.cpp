@@ -15,18 +15,19 @@ namespace FluidSimulation
         {
         }
 
-        void ParticleSystem2d::setContainerSize(glm::vec2 corner, glm::vec2 size)
+        void ParticleSystem2d::setContainerSize(glm::vec2 corner = glm::vec2(-1.0f, -1.0f), glm::vec2 size = glm::vec2(2.0f, 2.0f))
         {
+            corner *=  Lagrangian2dPara::scale;
+            size *= Lagrangian2dPara::scale;
+
             mLowerBound = corner - mSupportRadius + mParticleDiameter;
             mUpperBound = corner + size + mSupportRadius - mParticleDiameter;
             mContainerCenter = (mLowerBound + mUpperBound) / 2.0f;
             size = mUpperBound - mLowerBound;
 
-            // ���������block����
             mBlockNum.x = floor(size.x / mSupportRadius);
             mBlockNum.y = floor(size.y / mSupportRadius);
 
-            // һ��block�Ĵ�С
             mBlockSize = glm::vec2(size.x / mBlockNum.x, size.y / mBlockNum.y);
 
             mBlockIdOffs.resize(9);
@@ -45,6 +46,10 @@ namespace FluidSimulation
 
         int ParticleSystem2d::addFluidBlock(glm::vec2 corner, glm::vec2 size, glm::vec2 v0, float particleSpace)
         {
+
+            corner *= Lagrangian2dPara::scale;
+            size *= Lagrangian2dPara::scale;
+
             glm::vec2 blockLowerBound = corner;
             glm::vec2 blockUpperBound = corner + size;
 
@@ -97,18 +102,12 @@ namespace FluidSimulation
 
         void ParticleSystem2d::updateBlockInfo()
         {
-
-            // ��blockId��˳�򣬶����ӽ�������
-            // ����ǰҪ��������ӵ�blockID�Ѿ�����ȷ����
-            // ��addFluidBlock�У������ӵ�blockID��ʼ��
-            // ֮���ģ������У�Slover::calculateBlockId()��������blockID
             std::sort(mParticleInfos.begin(), mParticleInfos.end(),
                       [=](ParticleInfo2d &first, ParticleInfo2d &second)
                       {
                           return first.blockId < second.blockId;
                       });
 
-            // ����ÿ��block�����������������е���ʼ�ͽ�������
             mBlockExtens = std::vector<glm::uvec2>(mBlockNum.x * mBlockNum.y, glm::uvec2(0, 0));
             int curBlockId = 0;
             int left = 0;

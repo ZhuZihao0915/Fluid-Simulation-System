@@ -19,6 +19,10 @@ namespace FluidSimulation {
             Glb::Timer::getInstance().clear();
 
             grid = new MACGrid2d();
+
+            Glb::Logger::getInstance().addLog("MAC gird created. dimension: " + std::to_string(Eulerian2dPara::theDim2d[0]) + "x"
+                + std::to_string(Eulerian2dPara::theDim2d[1]) + " cell size:" + std::to_string(Eulerian2dPara::theCellSize2d).substr(0,3));
+
             renderer = new Renderer();
             solver = new Solver(*grid);
 

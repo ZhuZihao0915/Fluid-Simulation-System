@@ -10,6 +10,7 @@
 #include "imgui_impl_opengl3.h"
 
 #include "Manager.h"
+#include "Logger.h"
 
 
 namespace FluidSimulation 

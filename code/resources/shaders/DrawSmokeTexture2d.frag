@@ -6,8 +6,9 @@ in vec2 TexCoord;
 
 // texture sampler
 uniform sampler2D mTexture;
+uniform float contrast;
 
 void main()
 {
-	FragColor = texture(mTexture, TexCoord) * vec4(ourColor);
+	FragColor = texture(mTexture, TexCoord) * ourColor * contrast;
 }

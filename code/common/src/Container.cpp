@@ -28,6 +28,17 @@ namespace Glb {
 		this->x = x;
 		this->y = y;
 		this->z = z;
+		for (int i = 0; i < 48; i += 3) {
+			if (vertices[i] != 0) {
+				vertices[i] = x;
+			}
+			if (vertices[i + 1] != 0) {
+				vertices[i + 1] = y;
+			}
+			if (vertices[i + 2] != 0) {
+				vertices[i + 2] = z;
+			}
+		}
 	}
 
 	void Container::draw()

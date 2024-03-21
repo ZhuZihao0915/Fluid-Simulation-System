@@ -15,7 +15,7 @@ namespace FluidSimulation
         methodComponents.push_back(new Eulerian2d::Eulerian2dComponent("Eulerian 2d", id++));
         methodComponents.push_back(new Lagrangian3d::Lagrangian3dComponent("Lagrangian 3d", id++));
         methodComponents.push_back(new Eulerian3d::Eulerian3dComponent("Eulerian 3d", id++));
-        // TODO(selectable)
+        // TODO(optional)
         // add more simulation method
 
     }
@@ -39,10 +39,6 @@ namespace FluidSimulation
         inspectorView->display();
         projectView->display();
 	}
-
-    void Manager::pushMessage(char* message) {
-        log.push_back(message);
-    }
 
     void Manager::displayToolBar() {
 

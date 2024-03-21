@@ -19,7 +19,7 @@ namespace FluidSimulation {
 			Renderer(MACGrid3d& grid);
 
 			void loadTexture();
-
+			void resetVertices(float x, float y, float z);
 			void draw();
 			void drawOneSheet();
 			void drawOneSheetXY();

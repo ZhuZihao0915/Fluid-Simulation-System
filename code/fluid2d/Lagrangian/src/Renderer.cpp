@@ -81,6 +81,8 @@ namespace FluidSimulation
 
             glBindVertexArray(mVaoParticles); // VAO
             mParticleShader->use();           // shader
+            mParticleShader->setFloat("scale", Lagrangian2dPara::scale);
+
             glEnable(GL_PROGRAM_POINT_SIZE);
 
             glDrawArrays(GL_POINTS, 0, mParticleNum);

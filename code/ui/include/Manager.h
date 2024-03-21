@@ -39,7 +39,6 @@ namespace FluidSimulation
 		void init(GLFWwindow* window);
 		void displayViews();
 		void displayToolBar();
-		void pushMessage(char* message);
 
 		HierarchyView* getHierachyView() const { return hierarchyView; };
 		SceneView* getSceneView() const { return sceneView; };
@@ -48,7 +47,6 @@ namespace FluidSimulation
 		GLFWwindow* getWindow() const { return window; };
 		Glb::Component* getMethod() const { return currentMethod; };
 		void setMethod(Glb::Component* method) { currentMethod = method; };
-		std::vector<char*> getLog() const { return log; };
 
 	private:
 
@@ -71,8 +69,6 @@ namespace FluidSimulation
 		ProjectView* projectView;
 
 		Glb::Component* currentMethod;
-
-		std::vector<char*> log;
 		
 	};
 }

@@ -186,9 +186,9 @@ namespace FluidSimulation
 					}
 				}
 
-				mPs.particles[i].density *= (mPs.mVolume * Lagrangian3dPara::density0);
-				mPs.particles[i].density = max(mPs.particles[i].density, Lagrangian3dPara::density0);
-				mPs.particles[i].pressure = Lagrangian3dPara::stiffness * (pow(mPs.particles[i].density / Lagrangian3dPara::density0, Lagrangian3dPara::exponent) - 1.0);
+				mPs.particles[i].density *= (mPs.mVolume * Lagrangian3dPara::density);
+				mPs.particles[i].density = max(mPs.particles[i].density, Lagrangian3dPara::density);
+				mPs.particles[i].pressure = Lagrangian3dPara::stiffness * (pow(mPs.particles[i].density / Lagrangian3dPara::density, Lagrangian3dPara::exponent) - 1.0);
 				mPs.particles[i].pressDivDens2 = mPs.particles[i].pressure / pow(mPs.particles[i].density, 2);
 			}
 		}

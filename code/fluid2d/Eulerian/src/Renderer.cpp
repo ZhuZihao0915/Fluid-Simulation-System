@@ -80,7 +80,6 @@ namespace FluidSimulation
 			unsigned char *data = stbi_load((picturePath + "/white.png").c_str(), &width, &height, &nrChannels, 0);
 			if (data)
 			{
-				// ʹ��ͼ����������
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 				// Mipmaps
 				glGenerateMipmap(GL_TEXTURE_2D);
@@ -107,21 +106,19 @@ namespace FluidSimulation
 						float pt_y = j * mGrid.mU.mMax[1] / (imageHeight);
 						glm::vec2 pt(pt_x, pt_y);
 						glm::vec4 color = mGrid.getRenderColor(pt);
-						imageData.push_back(color.x);
-						imageData.push_back(color.y);
-						imageData.push_back(color.z);
+						imageData.push_back(color.x * Eulerian2dPara::contrast);
+						imageData.push_back(color.y * Eulerian2dPara::contrast);
+						imageData.push_back(color.z * Eulerian2dPara::contrast);
 					}
 				}
 
 				glGenTextures(1, &texturePixelID);
 				glBindTexture(GL_TEXTURE_2D, texturePixelID);
-				// ������������
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-				// ����ɫ���ݴ��ݸ�����
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_FLOAT, imageData.data());
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
@@ -180,7 +177,7 @@ namespace FluidSimulation
 						shader->use();
 						glBindTexture(GL_TEXTURE_2D, smokeTexture);
 						glUniform1i(glGetUniformLocation(shader->getId(), "mTexture"), 0);
-
+						shader->setFloat("contrast", Eulerian2dPara::contrast);
 						glBindVertexArray(VAO);
 						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 					}

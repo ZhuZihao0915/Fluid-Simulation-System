@@ -20,8 +20,6 @@ namespace FluidSimulation {
 
 			void draw(MACGrid2d& mGrid);
 
-			void destroy();
-
 			void loadTexture();
 
 			GLuint getTextureID();

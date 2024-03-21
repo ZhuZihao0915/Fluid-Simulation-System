@@ -1,3 +1,4 @@
+#include "Renderer.h"
 #include "stb_image.h"
 #include "fluid3d/Eulerian/include/Renderer.h"
 
@@ -42,11 +43,30 @@ namespace FluidSimulation
 			0.0f, 0.0f, 1.0f, 1.0f, 1.0f,
 			0.0f, 0.0f, 0.0f, 1.0f, 0.0f};
 
+		void Renderer::resetVertices(float x, float y, float z)
+		{
+			for (int i = 0; i < 30; i += 5) {
+				if (verticesXY[i] != 0)verticesXY[i] = x;
+				if (verticesXY[i+1] != 0)verticesXY[i+1] = y;
+				if (verticesXY[i+2] != 0)verticesXY[i+2] = z;
+				if (verticesYZ[i] != 0)verticesYZ[i] = x;
+				if (verticesYZ[i + 1] != 0)verticesYZ[i + 1] = y;
+				if (verticesYZ[i + 2] != 0)verticesYZ[i + 2] = z;
+				if (verticesXZ[i] != 0)verticesXZ[i] = x;
+				if (verticesXZ[i + 1] != 0)verticesXZ[i + 1] = y;
+				if (verticesXZ[i + 2] != 0)verticesXZ[i + 2] = z;
+			}
+		}
+
 		Renderer::Renderer(MACGrid3d &grid) : mGrid(grid)
 		{
 
 			container = new Glb::Container();
+			float x = (float)Eulerian3dPara::theDim3d[0] / Eulerian3dPara::theDim3d[2];
+			float y = (float)Eulerian3dPara::theDim3d[1] / Eulerian3dPara::theDim3d[2];
+			container->resetSize(x, y, 1.0f);
 			container->init();
+			resetVertices(x, y, 1.0f);
 
 			std::string particleVertShaderPath = shaderPath + "/DrawSmokePixel3d.vert";
 			std::string particleFragShaderPath = shaderPath + "/DrawSmokePixel3d.frag";
@@ -111,7 +131,7 @@ namespace FluidSimulation
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 			glBindTexture(GL_TEXTURE_2D, 0);
 
-			// Texture2D�󶨵�FBO
+			// FBO
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
 			// generate render buffer object (RBO)
@@ -120,7 +140,6 @@ namespace FluidSimulation
 			glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageWidth, imageHeight);
 			glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-			// RBO�󶨵�FBO
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			{
@@ -231,7 +250,7 @@ namespace FluidSimulation
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+				pixelShader->setFloat("contrast", Eulerian3dPara::contrast);
 				glBindVertexArray(VAO_XY);
 				pixelShader->use();
 				glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -267,8 +286,8 @@ namespace FluidSimulation
 
 						for (int k = 0; k <= 18; k += 6)
 						{
-							vertices[k] = (vertices[k] / mGrid.mD.mMax[0]);
-							vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[1]);
+							vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
+							vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[2]);
 							vertices[k + 2] = 0;
 						}
 
@@ -297,6 +316,7 @@ namespace FluidSimulation
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
+						gridShader->setFloat("contrast", Eulerian3dPara::contrast);
 
 						glBindVertexArray(VAO);
 						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -350,7 +370,7 @@ namespace FluidSimulation
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+				pixelShader->setFloat("contrast", Eulerian3dPara::contrast);
 				glBindVertexArray(VAO_XZ);
 				pixelShader->use();
 				glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -387,7 +407,7 @@ namespace FluidSimulation
 
 						for (int k = 0; k <= 18; k += 6)
 						{
-							vertices[k] = (vertices[k] / mGrid.mD.mMax[0]);
+							vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
 							vertices[k + 1] = 0;
 							vertices[k + 2] = (vertices[k + 2] / mGrid.mD.mMax[2]);
 						}
@@ -417,7 +437,7 @@ namespace FluidSimulation
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+						gridShader->setFloat("contrast", Eulerian3dPara::contrast);
 						glBindVertexArray(VAO);
 						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 					}
@@ -471,7 +491,7 @@ namespace FluidSimulation
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+				pixelShader->setFloat("contrast", Eulerian3dPara::contrast);
 				glBindVertexArray(VAO_YZ);
 				pixelShader->use();
 				glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -538,7 +558,7 @@ namespace FluidSimulation
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 						glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+						gridShader->setFloat("contrast", Eulerian3dPara::contrast);
 						glBindVertexArray(VAO);
 						glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 					}
@@ -562,7 +582,6 @@ namespace FluidSimulation
 			unsigned char *data = stbi_load((picturePath + "/white.png").c_str(), &width, &height, &nrChannels, 0);
 			if (data)
 			{
-				// ʹ��ͼ����������
 				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 				// Mipmaps
 				glGenerateMipmap(GL_TEXTURE_2D);
@@ -623,7 +642,7 @@ namespace FluidSimulation
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+					pixelShader->setFloat("contrast", Eulerian3dPara::contrast);
 					glBindVertexArray(VAO_XY);
 					pixelShader->use();
 					glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -664,7 +683,7 @@ namespace FluidSimulation
 							for (int k = 0; k <= 18; k += 6)
 							{
 								vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
-								vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[1]);
+								vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[2]);
 								vertices[k + 2] = 0;
 							}
 
@@ -693,7 +712,7 @@ namespace FluidSimulation
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+							gridShader->setFloat("contrast", Eulerian3dPara::contrast);
 							glBindVertexArray(VAO);
 							glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 						}
@@ -749,7 +768,7 @@ namespace FluidSimulation
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+					pixelShader->setFloat("contrast", Eulerian3dPara::contrast);
 					glBindVertexArray(VAO_YZ);
 					pixelShader->use();
 					glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -791,7 +810,7 @@ namespace FluidSimulation
 							for (int k = 1; k <= 19; k += 6)
 							{
 								vertices[k - 1] = 0;
-								vertices[k] = (vertices[k] / mGrid.mD.mMax[1]);
+								vertices[k] = (vertices[k] / mGrid.mD.mMax[2]);
 								vertices[k + 1] = (vertices[k + 1] / mGrid.mD.mMax[2]);
 							}
 
@@ -820,7 +839,7 @@ namespace FluidSimulation
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+							gridShader->setFloat("contrast", Eulerian3dPara::contrast);
 							glBindVertexArray(VAO);
 							glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 						}
@@ -877,7 +896,7 @@ namespace FluidSimulation
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+					pixelShader->setFloat("contrast", Eulerian3dPara::contrast);
 					glBindVertexArray(VAO_XZ);
 					pixelShader->use();
 					glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -950,7 +969,7 @@ namespace FluidSimulation
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 							glUniformMatrix4fv(glGetUniformLocation(gridShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
-
+							gridShader->setFloat("contrast", Eulerian3dPara::contrast);
 							glBindVertexArray(VAO);
 							glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 						}

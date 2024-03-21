@@ -13,6 +13,7 @@ namespace FluidSimulation {
 	}
 
 	void SceneView::display() {
+
         //ImGui::SetNextWindowSizeConstraints(ImVec2(900, 900), ImVec2(1200, 1200));
 		ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoCollapse);
 
@@ -47,7 +48,7 @@ namespace FluidSimulation {
             ImVec2(0, 1), ImVec2(1, 0));
 
 
-        // 如果鼠标停留在渲染界面上，将鼠标的运动报告给component
+        // 响应鼠标
         if (ImGui::IsItemHovered() && Manager::getInstance().getMethod() != NULL) {
 
             // 获取鼠标状态

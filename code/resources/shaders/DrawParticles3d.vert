@@ -5,6 +5,7 @@ layout(location = 1) in float density;
 
 uniform mat4 view;
 uniform mat4 projection;
+uniform float scale;
 
 out vec3 color;
 
@@ -30,7 +31,7 @@ vec3 ValueToColor(float value) {
 
 void main() {
     gl_PointSize = 3;
-    gl_Position = projection * view * vec4(position, 1.0);
+    gl_Position = projection * view * vec4(position/scale, 1.0);
 
     color = ValueToColor((density - 500.0) / 2000.0);
 }

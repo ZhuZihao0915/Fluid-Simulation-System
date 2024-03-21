@@ -12,6 +12,7 @@
 
 #include "Configure.h"
 #include "Manager.h"
+#include "Logger.h"
 
 namespace FluidSimulation {
 

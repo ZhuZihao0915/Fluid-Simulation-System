@@ -17,6 +17,9 @@ namespace FluidSimulation
 
         void ParticleSystem3d::setContainerSize(glm::vec3 corner, glm::vec3 size)
         {
+
+            size *= Lagrangian3dPara::scale;
+
             mLowerBound = corner - mSupportRadius + mParticleDiameter;
             mUpperBound = corner + size + mSupportRadius - mParticleDiameter;
             mContainerCenter = (mLowerBound + mUpperBound) / 2.0f;
@@ -49,6 +52,10 @@ namespace FluidSimulation
 
         int32_t ParticleSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particleSpace)
         {
+
+            corner *= Lagrangian3dPara::scale;
+            size *= Lagrangian3dPara::scale;
+
             glm::vec3 blockLowerBound = corner;
             glm::vec3 blockUpperBound = corner + size;
 

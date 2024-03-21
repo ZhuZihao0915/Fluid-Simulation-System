@@ -21,7 +21,7 @@ namespace FluidSimulation {
         // initialize glfw
         if (!glfwInit())
         {
-            Manager::getInstance().pushMessage("GLFW initialization failed.");
+            Glb::Logger::getInstance().addLog("GLFW initialization failed.");
             return;
         }
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -31,7 +31,7 @@ namespace FluidSimulation {
         // create window
         GLFWwindow* window = glfwCreateWindow(1440, 1150, "Fluid Simulation System", NULL, NULL);
         if (!window) {
-            Manager::getInstance().pushMessage("Fail to create window.");
+            Glb::Logger::getInstance().addLog("Fail to create window.");
             glfwTerminate();
             return;
         }
@@ -44,11 +44,10 @@ namespace FluidSimulation {
 
         // initialize glad
         if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-            Manager::getInstance().pushMessage("GLAD initialization failed.");
+            Glb::Logger::getInstance().addLog("GLAD initialization failed.");
             return;
         }
-
-        Manager::getInstance().pushMessage("GLFW and GLAD initialization succeeded.");
+        Glb::Logger::getInstance().addLog("GLFW and GLAD initialization succeeded.");
 
         // make imgui ready for glfw and OpenGL
         ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -57,7 +56,7 @@ namespace FluidSimulation {
 
         // init manager
         Manager::getInstance().init(window);
-        Manager::getInstance().pushMessage("Start Main Render Loop.");
+        Glb::Logger::getInstance().addLog("Start Main Render Loop.");
 
         // main render loop
         while (!glfwWindowShouldClose(window)) {
