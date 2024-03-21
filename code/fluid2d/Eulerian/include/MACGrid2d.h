@@ -54,7 +54,6 @@ namespace FluidSimulation
                 Y
             };
 
-            // ��������������ȡ���ĵ�λ���Լ���������
             glm::vec2 getCenter(int i, int j);
             glm::vec2 getLeftLine(int i, int j);
             glm::vec2 getRightLine(int i, int j);

@@ -11,16 +11,6 @@ namespace Glb {
 
 	using namespace boost::numeric;
 
-	// GridData is capable of storing any data in a grid
-	// Columns are indexed with i and increase with increasing x
-	// Rows are indexed with j and increase with z
-	// Stacks are indexed with k and incrase with y
-	//
-	// GridData is initialized by global variables theDim and theCellSize
-	// defined in GridData.cpp.  theDim defines the number of cells in 
-	// each X,Y,Z direction.  theCellSize defines the size of each cell.
-	// GridData's world space dimensions extend from (0,0,0) to mMax, where mMax is
-	// (theCellSize*theDim[0], theCellSize*theDim[1], theCellSize*theDim[2])
 	class GridData3d
 	{
 	public:
@@ -29,23 +19,15 @@ namespace Glb {
 		virtual ~GridData3d();
 		virtual GridData3d& operator=(const GridData3d& orig);
 
-		// Initialize underlying data structure with dlftValue
 		virtual void initialize(double dfltValue = 0.0);
 
-		// Returns editable data at index (i,j,k).
-		// E.g. to set data on this object, call mygriddata(i,j,k) = newval
 		virtual double& operator()(int i, int j, int k);
 
-		// Given a point in world coordinates, return the corresponding
-		// value from this grid. mDfltValue is returned for points
-		// outside of our grid dimensions
 		virtual double interpolate(const glm::vec3& pt);	// 插值函数，根据给定的世界坐标返回网格数据
 
-		// Access underlying data structure (for use with other UBLAS objects)
 		ublas::vector<double>& data();
 
-		// Given a point in world coordinates, return the cell index (i,j,k)
-		// corresponding to it
+
 		virtual void getCell(const glm::vec3& pt, int& i, int& j, int& k);
 
 		glm::vec3 mMax;		// 三维空间中的最大坐标，表示网格的尺寸

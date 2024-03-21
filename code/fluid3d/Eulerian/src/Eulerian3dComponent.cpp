@@ -19,9 +19,9 @@ namespace FluidSimulation {
 
             grid = new MACGrid3d();
 
-            Glb::Logger::getInstance().addLog("MAC gird created. dimension: " + std::to_string(Eulerian3dPara::theDim3d[0]) + "x"
+            Glb::Logger::getInstance().addLog("2d MAC gird created. dimension: " + std::to_string(Eulerian3dPara::theDim3d[0]) + "x"
                 + std::to_string(Eulerian3dPara::theDim3d[1]) + "x"
-                + std::to_string(Eulerian3dPara::theDim3d[2]) + " cell size:"
+                + std::to_string(Eulerian3dPara::theDim3d[2]) + ". cell size:"
                 + std::to_string(Eulerian2dPara::theCellSize2d).substr(0, 3));
 
 

@@ -115,10 +115,10 @@ namespace Glb {
 
         float tanHalfFovx = 1.0 / projection[0][0];
         float tanHalfFovy = 1.0 / projection[1][1];
-        intrinsic.x = 2.0 * tanHalfFovx / w;      // fxInv
-        intrinsic.y = 2.0 * tanHalfFovy / h;     // fyInv
-        intrinsic.z = w / 2.0;                    // cx
-        intrinsic.w = h / 2.0;                    // cy
+        intrinsic.x = 2.0 * tanHalfFovx / w;
+        intrinsic.y = 2.0 * tanHalfFovy / h;
+        intrinsic.z = w / 2.0;                   
+        intrinsic.w = h / 2.0;            
 
         return intrinsic;
     }

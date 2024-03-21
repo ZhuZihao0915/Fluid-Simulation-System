@@ -63,12 +63,6 @@ namespace FluidSimulation
 
             Glb::Container *container = nullptr;
 
-            /*Glb::Shader* mScreenQuad = nullptr;
-            Glb::Shader* mPointSpriteZValue = nullptr;
-            Glb::Shader* mPointSpriteThickness = nullptr;
-            Glb::Shader* mDrawFluidColor = nullptr;
-            Glb::Shader* mDrawModel = nullptr;*/
-
             GLuint FBO = 0;
             GLuint RBO = 0;
 
@@ -108,11 +102,6 @@ namespace FluidSimulation
             float_t mUpdateTime = 0.0f;
             float_t updateTitleTime = 0.0f;
             float_t frameCount = 0.0f;
-
-            // shadow map
-            /*Glb::PointLight mLight;
-            Glb::ShadowMap* mShadowMap;
-            Glb::DepthFilter* mDepthFilter;*/
 
             glm::vec3 mExternelAccleration = {0.0, 0.0, 0.0};
         };

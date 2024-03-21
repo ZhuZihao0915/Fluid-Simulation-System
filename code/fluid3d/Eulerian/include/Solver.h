@@ -35,7 +35,7 @@ namespace FluidSimulation
 		protected:
 			MACGrid3d &mGrid;
 
-			MACGrid3d target; // ����advection�׶δ洢�µĳ�
+			MACGrid3d target;
 
 			unsigned int numCells = Eulerian3dPara::theDim3d[0] * Eulerian3dPara::theDim3d[1] * Eulerian3dPara::theDim3d[2];
 

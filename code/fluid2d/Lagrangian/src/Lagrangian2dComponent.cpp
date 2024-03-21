@@ -37,7 +37,7 @@ namespace FluidSimulation
 
             ps->updateBlockInfo();
 
-            std::cout << "particle num = " << ps->mParticleInfos.size() << std::endl;
+            Glb::Logger::getInstance().addLog("2d Particle System initialized. particle num: " + std::to_string(ps->mParticleInfos.size()));
 
             solver = new Solver(*ps);
         }

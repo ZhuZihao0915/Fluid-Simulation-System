@@ -11,14 +11,6 @@ namespace Glb {
 
 	using namespace boost::numeric;
 
-	// GridData2d 能够存储网格中的任何数据
-	// 列由 i 索引，随 x 增加而增加
-	// 行由 j 索引，随 y 增加而增加
-	//
-	// GridData2d 通过全局变量 theDim2d 和 theCellSize2d 进行初始化
-	// theDim2d 定义每个X、Y、Z方向上的单元格数
-	// GridData2d 的世界空间尺寸从(0,0)延伸到 mMax
-	// 其中 mMax 是 ( theCellSize * theDim[0], theCellSize * theDim[1])
 	class GridData2d
 	{
 	public:

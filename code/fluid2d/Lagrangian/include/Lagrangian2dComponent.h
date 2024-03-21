@@ -8,6 +8,7 @@
 
 #include "Component.h"
 #include "Configure.h"
+#include "Logger.h"
 
 namespace FluidSimulation
 {

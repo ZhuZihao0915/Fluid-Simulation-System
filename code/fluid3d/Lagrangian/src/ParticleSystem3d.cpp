@@ -15,7 +15,7 @@ namespace FluidSimulation
         {
         }
 
-        void ParticleSystem3d::setContainerSize(glm::vec3 corner, glm::vec3 size)
+        void ParticleSystem3d::setContainerSize(glm::vec3 corner = glm::vec3(0.0, 0.0, 0.0), glm::vec3 size = glm::vec3(1, 1, 1))
         {
 
             size *= Lagrangian3dPara::scale;
