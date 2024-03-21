@@ -45,13 +45,10 @@ namespace FluidSimulation
         {
             float dim = 2.0;
             float constFactor = 2.0 * (dim + 2.0) * Lagrangian2dPara::viscosity;
-#pragma omp parallel for
             for (int i = 0; i < mPs.mParticleInfos.size(); i++)
             {
 
                 mPs.mParticleInfos[i].accleration = -glm::vec2(Lagrangian2dPara::gravityX, Lagrangian2dPara::gravityY);
-                // std::cout << mPs.mParticleInfos[i].accleration.z << std::endl;
-                //  ���� viscosity �� pressure
                 glm::vec2 viscosityForce = glm::vec2(0.0);
                 glm::vec2 pressureForce = glm::vec2(0.0);
                 for (int k = 0; k < mPs.mBlockIdOffs.size(); k++)
@@ -135,7 +132,7 @@ namespace FluidSimulation
 
                 if (invFlag)
                 {
-                    mPs.mParticleInfos[i].velocity *= Lagrangian2dPara::velocityAttenuation; // ����߽磬˥���ٶ�
+                    mPs.mParticleInfos[i].velocity *= Lagrangian2dPara::velocityAttenuation;
                 }
 
                 glm::vec2 newPosition, newVelocity;

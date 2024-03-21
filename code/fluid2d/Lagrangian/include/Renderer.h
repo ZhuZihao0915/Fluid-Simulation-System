@@ -36,11 +36,6 @@ namespace FluidSimulation
             GLuint GetRenderedTexture();
 
         private:
-            float CalculateFPS();
-
-            static void ResizeCallback(GLFWwindow *window, int width, int height);
-
-        private:
             GLFWwindow *mWindow = nullptr;
 
             Glb::Shader *mParticleShader = nullptr;

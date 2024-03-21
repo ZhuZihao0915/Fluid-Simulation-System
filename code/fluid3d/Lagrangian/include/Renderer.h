@@ -32,18 +32,15 @@ namespace FluidSimulation
 
             GLuint getRenderedTexture();
 
-            // ��⡢��Ⱦ
             void load(ParticleSystem3d &ps);
             void draw();
 
         private:
-            void BuildShaders();
             void GenerateFrameBuffers();
             void GenerateBuffers();
             void GenerateTextures();
             void LoadSkyBox();
             void MakeVertexArrays();
-            void DrawParticles();
             int32_t Destroy();
 
         private:

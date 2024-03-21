@@ -141,7 +141,7 @@ namespace FluidSimulation
 
 				if (invFlag)
 				{
-					mPs.particles[i].velocity *= Lagrangian3dPara::velocityAttenuation; // ����߽磬˥���ٶ�
+					mPs.particles[i].velocity *= Lagrangian3dPara::velocityAttenuation;
 				}
 
 				glm::vec3 newPosition, newVelocity;
