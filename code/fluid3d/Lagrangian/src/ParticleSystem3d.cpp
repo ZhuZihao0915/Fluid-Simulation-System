@@ -116,18 +116,13 @@ namespace FluidSimulation
 
         void ParticleSystem3d::updateBlockInfo()
         {
-
-            // 按blockId的顺序，对粒子进行排序
-            // 排序前要求各个粒子的blockID已经被正确更新
-            // 在addFluidBlock中，对粒子的blockID初始化
-            // 之后的模拟过程中，Slover::calculateBlockId()用来更新blockID
             std::sort(particles.begin(), particles.end(),
                       [=](particle3d &first, particle3d &second)
                       {
                           return first.blockId < second.blockId;
                       });
 
-            // 更新每个block在排序后的粒子数组中的起始和结束索引
+
             mBlockExtens = std::vector<glm::uvec2>(mBlockNum.x * mBlockNum.y * mBlockNum.z, glm::uvec2(0, 0));
             int curBlockId = 0;
             int left = 0;
@@ -136,7 +131,7 @@ namespace FluidSimulation
             {
                 if (particles[right].blockId != curBlockId)
                 {
-                    mBlockExtens[curBlockId] = glm::uvec2(left, right); // 左闭右开
+                    mBlockExtens[curBlockId] = glm::uvec2(left, right);
                     left = right;
                     curBlockId = particles[right].blockId;
                 }

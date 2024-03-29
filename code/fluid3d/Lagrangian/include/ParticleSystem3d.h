@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "Configure.h"
-#include "WCubicSpline.h"
+#include "CubicSpline.h"
 
 namespace FluidSimulation
 {
@@ -37,22 +37,25 @@ namespace FluidSimulation
 
         public:
             // 粒子参数
-            float mSupportRadius = Lagrangian3dPara::supportRadius; // 支撑半径
+            float mSupportRadius = Lagrangian3dPara::supportRadius;
             float mSupportRadius2 = mSupportRadius * mSupportRadius;
-            float mParticleRadius = Lagrangian3dPara::particleRadius; // 粒子半径
+            float mParticleRadius = Lagrangian3dPara::particleRadius;
             float mParticleDiameter = Lagrangian3dPara::particleDiameter;
-            float mVolume = std::pow(mParticleDiameter, 3); // 体积
+            float mVolume = std::pow(mParticleDiameter, 3);
 
+            // 存储全部粒子信息
             std::vector<particle3d> particles;
-            int maxNeighborNum = 512;
 
             // 容器参数
             glm::vec3 mLowerBound = glm::vec3(FLT_MAX);
             glm::vec3 mUpperBound = glm::vec3(-FLT_MAX);
             glm::vec3 mContainerCenter = glm::vec3(0.0f);
-            glm::uvec3 mBlockNum = glm::uvec3(0); // XYZ轴有几个block
+
+            // Block结构（加速临近搜索）
+            int maxNeighborNum = 512;
+            glm::uvec3 mBlockNum = glm::uvec3(0);
             glm::vec3 mBlockSize = glm::vec3(0.0f);
-            std::vector<glm::uvec2> mBlockExtens; // 记载着每个block含有那个索引区间的粒子（索引为mParticleInfos的索引）
+            std::vector<glm::uvec2> mBlockExtens;
             std::vector<int32_t> mBlockIdOffs;
         };
 

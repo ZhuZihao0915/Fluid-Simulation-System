@@ -15,9 +15,8 @@ namespace FluidSimulation{
 		class Solver {
 		public:
 			Solver(MACGrid2d& grid);
-			virtual ~Solver();
 
-			virtual void solve();
+			void solve();
 
 			void advectVelocity();
 			void addExternalForces();
@@ -32,7 +31,7 @@ namespace FluidSimulation{
 		protected:
 			MACGrid2d& mGrid;
 
-			MACGrid2d target;   // 用于advection阶段存储新的场
+			MACGrid2d target;
 
 			ublas::compressed_matrix<double> A;
 			ublas::vector<double> b;

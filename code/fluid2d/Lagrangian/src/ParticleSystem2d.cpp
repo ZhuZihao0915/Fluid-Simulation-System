@@ -41,7 +41,7 @@ namespace FluidSimulation
                 }
             }
 
-            mParticleInfos.clear();
+            particles.clear();
         }
 
         int ParticleSystem2d::addFluidBlock(glm::vec2 corner, glm::vec2 size, glm::vec2 v0, float particleSpace)
@@ -62,7 +62,7 @@ namespace FluidSimulation
             }
 
             glm::uvec2 particleNum = glm::uvec2(size.x / particleSpace, size.y / particleSpace);
-            std::vector<ParticleInfo2d> particles(particleNum.x * particleNum.y);
+            std::vector<ParticleInfo2d> tempParticles(particleNum.x * particleNum.y);
 
             Glb::RandomGenerator rand;
             int p = 0;
@@ -73,14 +73,14 @@ namespace FluidSimulation
                     float x = (idX + rand.GetUniformRandom()) * particleSpace;
                     float y = (idY + rand.GetUniformRandom()) * particleSpace;
 
-                    particles[p].position = corner + glm::vec2(x, y);
-                    particles[p].blockId = getBlockIdByPosition(particles[p].position);
-                    particles[p].velocity = v0;
+                    tempParticles[p].position = corner + glm::vec2(x, y);
+                    tempParticles[p].blockId = getBlockIdByPosition(tempParticles[p].position);
+                    tempParticles[p].velocity = v0;
                     p++;
                 }
             }
 
-            mParticleInfos.insert(mParticleInfos.end(), particles.begin(), particles.end());
+            particles.insert(particles.end(), tempParticles.begin(), tempParticles.end());
             return particles.size();
         }
 
@@ -102,7 +102,7 @@ namespace FluidSimulation
 
         void ParticleSystem2d::updateBlockInfo()
         {
-            std::sort(mParticleInfos.begin(), mParticleInfos.end(),
+            std::sort(particles.begin(), particles.end(),
                       [=](ParticleInfo2d &first, ParticleInfo2d &second)
                       {
                           return first.blockId < second.blockId;
@@ -112,13 +112,13 @@ namespace FluidSimulation
             int curBlockId = 0;
             int left = 0;
             int right;
-            for (right = 0; right < mParticleInfos.size(); right++)
+            for (right = 0; right < particles.size(); right++)
             {
-                if (mParticleInfos[right].blockId != curBlockId)
+                if (particles[right].blockId != curBlockId)
                 {
-                    mBlockExtens[curBlockId] = glm::uvec2(left, right); // ����ҿ�
+                    mBlockExtens[curBlockId] = glm::uvec2(left, right);
                     left = right;
-                    curBlockId = mParticleInfos[right].blockId;
+                    curBlockId = particles[right].blockId;
                 }
             }
             mBlockExtens[curBlockId] = glm::uvec2(left, right);

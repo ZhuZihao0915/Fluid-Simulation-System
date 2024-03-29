@@ -8,12 +8,6 @@
 #include <string>
 
 namespace Glb {
-    const float_t EPS = 1e-5;
-    const glm::vec3 Z_AXIS = glm::vec3(0.0, 0.0, 1.0);
-    const glm::vec3 COLOR_GREEN = glm::vec3(0.0, 1.0, 0.0);
-    const glm::vec3 COLOR_RED = glm::vec3(1.0, 0.0, 0.0);
-    const glm::vec3 COLOR_BLUE = glm::vec3(0.0, 0.0, 1.0);
-    const std::vector<glm::vec3> ORIGIN_COLORS = { COLOR_RED, COLOR_GREEN, COLOR_BLUE };
 
     class Timer {
     public:
@@ -75,7 +69,7 @@ namespace Glb {
             lastTime = now;
             auto it = record.find(str);
             if (it != record.end()) {
-                it->second += std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
+                it->second = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
             }
             else {
                 record[str] = std::chrono::duration_cast<std::chrono::milliseconds>(dur).count();
@@ -109,19 +103,6 @@ namespace Glb {
             return dist(rng);
         }
     };
-
-    static glm::vec4 ProjToIntrinsic(glm::mat4 projection, float w, float h) {
-        glm::vec4 intrinsic = {};
-
-        float tanHalfFovx = 1.0 / projection[0][0];
-        float tanHalfFovy = 1.0 / projection[1][1];
-        intrinsic.x = 2.0 * tanHalfFovx / w;
-        intrinsic.y = 2.0 * tanHalfFovy / h;
-        intrinsic.z = w / 2.0;                   
-        intrinsic.w = h / 2.0;            
-
-        return intrinsic;
-    }
 
 }
 

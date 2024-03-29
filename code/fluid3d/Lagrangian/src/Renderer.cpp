@@ -21,6 +21,7 @@ namespace FluidSimulation
         {
 
             container = new Glb::Container();
+            container->resetSize(1, 1, 1);
             container->init();
 
             // Build Shaders
@@ -63,14 +64,7 @@ namespace FluidSimulation
                 std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
             }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-            // Generate Buffer
             glGenBuffers(1, &mBufferParticles);
-
-            // GenerateTextures();
-
-            LoadSkyBox();
-
             MakeVertexArrays();
 
             glGenVertexArrays(1, &mVaoNull);
@@ -133,22 +127,6 @@ namespace FluidSimulation
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, 100, 100, 0, GL_RGBA, GL_FLOAT, NULL);
             glBindTexture(GL_TEXTURE_2D, 0);
         }
-
-        void Renderer::LoadSkyBox()
-        {
-            mSkyBox = new Glb::SkyBox();
-            mSkyBox->Create();
-            std::vector<std::string> paths{
-                picturePath + "/right.jpg",
-                picturePath + "/left.jpg",
-                picturePath + "/top.jpg",
-                picturePath + "/bottom.jpg",
-                picturePath + "/front.jpg",
-                picturePath + "/back.jpg"};
-            mSkyBox->LoadImages(paths);
-            mSkyBox->BuildShader();
-        }
-
 
         void Renderer::MakeVertexArrays()
         {

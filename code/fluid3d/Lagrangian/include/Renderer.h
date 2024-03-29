@@ -10,7 +10,6 @@
 #include "Container.h"
 
 #include "Camera.h"
-#include "SkyBox.h"
 #include "Global.h"
 
 #include "Configure.h"
@@ -39,7 +38,6 @@ namespace FluidSimulation
             void GenerateFrameBuffers();
             void GenerateBuffers();
             void GenerateTextures();
-            void LoadSkyBox();
             void MakeVertexArrays();
             int32_t Destroy();
 
@@ -90,12 +88,6 @@ namespace FluidSimulation
             GLuint mTestTexture = 0;
             GLuint mTexKernelBuffer = 0;
             GLuint mTexZBlurTempBuffer = 0;
-
-            // SkyBox
-            Glb::SkyBox *mSkyBox = nullptr;
-
-            // Materials
-            // Material* mSlabWhite = nullptr;
 
             // time statistics
             int32_t particleNum = 0;

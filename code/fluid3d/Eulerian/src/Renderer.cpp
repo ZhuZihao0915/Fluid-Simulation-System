@@ -1,6 +1,6 @@
-#include "Renderer.h"
-#include "stb_image.h"
 #include "fluid3d/Eulerian/include/Renderer.h"
+
+#include "stb_image.h"
 
 namespace FluidSimulation
 {
@@ -152,7 +152,9 @@ namespace FluidSimulation
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-			data = new float[4 * width * height];
+			dataXY = new float[4 * pixelX * pixelY];
+			dataYZ = new float[4 * pixelY * pixelZ];
+			dataXZ = new float[4 * pixelX * pixelZ];
 
 			loadTexture();
 
@@ -203,38 +205,39 @@ namespace FluidSimulation
 			{
 				drawOneSheetXZ();
 			}
+
 		}
 
 		void Renderer::drawOneSheetXY()
 		{
 			if (Eulerian3dPara::drawModel == 0)
 			{
-				for (int j = 1; j <= height; j++)
+				for (int j = 1; j <= pixelY; j++)
 				{
-					for (int i = 1; i <= width; i++)
+					for (int i = 1; i <= pixelX; i++)
 					{
-						float pt_x = i * mGrid.mU.mMax[2] / (width);
-						float pt_y = j * mGrid.mV.mMax[1] / (height);
+						float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
+						float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
 						float pt_z = Eulerian3dPara::distanceZ * mGrid.mW.mMax[2];
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
-						data[4 * ((j - 1) * width + (i - 1))] = color.r;
-						data[4 * ((j - 1) * width + (i - 1)) + 1] = color.g;
-						data[4 * ((j - 1) * width + (i - 1)) + 2] = color.b;
-						data[4 * ((j - 1) * width + (i - 1)) + 3] = color.a;
+						dataXY[4 * ((j - 1) * pixelX + (i - 1))] = color.r;
+						dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 1] = color.g;
+						dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 2] = color.b;
+						dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 3] = color.a;
 					}
 				}
 
 				unsigned int texture;
 				glGenTextures(1, &texture);
-				glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+				glBindTexture(GL_TEXTURE_2D, texture);
 				// set the texture wrapping parameters
-				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 				// set texture filtering parameters
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelX, pixelY, 0, GL_RGBA, GL_FLOAT, dataXY);
 				glGenerateMipmap(GL_TEXTURE_2D);
 
 				pixelShader->use();
@@ -329,19 +332,19 @@ namespace FluidSimulation
 		{
 			if (Eulerian3dPara::drawModel == 0)
 			{
-				for (int k = height; k >= 1; k--)
+				for (int k = pixelZ; k >= 1; k--)
 				{
-					for (int i = width; i >= 1; i--)
+					for (int i = pixelX; i >= 1; i--)
 					{
-						float pt_x = i * mGrid.mU.mMax[0] / (width);
+						float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
 						float pt_y = Eulerian3dPara::distanceY * mGrid.mV.mMax[1];
-						float pt_z = k * mGrid.mW.mMax[2] / (height);
+						float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
-						data[4 * ((height - k) * width + (width - i))] = color.r;
-						data[4 * ((height - k) * width + (width - i)) + 1] = color.g;
-						data[4 * ((height - k) * width + (width - i)) + 2] = color.b;
-						data[4 * ((height - k) * width + (width - i)) + 3] = color.a;
+						dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i))] = color.r;
+						dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i)) + 1] = color.g;
+						dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i)) + 2] = color.b;
+						dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i)) + 3] = color.a;
 					}
 				}
 
@@ -354,7 +357,7 @@ namespace FluidSimulation
 				// set texture filtering parameters
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelX, pixelZ, 0, GL_RGBA, GL_FLOAT, dataXZ);
 				glGenerateMipmap(GL_TEXTURE_2D);
 
 				pixelShader->use();
@@ -450,19 +453,19 @@ namespace FluidSimulation
 			if (Eulerian3dPara::drawModel == 0)
 			{
 
-				for (int k = height; k >= 1; k--)
+				for (int k = pixelZ; k >= 1; k--)
 				{
-					for (int j = 1; j <= width; j++)
+					for (int j = 1; j <= pixelY; j++)
 					{
 						float pt_x = Eulerian3dPara::distanceX * mGrid.mU.mMax[0];
-						float pt_y = j * mGrid.mV.mMax[1] / (width);
-						float pt_z = k * mGrid.mW.mMax[2] / (height);
+						float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
+						float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
-						data[4 * ((height - k) * width + (j - 1))] = color.r;
-						data[4 * ((height - k) * width + (j - 1)) + 1] = color.g;
-						data[4 * ((height - k) * width + (j - 1)) + 2] = color.b;
-						data[4 * ((height - k) * width + (j - 1)) + 3] = color.a;
+						dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1))] = color.r;
+						dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1)) + 1] = color.g;
+						dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1)) + 2] = color.b;
+						dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1)) + 3] = color.a;
 					}
 				}
 
@@ -475,7 +478,7 @@ namespace FluidSimulation
 				// set texture filtering parameters
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+				glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelY, pixelZ, 0, GL_RGBA, GL_FLOAT, dataYZ);
 				glGenerateMipmap(GL_TEXTURE_2D);
 
 				pixelShader->use();
@@ -601,32 +604,32 @@ namespace FluidSimulation
 				for (float k = eps; k <= mGrid.mW.mMax[2]; k += (mGrid.mW.mMax[2] - 2 * eps) / (Eulerian3dPara::xySheetsNum - 1))
 				{
 
-					for (int j = 1; j <= height; j++)
+					for (int j = 1; j <= pixelY; j++)
 					{
-						for (int i = 1; i <= width; i++)
+						for (int i = 1; i <= pixelX; i++)
 						{
-							float pt_x = i * mGrid.mU.mMax[0] / (width);
-							float pt_y = j * mGrid.mV.mMax[1] / (height);
+							float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
+							float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
 							float pt_z = k;
 							glm::vec3 pt(pt_x, pt_y, pt_z);
 							glm::vec4 color = mGrid.getRenderColor(pt);
-							data[4 * ((j - 1) * width + (i - 1))] = color.r;
-							data[4 * ((j - 1) * width + (i - 1)) + 1] = color.g;
-							data[4 * ((j - 1) * width + (i - 1)) + 2] = color.b;
-							data[4 * ((j - 1) * width + (i - 1)) + 3] = color.a;
+							dataXY[4 * ((j - 1) * pixelX + (i - 1))] = color.r;
+							dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 1] = color.g;
+							dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 2] = color.b;
+							dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 3] = color.a;
 						}
 					}
 
 					unsigned int texture;
 					glGenTextures(1, &texture);
-					glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+					glBindTexture(GL_TEXTURE_2D, texture);
 					// set the texture wrapping parameters
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); // set texture wrapping to GL_REPEAT (default wrapping method)
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 					// set texture filtering parameters
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelX, pixelY, 0, GL_RGBA, GL_FLOAT, dataXY);
 					glGenerateMipmap(GL_TEXTURE_2D);
 
 					pixelShader->use();
@@ -727,19 +730,19 @@ namespace FluidSimulation
 			{
 				for (float i = eps; i <= mGrid.mU.mMax[0]; i += (mGrid.mU.mMax[0] - 2 * eps) / (Eulerian3dPara::yzSheetsNum - 1))
 				{
-					for (int k = height; k >= 1; k--)
+					for (int k = pixelZ; k >= 1; k--)
 					{
-						for (int j = 1; j <= width; j++)
+						for (int j = 1; j <= pixelY; j++)
 						{
 							float pt_x = i;
-							float pt_y = j * mGrid.mV.mMax[1] / (width);
-							float pt_z = k * mGrid.mW.mMax[2] / (height);
+							float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
+							float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
 							glm::vec3 pt(pt_x, pt_y, pt_z);
 							glm::vec4 color = mGrid.getRenderColor(pt);
-							data[4 * ((height - k) * width + (j - 1))] = color.r;
-							data[4 * ((height - k) * width + (j - 1)) + 1] = color.g;
-							data[4 * ((height - k) * width + (j - 1)) + 2] = color.b;
-							data[4 * ((height - k) * width + (j - 1)) + 3] = color.a;
+							dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1))] = color.r;
+							dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1)) + 1] = color.g;
+							dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1)) + 2] = color.b;
+							dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1)) + 3] = color.a;
 						}
 					}
 
@@ -752,7 +755,7 @@ namespace FluidSimulation
 					// set texture filtering parameters
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelY, pixelZ, 0, GL_RGBA, GL_FLOAT, dataYZ);
 					glGenerateMipmap(GL_TEXTURE_2D);
 
 					pixelShader->use();
@@ -855,19 +858,19 @@ namespace FluidSimulation
 
 				for (float j = eps; j <= mGrid.mV.mMax[1]; j += (mGrid.mV.mMax[1] - 2 * eps) / (Eulerian3dPara::xzSheetsNum - 1))
 				{
-					for (int k = height; k >= 1; k--)
+					for (int k = pixelZ; k >= 1; k--)
 					{
-						for (int i = width; i >= 1; i--)
+						for (int i = pixelX; i >= 1; i--)
 						{
-							float pt_x = i * mGrid.mU.mMax[0] / (width);
+							float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
 							float pt_y = j;
-							float pt_z = k * mGrid.mW.mMax[2] / (height);
+							float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
 							glm::vec3 pt(pt_x, pt_y, pt_z);
 							glm::vec4 color = mGrid.getRenderColor(pt);
-							data[4 * ((height - k) * width + (width - i))] = color.r;
-							data[4 * ((height - k) * width + (width - i)) + 1] = color.g;
-							data[4 * ((height - k) * width + (width - i)) + 2] = color.b;
-							data[4 * ((height - k) * width + (width - i)) + 3] = color.a;
+							dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i))] = color.r;
+							dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i)) + 1] = color.g;
+							dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i)) + 2] = color.b;
+							dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i)) + 3] = color.a;
 						}
 					}
 
@@ -880,7 +883,7 @@ namespace FluidSimulation
 					// set texture filtering parameters
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_FLOAT, data);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, pixelX, pixelZ, 0, GL_RGBA, GL_FLOAT, dataXZ);
 					glGenerateMipmap(GL_TEXTURE_2D);
 
 					pixelShader->use();

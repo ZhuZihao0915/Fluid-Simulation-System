@@ -18,9 +18,8 @@ namespace FluidSimulation
 		{
 		public:
 			Solver(MACGrid3d &grid);
-			virtual ~Solver();
 
-			virtual void solve();
+			void solve();
 
 			void advectVelocity();
 			void addExternalForces();
@@ -46,4 +45,4 @@ namespace FluidSimulation
 	}
 }
 
-#endif // !__EULER_SOLVER_H__
+#endif // !__EULERIAN_3D_SOLVER_H__

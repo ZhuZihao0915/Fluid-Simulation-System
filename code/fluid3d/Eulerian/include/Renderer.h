@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Configure.h"
 
+
 namespace FluidSimulation {
 	namespace Eulerian3d {
 		class Renderer {
@@ -53,10 +54,13 @@ namespace FluidSimulation {
 			GLuint FBO = 0;
 			GLuint RBO = 0;
 
-			int width = imageWidth;
-			int height = imageHeight;
-			
-			float* data;
+			int pixelX = (float)Eulerian3dPara::theDim3d[0] / Eulerian3dPara::theDim3d[2] * 200;
+			int pixelY = 200;
+			int pixelZ = 200;
+
+			float* dataXY;
+			float* dataYZ;
+			float* dataXZ;
 
 			Glb::Shader* pixelShader;
 			Glb::Shader* gridShader;
@@ -68,4 +72,4 @@ namespace FluidSimulation {
 	}
 }
 
-#endif // !__EULER_RENDERER_H__
+#endif // !__EULERIAN_3D_RENDERER_H__

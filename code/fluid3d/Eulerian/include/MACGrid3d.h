@@ -28,7 +28,6 @@ namespace FluidSimulation
             glm::vec4 getRenderColor(int i, int j, int k);
             glm::vec4 getRenderColor(const glm::vec3 &pt);
 
-            // setup
             void initialize();
             void createSolids();
 
@@ -59,16 +58,16 @@ namespace FluidSimulation
             int getIndex(int i, int j, int k);
             bool isNeighbor(int i0, int j0, int k0, int i1, int j1, int k1);
             bool isFace(int i, int j, int k, Direction d);
-            int isSolidCell(int i, int j, int k);              // Returns 1 if true, else otherwise
-            int isSolidFace(int i, int j, int k, Direction d); // Returns 1 if true, else otherwise
+            int isSolidCell(int i, int j, int k);
+            int isSolidFace(int i, int j, int k, Direction d);
             bool inSolid(const glm::vec3 &pt);
             bool inSolid(const glm::vec3 &pt, int &i, int &j, int &k);
             bool intersects(const glm::vec3 &pt, const glm::vec3 &dir, int i, int j, int k, double &time);
             int numSolidCells();
 
             double getPressureCoeffBetweenCells(int i0, int j0, int k0, int i1, int j1, int k1);
-            double getDivergence(int i, int j, int k);   // At center
-            double checkDivergence(int i, int j, int k); // At center
+            double getDivergence(int i, int j, int k);
+            double checkDivergence(int i, int j, int k);
             bool checkDivergence();
 
             double getBoussinesqForce(const glm::vec3 &pt);

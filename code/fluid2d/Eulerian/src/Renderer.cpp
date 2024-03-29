@@ -1,4 +1,5 @@
-#include "Eulerian/include/Renderer.h"
+#include "fluid2d/Eulerian/include/Renderer.h"
+#include "stb_image.h"
 
 namespace FluidSimulation
 {

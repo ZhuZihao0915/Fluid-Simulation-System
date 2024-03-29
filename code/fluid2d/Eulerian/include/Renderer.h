@@ -2,14 +2,16 @@
 #ifndef __EULERIAN_2D_RENDERER_H__
 #define __EULERIAN_2D_RENDERER_H__
 
-
-#include <stb_image.h>
-#include "Eulerian/include/MACGrid2d.h"
+#include "MACGrid2d.h"
 #include <glad/glad.h>
 #include <glfw3.h>
 #include "Configure.h"
 #include "glm/glm.hpp"
 #include "Shader.h"
+
+#ifndef STB_IMAGE_IMPLEMENTATION
+#define STB_IMAGE_IMPLEMENTATION
+#endif // !STB_IMAGE_IMPLEMENTATION
 
 namespace FluidSimulation {
 	namespace Eulerian2d {

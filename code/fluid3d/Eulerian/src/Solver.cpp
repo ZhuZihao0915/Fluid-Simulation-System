@@ -14,11 +14,6 @@ namespace FluidSimulation
             constructPrecon();
         }
 
-        Solver::~Solver()
-        {
-
-        }
-
         void Solver::solve()
         {
             // TODO

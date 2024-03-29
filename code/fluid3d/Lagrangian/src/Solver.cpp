@@ -66,7 +66,7 @@ namespace FluidSimulation
 							{
 								float dotDvToRad = glm::dot(mPs.particles[i].velocity - mPs.particles[j].velocity, radiusIj);
 								float denom = diatanceIj * diatanceIj + 0.01 * Lagrangian3dPara::supportRadius * Lagrangian3dPara::supportRadius;
-								glm::vec3 wGrad = mW.GetGrad(diatanceIj / Lagrangian3dPara::supportRadius).g * radiusIj;
+								glm::vec3 wGrad = mW.GetValueAndGrad(diatanceIj / Lagrangian3dPara::supportRadius).g * radiusIj;
 								// std::cout << wGrad.z << std::endl;
 								viscosityForce += (float)(0.5 / mPs.particles[j].density) * dotDvToRad * wGrad / denom;
 								pressureForce += mPs.particles[j].density * (mPs.particles[i].pressDivDens2 + mPs.particles[j].pressDivDens2) * wGrad;
@@ -180,7 +180,7 @@ namespace FluidSimulation
 							float diatanceIj = length(radiusIj);
 							if (diatanceIj <= Lagrangian3dPara::supportRadius)
 							{
-								mPs.particles[i].density += mW.GetGrad(diatanceIj / Lagrangian3dPara::supportRadius).r;
+								mPs.particles[i].density += mW.GetValueAndGrad(diatanceIj / Lagrangian3dPara::supportRadius).r;
 							}
 						}
 					}

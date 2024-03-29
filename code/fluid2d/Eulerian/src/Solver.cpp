@@ -13,11 +13,6 @@ namespace FluidSimulation
             constructPrecon();
         }
 
-        Solver::~Solver()
-        {
-
-        }
-
         void Solver::solve()
         {
             // TODO
@@ -30,11 +25,10 @@ namespace FluidSimulation
             Glb::Timer::getInstance().start();
 
             target.reset();
-
+            
             advectVelocity();
 
             Glb::Timer::getInstance().recordTime("vel advection");
-
 
             addExternalForces();
 
@@ -222,10 +216,7 @@ namespace FluidSimulation
             ublas::vector<double> p(numCells);
 
             Glb::cg_psolve2d(A, precon, b, p, 500, 0.005);
-            // Glb::cg_solve2d(A, b, p, 500, 0.005);
 
-            // Subtract pressure from our velocity and save in target
-            // u_new = u - dt*(1/theAirPressure)*((p_i+1-p_i)/theCellSize)
             double scaleConstant = Eulerian2dPara::dt / Eulerian2dPara::airDensity;
             double pressureChange;
 

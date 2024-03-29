@@ -3,7 +3,6 @@
 #define __COMPONENT_H__
 
 #include <glfw3.h>
-#include "Camera.h"
 
 // 用于组织粒子/网格系统、渲染器、求解器
 
@@ -11,13 +10,14 @@ namespace Glb {
 	class Component {
 	public:
 		int id;
-		bool is3D;
 		char* description;
 
 		Component() {
+			id = -1;
 			this->description = NULL;
 		}
 		Component(char* description) {
+			id = -1;
 			this->description = description;
 		}
 

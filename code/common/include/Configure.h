@@ -112,21 +112,6 @@ namespace Lagrangian3dPara
     extern float stiffness;
     extern float exponent;
     extern float viscosity;
-
-    extern float IOR;
-    extern float IOR_BIAS;
-    extern glm::vec3 F0;
-    extern glm::vec3 FLUID_COLOR;
-    extern glm::vec3 SHADOW_COLOR;
-    extern float CAUSTIC_FACTOR;
-    extern float THICKNESS_FACTOR;
-
-    extern float zFar;
-    extern float zNear;
-
-    extern const glm::vec3 vertexes[];
-    extern const GLuint indices[];
-    extern std::vector<float_t> floorVertices;
 }
 
 extern std::string shaderPath;

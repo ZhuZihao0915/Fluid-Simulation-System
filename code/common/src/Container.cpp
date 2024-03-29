@@ -50,11 +50,11 @@ namespace Glb {
 		shader->setMat4("view", Glb::Camera::getInstance().GetView());
 		shader->setMat4("projection", Glb::Camera::getInstance().GetProjection());
 
-		glDrawArrays(GL_LINE_LOOP, 0, 4); // 画出底面
-		glDrawArrays(GL_LINE_LOOP, 4, 4); // 画出顶面
+		glDrawArrays(GL_LINE_LOOP, 0, 4);
+		glDrawArrays(GL_LINE_LOOP, 4, 4);
 
 		for (int i = 8; i < 16; i += 2) {
-			glDrawArrays(GL_LINES, i, 2); // 画出每个侧面的四条边
+			glDrawArrays(GL_LINES, i, 2);
 		}
 
 
@@ -62,8 +62,8 @@ namespace Glb {
 	}
 
 	void Container::init() {
-		std::string vertShaderPath = shaderPath + "/Container.vert";
-		std::string fragShaderPath = shaderPath + "/Container.frag";
+		std::string vertShaderPath = shaderPath + "/Line.vert";
+		std::string fragShaderPath = shaderPath + "/Line.frag";
 		shader = new Shader();
 		shader->buildFromFile(vertShaderPath, fragShaderPath);
 

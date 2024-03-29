@@ -28,7 +28,6 @@ namespace FluidSimulation
                 renderer = NULL;
                 solver = NULL;
                 ps = NULL;
-                is3D = true;
             }
             virtual void shutDown();
             virtual void init();

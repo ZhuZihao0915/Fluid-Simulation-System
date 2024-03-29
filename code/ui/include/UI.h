@@ -12,7 +12,6 @@
 #include "Manager.h"
 #include "Logger.h"
 
-
 namespace FluidSimulation 
 {
 	using namespace std;

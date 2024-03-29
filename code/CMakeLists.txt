@@ -33,10 +33,12 @@ add_subdirectory("./third_party/glm")
 add_subdirectory("./common")
 
 # 2d simulation scheme
-add_subdirectory("./fluid2d")
+add_subdirectory("./fluid2d/Lagrangian")
+add_subdirectory("./fluid2d/Eulerian")
 
 # 3d simulation scheme
-add_subdirectory("./fluid3d")
+add_subdirectory("./fluid3d/Lagrangian")
+add_subdirectory("./fluid3d/Eulerian")
 
 # ui
 add_subdirectory("./ui")

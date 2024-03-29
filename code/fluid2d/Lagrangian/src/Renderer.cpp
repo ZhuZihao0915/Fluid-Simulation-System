@@ -116,7 +116,7 @@ namespace FluidSimulation
             // bind VBO to GL_ARRAY_BUFFER
             glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
             // copy data to the current bound buffer(VBO)
-            glBufferData(GL_ARRAY_BUFFER, ps.mParticleInfos.size() * sizeof(ParticleInfo2d), ps.mParticleInfos.data(), GL_STATIC_DRAW);
+            glBufferData(GL_ARRAY_BUFFER, ps.particles.size() * sizeof(ParticleInfo2d), ps.particles.data(), GL_STATIC_DRAW);
 
             // tell OpenGL how to parse vertex data. here are the parameters' meaning:
             // 0 is the VBO's location of current VAO, which is defined in shader
@@ -134,7 +134,7 @@ namespace FluidSimulation
 
             glBindVertexArray(0);
 
-            mParticleNum = ps.mParticleInfos.size();
+            mParticleNum = ps.particles.size();
         }
 
         GLuint Renderer::GetRenderedTexture()

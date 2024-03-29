@@ -23,7 +23,6 @@ namespace FluidSimulation
             alignas(4) float density;
             alignas(4) float pressure;
             alignas(4) float pressDivDens2;
-            ;
             alignas(4) uint32_t blockId;
         };
 
@@ -39,21 +38,25 @@ namespace FluidSimulation
             void updateBlockInfo();
 
         public:
+            // 粒子参数
             float mSupportRadius = Lagrangian2dPara::supportRadius;
             float mSupportRadius2 = mSupportRadius * mSupportRadius;
             float mParticleRadius = Lagrangian2dPara::particleRadius;
             float mParticleDiameter = Lagrangian2dPara::particleDiameter;
             float mVolume = mParticleDiameter * mParticleDiameter;
 
-            std::vector<ParticleInfo2d> mParticleInfos;
-            int mMaxNeighbors = 128;
+            // 存储全部粒子信息
+            std::vector<ParticleInfo2d> particles;
 
+            // 容器参数
             glm::vec2 mLowerBound = glm::vec2(FLT_MAX);
             glm::vec2 mUpperBound = glm::vec2(-FLT_MAX);
             glm::vec2 mContainerCenter = glm::vec2(0.0f);
+            
+            // Block结构（加速临近搜索）
+            int mMaxNeighbors = 128;
             glm::uvec2 mBlockNum = glm::uvec2(0);
             glm::vec2 mBlockSize = glm::vec2(0.0f);
-
             std::vector<glm::uvec2> mBlockExtens;
             std::vector<int32_t> mBlockIdOffs;
         };

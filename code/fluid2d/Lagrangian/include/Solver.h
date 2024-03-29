@@ -3,7 +3,7 @@
 #define __LAGRANGIAN_2D_SOLVER_H__
 
 #include "ParticleSystem2d.h"
-#include "WCubicSpline.h"
+#include "CubicSpline.h"
 
 #include "Configure.h"
 
@@ -29,7 +29,7 @@ namespace FluidSimulation
 
         private:
             ParticleSystem2d &mPs;
-            Glb::WCubicSpline2d mW;
+            Glb::CubicSpline2d mW;
         };
     }
 }
