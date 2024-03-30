@@ -58,7 +58,7 @@ namespace Glb
     double &GridData3d::operator()(int i, int j, int k)
     {
         static double dflt = 0;
-        dflt = mDfltValue; // HACK: Protect against setting the default value
+        dflt = mDfltValue;
 
         if (i < 0 || j < 0 || k < 0 ||
             i > dim[0] - 1 ||
@@ -201,7 +201,7 @@ namespace Glb
     double &GridData3dY::operator()(int i, int j, int k)
     {
         static double dflt = 0;
-        dflt = mDfltValue; // Protect against setting the default value
+        dflt = mDfltValue;
 
         if (j < 0 || j > dim[1])
             return dflt;
@@ -251,7 +251,7 @@ namespace Glb
     double &GridData3dZ::operator()(int i, int j, int k)
     {
         static double dflt = 0;
-        dflt = mDfltValue; // Protect against setting the default value
+        dflt = mDfltValue;
 
         if (k < 0 || k > dim[2])
             return dflt;
@@ -299,7 +299,6 @@ namespace Glb
         double d1 = (q3 - q1) * 0.5;
         double d2 = (q4 - q2) * 0.5;
 
-        // Force monotonic: if d1/d2 differ in sign to deltaq, make it zero
         if (deltaq > 0.0001)
         {
             d1 = d1 > 0 ? d1 : 0.0;
@@ -326,7 +325,7 @@ namespace Glb
 
     double CubicGridData3d::interpX(int i, int j, int k, double fracty, double fractx)
     {
-        double tmp1 = interpY(i - 1 < 0 ? i : i - 1, j, k, fracty); // hack
+        double tmp1 = interpY(i - 1 < 0 ? i : i - 1, j, k, fracty);
         double tmp2 = interpY(i, j, k, fracty);
         double tmp3 = interpY(i + 1, j, k, fracty);
         double tmp4 = interpY(i + 2, j, k, fracty);

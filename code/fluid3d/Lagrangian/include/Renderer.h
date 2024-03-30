@@ -31,71 +31,24 @@ namespace FluidSimulation
 
             GLuint getRenderedTexture();
 
-            void load(ParticleSystem3d &ps);
-            void draw();
+            void draw(ParticleSystem3d &ps);
 
         private:
-            void GenerateFrameBuffers();
-            void GenerateBuffers();
-            void GenerateTextures();
             void MakeVertexArrays();
-            int32_t Destroy();
-
         private:
-            // window
-            GLFWwindow *mWindow = nullptr;
-            int mWindowWidth = 1000;
-            int mWindowHeight = 1000;
-
-            // camera
-            bool mFirstMouseFlag = true;
-            float mLastX;
-            float mLastY;
-            bool mLeftPressFlag = false;
-            bool mRightPressFlag = false;
-            bool mMiddlePressFlag = false;
-            bool mPauseFlag = false;
 
             // shaders
-            Glb::Shader *mDrawColor3d = nullptr;
+            Glb::Shader *shader = nullptr;
 
             Glb::Container *container = nullptr;
 
             GLuint FBO = 0;
             GLuint RBO = 0;
-
-            // fbo
-            GLuint mFboDepth = 0;
-            GLuint mTexZBuffer = 0;
-            GLuint mRboDepthBuffer = 0;
-            GLuint mFboThickness = 0;
-            GLuint mTexThicknessBuffer = 0;
-
-            // vao
-            GLuint mVaoNull = 0;
             GLuint VAO = 0;
-            GLuint mVaoCoord = 0;
-            GLuint mVaoFloor = 0;
-
-            // buffers
-            GLuint mCoordVertBuffer = 0;
-            GLuint mBufferParticles = 0;
-            GLuint mBufferBlocks = 0;
-            GLuint mBufferFloor = 0;
-
-            // texures
+            GLuint VBO = 0;
             GLuint textureID = 0;
-            GLuint mTestTexture = 0;
-            GLuint mTexKernelBuffer = 0;
-            GLuint mTexZBlurTempBuffer = 0;
 
-            // time statistics
             int32_t particleNum = 0;
-            float_t mUpdateTime = 0.0f;
-            float_t updateTitleTime = 0.0f;
-            float_t frameCount = 0.0f;
-
-            glm::vec3 mExternelAccleration = {0.0, 0.0, 0.0};
         };
     }
 }

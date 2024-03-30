@@ -114,7 +114,7 @@ namespace Lagrangian3dPara
     float viscosity = 8e-5f;
 }
 
-// store system's all simulation method components
+// stores system's all simulation method components
 std::vector<Glb::Component *> methodComponents;
 
 std::string shaderPath = "../../../../code/resources/shaders";

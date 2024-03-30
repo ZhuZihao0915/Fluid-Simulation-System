@@ -57,14 +57,12 @@ namespace FluidSimulation
             {
                 Glb::Timer::getInstance().start();
             }
-            renderer->LoadVertexes(*ps);
-            renderer->draw();
+            renderer->draw(*ps);
             if (simulating)
             {
                 Glb::Timer::getInstance().recordTime("rendering");
             }
-
-            return renderer->GetRenderedTexture();
+            return renderer->getRenderedTexture();
         }
     }
 }

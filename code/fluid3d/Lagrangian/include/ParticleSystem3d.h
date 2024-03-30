@@ -37,26 +37,25 @@ namespace FluidSimulation
 
         public:
             // 粒子参数
-            float mSupportRadius = Lagrangian3dPara::supportRadius;
-            float mSupportRadius2 = mSupportRadius * mSupportRadius;
-            float mParticleRadius = Lagrangian3dPara::particleRadius;
-            float mParticleDiameter = Lagrangian3dPara::particleDiameter;
-            float mVolume = std::pow(mParticleDiameter, 3);
+            float supportRadius = Lagrangian3dPara::supportRadius;
+            float supportRadius2 = supportRadius * supportRadius;
+            float particleRadius = Lagrangian3dPara::particleRadius;
+            float particleDiameter = Lagrangian3dPara::particleDiameter;
+            float particleVolume = std::pow(particleDiameter, 3);
 
             // 存储全部粒子信息
             std::vector<particle3d> particles;
 
             // 容器参数
-            glm::vec3 mLowerBound = glm::vec3(FLT_MAX);
-            glm::vec3 mUpperBound = glm::vec3(-FLT_MAX);
-            glm::vec3 mContainerCenter = glm::vec3(0.0f);
+            glm::vec3 lowerBound = glm::vec3(FLT_MAX);
+            glm::vec3 upperBound = glm::vec3(-FLT_MAX);
+            glm::vec3 containerCenter = glm::vec3(0.0f);
 
             // Block结构（加速临近搜索）
-            int maxNeighborNum = 512;
-            glm::uvec3 mBlockNum = glm::uvec3(0);
-            glm::vec3 mBlockSize = glm::vec3(0.0f);
-            std::vector<glm::uvec2> mBlockExtens;
-            std::vector<int32_t> mBlockIdOffs;
+            glm::uvec3 blockNum = glm::uvec3(0);
+            glm::vec3 blockSize = glm::vec3(0.0f);
+            std::vector<glm::uvec2> blockExtens;
+            std::vector<int32_t> blockIdOffs;
         };
 
     }

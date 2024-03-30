@@ -71,7 +71,7 @@ namespace Glb {
         glm::vec3 mRight;                                   //相机右方向向量
         glm::vec3 mUp;                                      //相机上方向向量
         glm::vec3 mFront;                                   //相机前方向向量
-        glm::vec3 mWorldUp;                                 //世界上的方向向量
+        glm::vec3 mWorldUp;                                 //上方向向量
 
 
         float aspect;

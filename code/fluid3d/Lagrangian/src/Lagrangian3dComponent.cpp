@@ -50,8 +50,7 @@ namespace FluidSimulation
             {
                 Glb::Timer::getInstance().start();
             }
-            renderer->load(*ps);
-            renderer->draw();
+            renderer->draw(*ps);
             if (simulating)
             {
                 Glb::Timer::getInstance().recordTime("rendering");

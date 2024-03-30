@@ -8,7 +8,7 @@ namespace FluidSimulation
 
     namespace Lagrangian2d
     {
-        Solver::Solver(ParticleSystem2d &ps) : mPs(ps), mW(ps.mSupportRadius)
+        Solver::Solver(ParticleSystem2d &ps) : mPs(ps), mW(ps.supportRadius)
         {
         }
 
@@ -51,13 +51,13 @@ namespace FluidSimulation
                 mPs.particles[i].accleration = -glm::vec2(Lagrangian2dPara::gravityX, Lagrangian2dPara::gravityY);
                 glm::vec2 viscosityForce = glm::vec2(0.0);
                 glm::vec2 pressureForce = glm::vec2(0.0);
-                for (int k = 0; k < mPs.mBlockIdOffs.size(); k++)
+                for (int k = 0; k < mPs.blockIdOffs.size(); k++)
                 {
-                    int bIdj = mPs.particles[i].blockId + mPs.mBlockIdOffs[k];
+                    int bIdj = mPs.particles[i].blockId + mPs.blockIdOffs[k];
 
-                    if (bIdj >= 0 && bIdj < mPs.mBlockExtens.size())
+                    if (bIdj >= 0 && bIdj < mPs.blockExtens.size())
                     {
-                        for (int j = mPs.mBlockExtens[bIdj].x; j < mPs.mBlockExtens[bIdj].y; j++)
+                        for (int j = mPs.blockExtens[bIdj].x; j < mPs.blockExtens[bIdj].y; j++)
                         {
                             if (j == i)
                             {
@@ -71,14 +71,14 @@ namespace FluidSimulation
                                 float denom = diatanceIj * diatanceIj + 0.01 * Lagrangian2dPara::supportRadius * Lagrangian2dPara::supportRadius;
                                 glm::vec2 wGrad = mW.Grad(radiusIj);
                                 // std::cout << wGrad.x << " " << wGrad.y<< std::endl;
-                                viscosityForce += (Lagrangian2dPara::density * mPs.mVolume / mPs.particles[j].density) * dotDvToRad * wGrad / denom;
+                                viscosityForce += (Lagrangian2dPara::density * mPs.particleVolume / mPs.particles[j].density) * dotDvToRad * wGrad / denom;
                                 pressureForce += mPs.particles[j].density * (mPs.particles[i].pressDivDens2 + mPs.particles[j].pressDivDens2) * wGrad;
                             }
                         }
                     }
                 }
                 mPs.particles[i].accleration += viscosityForce * constFactor;
-                mPs.particles[i].accleration -= pressureForce * mPs.mVolume;
+                mPs.particles[i].accleration -= pressureForce * mPs.particleVolume;
             }
         }
 
@@ -104,25 +104,25 @@ namespace FluidSimulation
 
                 bool invFlag = false;
 
-                if (mPs.particles[i].position.x < mPs.mLowerBound.x + Lagrangian2dPara::supportRadius)
+                if (mPs.particles[i].position.x < mPs.lowerBound.x + Lagrangian2dPara::supportRadius)
                 {
                     mPs.particles[i].velocity.x = abs(mPs.particles[i].velocity.x);
                     invFlag = true;
                 }
 
-                if (mPs.particles[i].position.y < mPs.mLowerBound.y + Lagrangian2dPara::supportRadius)
+                if (mPs.particles[i].position.y < mPs.lowerBound.y + Lagrangian2dPara::supportRadius)
                 {
                     mPs.particles[i].velocity.y = abs(mPs.particles[i].velocity.y);
                     invFlag = true;
                 }
 
-                if (mPs.particles[i].position.x > mPs.mUpperBound.x - Lagrangian2dPara::supportRadius)
+                if (mPs.particles[i].position.x > mPs.upperBound.x - Lagrangian2dPara::supportRadius)
                 {
                     mPs.particles[i].velocity.x = -abs(mPs.particles[i].velocity.x);
                     invFlag = true;
                 }
 
-                if (mPs.particles[i].position.y > mPs.mUpperBound.y - Lagrangian2dPara::supportRadius)
+                if (mPs.particles[i].position.y > mPs.upperBound.y - Lagrangian2dPara::supportRadius)
                 {
                     mPs.particles[i].velocity.y = -abs(mPs.particles[i].velocity.y);
                     invFlag = true;
@@ -136,7 +136,7 @@ namespace FluidSimulation
                 glm::vec2 newPosition, newVelocity;
                 for (int j = 0; j < 2; j++)
                 {
-                    newPosition[j] = max((mPs.mLowerBound[j] + Lagrangian2dPara::supportRadius + Lagrangian2dPara::eps), min(mPs.particles[i].position[j], (mPs.mUpperBound[j] - (Lagrangian2dPara::supportRadius + Lagrangian2dPara::eps))));
+                    newPosition[j] = max((mPs.lowerBound[j] + Lagrangian2dPara::supportRadius + Lagrangian2dPara::eps), min(mPs.particles[i].position[j], (mPs.upperBound[j] - (Lagrangian2dPara::supportRadius + Lagrangian2dPara::eps))));
                     newVelocity[j] = max(-Lagrangian2dPara::maxVelocity, min(mPs.particles[i].velocity[j], Lagrangian2dPara::maxVelocity));
                 }
                 mPs.particles[i].position = newPosition;
@@ -148,9 +148,9 @@ namespace FluidSimulation
         {
             for (int i = 0; i < mPs.particles.size(); i++)
             {
-                glm::vec2 deltePos = mPs.particles[i].position - mPs.mLowerBound;
-                glm::vec2 blockPosition = glm::floor(deltePos / mPs.mBlockSize);
-                mPs.particles[i].blockId = blockPosition.y * mPs.mBlockNum.x + blockPosition.x;
+                glm::vec2 deltePos = mPs.particles[i].position - mPs.lowerBound;
+                glm::vec2 blockPosition = glm::floor(deltePos / mPs.blockSize);
+                mPs.particles[i].blockId = blockPosition.y * mPs.blockNum.x + blockPosition.x;
             }
         }
 
@@ -158,12 +158,12 @@ namespace FluidSimulation
         {
             for (int i = 0; i < mPs.particles.size(); i++)
             {
-                for (int k = 0; k < mPs.mBlockIdOffs.size(); k++)
+                for (int k = 0; k < mPs.blockIdOffs.size(); k++)
                 { // for all neighbor block
-                    int bIdj = mPs.particles[i].blockId + mPs.mBlockIdOffs[k];
-                    if (bIdj >= 0 && bIdj < mPs.mBlockExtens.size())
+                    int bIdj = mPs.particles[i].blockId + mPs.blockIdOffs[k];
+                    if (bIdj >= 0 && bIdj < mPs.blockExtens.size())
                     {
-                        for (int j = mPs.mBlockExtens[bIdj].x; j < mPs.mBlockExtens[bIdj].y; j++)
+                        for (int j = mPs.blockExtens[bIdj].x; j < mPs.blockExtens[bIdj].y; j++)
                         { // for all neighbor particles
                             if (j == i)
                             {
@@ -179,7 +179,7 @@ namespace FluidSimulation
                     }
                 }
 
-                mPs.particles[i].density *= (mPs.mVolume * Lagrangian2dPara::density);
+                mPs.particles[i].density *= (mPs.particleVolume * Lagrangian2dPara::density);
                 mPs.particles[i].density = max(mPs.particles[i].density, Lagrangian2dPara::density);
                 mPs.particles[i].pressure = Lagrangian2dPara::stiffness * (std::powf(mPs.particles[i].density / Lagrangian2dPara::density, Lagrangian2dPara::exponent) - 1.0);
                 mPs.particles[i].pressDivDens2 = mPs.particles[i].pressure / std::powf(mPs.particles[i].density, 2);

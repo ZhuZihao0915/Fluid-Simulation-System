@@ -6,7 +6,7 @@ namespace FluidSimulation
 
 	namespace Lagrangian3d
 	{
-		Solver::Solver(ParticleSystem3d &ps) : mPs(ps), mW(ps.mSupportRadius)
+		Solver::Solver(ParticleSystem3d &ps) : mPs(ps), mW(ps.supportRadius)
 		{
 
 		}
@@ -53,12 +53,12 @@ namespace FluidSimulation
 				// update viscosity and pressure
 				glm::vec3 viscosityForce = glm::vec3(0.0);
 				glm::vec3 pressureForce = glm::vec3(0.0);
-				for (int k = 0; k < mPs.mBlockIdOffs.size(); k++)
+				for (int k = 0; k < mPs.blockIdOffs.size(); k++)
 				{
-					int bIdj = mPs.particles[i].blockId + mPs.mBlockIdOffs[k];
-					if (bIdj >= 0 && bIdj < mPs.mBlockExtens.size())
+					int bIdj = mPs.particles[i].blockId + mPs.blockIdOffs[k];
+					if (bIdj >= 0 && bIdj < mPs.blockExtens.size())
 					{
-						for (int j = mPs.mBlockExtens[bIdj].x; j < mPs.mBlockExtens[bIdj].y; j++)
+						for (int j = mPs.blockExtens[bIdj].x; j < mPs.blockExtens[bIdj].y; j++)
 						{
 							glm::vec3 radiusIj = mPs.particles[i].position - mPs.particles[j].position;
 							float diatanceIj = length(radiusIj);
@@ -77,7 +77,7 @@ namespace FluidSimulation
 				// std::cout << viscosityForce.x << " " << viscosityForce.y << " " << viscosityForce.z << std::endl;
 				mPs.particles[i].accleration += viscosityForce * constFactor;
 				// std::cout << mPs.mParticleInfos[i].accleration.z << std::endl;
-				mPs.particles[i].accleration -= pressureForce * mPs.mVolume;
+				mPs.particles[i].accleration -= pressureForce * mPs.particleVolume;
 			}
 		}
 
@@ -103,37 +103,37 @@ namespace FluidSimulation
 
 				bool invFlag = false;
 
-				if (mPs.particles[i].position.x < mPs.mLowerBound.x + Lagrangian3dPara::supportRadius)
+				if (mPs.particles[i].position.x < mPs.lowerBound.x + Lagrangian3dPara::supportRadius)
 				{
 					mPs.particles[i].velocity.x = abs(mPs.particles[i].velocity.x);
 					invFlag = true;
 				}
 
-				if (mPs.particles[i].position.y < mPs.mLowerBound.y + Lagrangian3dPara::supportRadius)
+				if (mPs.particles[i].position.y < mPs.lowerBound.y + Lagrangian3dPara::supportRadius)
 				{
 					mPs.particles[i].velocity.y = abs(mPs.particles[i].velocity.y);
 					invFlag = true;
 				}
 
-				if (mPs.particles[i].position.z < mPs.mLowerBound.z + Lagrangian3dPara::supportRadius)
+				if (mPs.particles[i].position.z < mPs.lowerBound.z + Lagrangian3dPara::supportRadius)
 				{
 					mPs.particles[i].velocity.z = abs(mPs.particles[i].velocity.z);
 					invFlag = true;
 				}
 
-				if (mPs.particles[i].position.x > mPs.mUpperBound.x - Lagrangian3dPara::supportRadius)
+				if (mPs.particles[i].position.x > mPs.upperBound.x - Lagrangian3dPara::supportRadius)
 				{
 					mPs.particles[i].velocity.x = -abs(mPs.particles[i].velocity.x);
 					invFlag = true;
 				}
 
-				if (mPs.particles[i].position.y > mPs.mUpperBound.y - Lagrangian3dPara::supportRadius)
+				if (mPs.particles[i].position.y > mPs.upperBound.y - Lagrangian3dPara::supportRadius)
 				{
 					mPs.particles[i].velocity.y = -abs(mPs.particles[i].velocity.y);
 					invFlag = true;
 				}
 
-				if (mPs.particles[i].position.z > mPs.mUpperBound.z - Lagrangian3dPara::supportRadius)
+				if (mPs.particles[i].position.z > mPs.upperBound.z - Lagrangian3dPara::supportRadius)
 				{
 					mPs.particles[i].velocity.z = -abs(mPs.particles[i].velocity.z);
 					invFlag = true;
@@ -147,7 +147,7 @@ namespace FluidSimulation
 				glm::vec3 newPosition, newVelocity;
 				for (int j = 0; j < 3; j++)
 				{
-					newPosition[j] = max((mPs.mLowerBound[j] + Lagrangian3dPara::supportRadius + Lagrangian3dPara::eps), min(mPs.particles[i].position[j], (mPs.mUpperBound[j] - (Lagrangian3dPara::supportRadius + Lagrangian3dPara::eps))));
+					newPosition[j] = max((mPs.lowerBound[j] + Lagrangian3dPara::supportRadius + Lagrangian3dPara::eps), min(mPs.particles[i].position[j], (mPs.upperBound[j] - (Lagrangian3dPara::supportRadius + Lagrangian3dPara::eps))));
 					newVelocity[j] = max(-Lagrangian3dPara::maxVelocity, min(mPs.particles[i].velocity[j], Lagrangian3dPara::maxVelocity));
 				}
 				mPs.particles[i].position = newPosition;
@@ -159,9 +159,9 @@ namespace FluidSimulation
 		{
 			for (int i = 0; i < mPs.particles.size(); i++)
 			{
-				glm::vec3 deltePos = mPs.particles[i].position - mPs.mLowerBound;
-				glm::vec3 blockPosition = glm::floor(deltePos / mPs.mBlockSize);
-				mPs.particles[i].blockId = blockPosition.z * mPs.mBlockNum.x * mPs.mBlockNum.y + blockPosition.y * mPs.mBlockNum.x + blockPosition.x;
+				glm::vec3 deltePos = mPs.particles[i].position - mPs.lowerBound;
+				glm::vec3 blockPosition = glm::floor(deltePos / mPs.blockSize);
+				mPs.particles[i].blockId = blockPosition.z * mPs.blockNum.x * mPs.blockNum.y + blockPosition.y * mPs.blockNum.x + blockPosition.x;
 			}
 		}
 
@@ -169,12 +169,12 @@ namespace FluidSimulation
 		{
 			for (int i = 0; i < mPs.particles.size(); i++)
 			{
-				for (int k = 0; k < mPs.mBlockIdOffs.size(); k++)
+				for (int k = 0; k < mPs.blockIdOffs.size(); k++)
 				{ // for all neighbor block
-					int bIdj = mPs.particles[i].blockId + mPs.mBlockIdOffs[k];
-					if (bIdj >= 0 && bIdj < mPs.mBlockExtens.size())
+					int bIdj = mPs.particles[i].blockId + mPs.blockIdOffs[k];
+					if (bIdj >= 0 && bIdj < mPs.blockExtens.size())
 					{
-						for (int j = mPs.mBlockExtens[bIdj].x; j < mPs.mBlockExtens[bIdj].y; j++)
+						for (int j = mPs.blockExtens[bIdj].x; j < mPs.blockExtens[bIdj].y; j++)
 						{ // for all neighbor particles
 							glm::vec3 radiusIj = mPs.particles[i].position - mPs.particles[j].position;
 							float diatanceIj = length(radiusIj);
@@ -186,7 +186,7 @@ namespace FluidSimulation
 					}
 				}
 
-				mPs.particles[i].density *= (mPs.mVolume * Lagrangian3dPara::density);
+				mPs.particles[i].density *= (mPs.particleVolume * Lagrangian3dPara::density);
 				mPs.particles[i].density = max(mPs.particles[i].density, Lagrangian3dPara::density);
 				mPs.particles[i].pressure = Lagrangian3dPara::stiffness * (pow(mPs.particles[i].density / Lagrangian3dPara::density, Lagrangian3dPara::exponent) - 1.0);
 				mPs.particles[i].pressDivDens2 = mPs.particles[i].pressure / pow(mPs.particles[i].density, 2);

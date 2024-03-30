@@ -23,25 +23,25 @@ namespace FluidSimulation
 
             std::string particleVertShaderPath = shaderPath + "/DrawParticles2d.vert";
             std::string particleFragShaderPath = shaderPath + "/DrawParticles2d.frag";
-            mParticleShader = new Glb::Shader();
-            mParticleShader->buildFromFile(particleVertShaderPath, particleFragShaderPath);
+            shader = new Glb::Shader();
+            shader->buildFromFile(particleVertShaderPath, particleFragShaderPath);
 
             // generate vertex array object
-            glGenVertexArrays(1, &mVaoParticles);
+            glGenVertexArrays(1, &VAO);
             // generate vertex buffer object (for position)
-            glGenBuffers(1, &mPositionBuffer);
+            glGenBuffers(1, &positionVBO);
             // generate vertex buffer object (for density)
-            glGenBuffers(1, &mDensityBuffer);
+            glGenBuffers(1, &densityVBO);
 
             // generate frame buffer object
-            glGenFramebuffers(1, &fbo);
+            glGenFramebuffers(1, &FBO);
             // make it active
             // start fbo
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
             // generate textures
-            glGenTextures(1, &mTextureSdf);
-            glBindTexture(GL_TEXTURE_2D, mTextureSdf);
+            glGenTextures(1, &textureID);
+            glBindTexture(GL_TEXTURE_2D, textureID);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -49,15 +49,15 @@ namespace FluidSimulation
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
             glBindTexture(GL_TEXTURE_2D, 0);
 
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mTextureSdf, 0);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureID, 0);
 
             // generate render buffer object (RBO)
-            glGenRenderbuffers(1, &mRboSdf);
-            glBindRenderbuffer(GL_RENDERBUFFER, mRboSdf);
+            glGenRenderbuffers(1, &RBO);
+            glBindRenderbuffer(GL_RENDERBUFFER, RBO);
             glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, imageWidth, imageHeight);
             glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mRboSdf);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             {
                 std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
@@ -70,76 +70,48 @@ namespace FluidSimulation
             return 0;
         }
 
-        void Renderer::draw()
+        void Renderer::draw(ParticleSystem2d& ps)
         {
 
-            glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+            // bind VAO (decide which VAO we want to set)
+            glBindVertexArray(VAO);
+
+            // bind VBO to GL_ARRAY_BUFFER
+            glBindBuffer(GL_ARRAY_BUFFER, positionVBO);
+            // copy data to the current bound buffer(VBO)
+            glBufferData(GL_ARRAY_BUFFER, ps.particles.size() * sizeof(ParticleInfo2d), ps.particles.data(), GL_STATIC_DRAW);
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo2d), (void*)offsetof(ParticleInfo2d, position));
+            // activate
+            glEnableVertexAttribArray(0);
+
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo2d), (void*)offsetof(ParticleInfo2d, density));
+            glEnableVertexAttribArray(1);
+
+            glBindVertexArray(0);
+
+            particleNum = ps.particles.size();
+
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
             glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
             glEnable(GL_DEPTH_TEST);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            glBindVertexArray(mVaoParticles); // VAO
-            mParticleShader->use();           // shader
-            mParticleShader->setFloat("scale", Lagrangian2dPara::scale);
+            glBindVertexArray(VAO); // VAO
+            shader->use();           // shader
+            shader->setFloat("scale", Lagrangian2dPara::scale);
 
             glEnable(GL_PROGRAM_POINT_SIZE);
 
-            glDrawArrays(GL_POINTS, 0, mParticleNum);
+            glDrawArrays(GL_POINTS, 0, particleNum);
 
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
-        int32_t Renderer::Destroy()
+        GLuint Renderer::getRenderedTexture()
         {
-
-            glDeleteVertexArrays(1, &mVaoParticles);
-            glDeleteBuffers(1, &mPositionBuffer);
-            glDeleteBuffers(1, &mDensityBuffer);
-            delete mParticleShader;
-            delete mSdfShader;
-            delete mMilkShader;
-            glfwTerminate();
-            return 0;
-        }
-
-        void Renderer::PollEvents()
-        {
-            glfwPollEvents();
-        }
-
-        void Renderer::LoadVertexes(ParticleSystem2d &ps)
-        {
-            // bind VAO (decide which VAO we want to set)
-            glBindVertexArray(mVaoParticles);
-
-            // bind VBO to GL_ARRAY_BUFFER
-            glBindBuffer(GL_ARRAY_BUFFER, mPositionBuffer);
-            // copy data to the current bound buffer(VBO)
-            glBufferData(GL_ARRAY_BUFFER, ps.particles.size() * sizeof(ParticleInfo2d), ps.particles.data(), GL_STATIC_DRAW);
-
-            // tell OpenGL how to parse vertex data. here are the parameters' meaning:
-            // 0 is the VBO's location of current VAO, which is defined in shader
-            // 2 means vec2
-            // GL_FLOAT implies that vec is composed of float
-            // GL_FALSE means we don't want normalization
-            // stride, the stride of two vertex data
-            // offset
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo2d), (void *)offsetof(ParticleInfo2d, position));
-            // activate
-            glEnableVertexAttribArray(0);
-
-            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(ParticleInfo2d), (void *)offsetof(ParticleInfo2d, density));
-            glEnableVertexAttribArray(1);
-
-            glBindVertexArray(0);
-
-            mParticleNum = ps.particles.size();
-        }
-
-        GLuint Renderer::GetRenderedTexture()
-        {
-            return mTextureSdf;
+            return textureID;
         }
     }
 

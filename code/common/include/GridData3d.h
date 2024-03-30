@@ -23,20 +23,20 @@ namespace Glb {
 
 		virtual double& operator()(int i, int j, int k);
 
-		virtual double interpolate(const glm::vec3& pt);	// 插值函数，根据给定的世界坐标返回网格数据
+		virtual double interpolate(const glm::vec3& pt);
 
 		ublas::vector<double>& data();
 
 
 		virtual void getCell(const glm::vec3& pt, int& i, int& j, int& k);
 
-		glm::vec3 mMax;		// 三维空间中的最大坐标，表示网格的尺寸
+		glm::vec3 mMax;
 
 	protected:
 
 		virtual glm::vec3 worldToSelf(const glm::vec3& pt) const;
-		double mDfltValue;	// 默认值，用于初始化数据
-		ublas::vector<double> mData;	// 存储网格数据的一维数组
+		double mDfltValue;
+		ublas::vector<double> mData;
 		float cellSize;
 		int dim[3];
 	};

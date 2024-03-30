@@ -20,20 +20,20 @@ namespace FluidSimulation
 
             size *= Lagrangian3dPara::scale;
 
-            mLowerBound = corner - mSupportRadius + mParticleDiameter;
-            mUpperBound = corner + size + mSupportRadius - mParticleDiameter;
-            mContainerCenter = (mLowerBound + mUpperBound) / 2.0f;
-            size = mUpperBound - mLowerBound;
+            lowerBound = corner - supportRadius + particleDiameter;
+            upperBound = corner + size + supportRadius - particleDiameter;
+            containerCenter = (lowerBound + upperBound) / 2.0f;
+            size = upperBound - lowerBound;
 
             // 三个方向的block数量
-            mBlockNum.x = floor(size.x / mSupportRadius);
-            mBlockNum.y = floor(size.y / mSupportRadius);
-            mBlockNum.z = floor(size.z / mSupportRadius);
+            blockNum.x = floor(size.x / supportRadius);
+            blockNum.y = floor(size.y / supportRadius);
+            blockNum.z = floor(size.z / supportRadius);
 
             // 一个block的大小
-            mBlockSize = glm::vec3(size.x / mBlockNum.x, size.y / mBlockNum.y, size.z / mBlockNum.z);
+            blockSize = glm::vec3(size.x / blockNum.x, size.y / blockNum.y, size.z / blockNum.z);
 
-            mBlockIdOffs.resize(27);
+            blockIdOffs.resize(27);
             int p = 0;
             for (int k = -1; k <= 1; k++)
             {
@@ -41,7 +41,7 @@ namespace FluidSimulation
                 {
                     for (int i = -1; i <= 1; i++)
                     {
-                        mBlockIdOffs[p] = mBlockNum.x * mBlockNum.y * k + mBlockNum.x * j + i;
+                        blockIdOffs[p] = blockNum.x * blockNum.y * k + blockNum.x * j + i;
                         p++;
                     }
                 }
@@ -59,12 +59,12 @@ namespace FluidSimulation
             glm::vec3 blockLowerBound = corner;
             glm::vec3 blockUpperBound = corner + size;
 
-            if (blockLowerBound.x < mLowerBound.x ||
-                blockLowerBound.y < mLowerBound.y ||
-                blockLowerBound.z < mLowerBound.z ||
-                blockUpperBound.x > mUpperBound.x ||
-                blockUpperBound.y > mUpperBound.y ||
-                blockUpperBound.z > mUpperBound.z)
+            if (blockLowerBound.x < lowerBound.x ||
+                blockLowerBound.y < lowerBound.y ||
+                blockLowerBound.z < lowerBound.z ||
+                blockUpperBound.x > upperBound.x ||
+                blockUpperBound.y > upperBound.y ||
+                blockUpperBound.z > upperBound.z)
             {
                 return 0;
             }
@@ -85,6 +85,7 @@ namespace FluidSimulation
                         float z = (idZ + rand.GetUniformRandom()) * particleSpace;
                         tempParticles[p].position = corner + glm::vec3(x, y, z);
                         tempParticles[p].blockId = getBlockIdByPosition(tempParticles[p].position);
+                        tempParticles[p].density = Lagrangian3dPara::density;
                         tempParticles[p].velocity = v0;
                         p++;
                     }
@@ -97,21 +98,21 @@ namespace FluidSimulation
 
         uint32_t ParticleSystem3d::getBlockIdByPosition(glm::vec3 position)
         {
-            if (position.x < mLowerBound.x ||
-                position.y < mLowerBound.y ||
-                position.z < mLowerBound.z ||
-                position.x > mUpperBound.x ||
-                position.y > mUpperBound.y ||
-                position.z > mUpperBound.z)
+            if (position.x < lowerBound.x ||
+                position.y < lowerBound.y ||
+                position.z < lowerBound.z ||
+                position.x > upperBound.x ||
+                position.y > upperBound.y ||
+                position.z > upperBound.z)
             {
                 return -1;
             }
 
-            glm::vec3 deltePos = position - mLowerBound;
-            uint32_t c = floor(deltePos.x / mBlockSize.x);
-            uint32_t r = floor(deltePos.y / mBlockSize.y);
-            uint32_t h = floor(deltePos.z / mBlockSize.z);
-            return h * mBlockNum.x * mBlockNum.y + r * mBlockNum.x + c;
+            glm::vec3 deltePos = position - lowerBound;
+            uint32_t c = floor(deltePos.x / blockSize.x);
+            uint32_t r = floor(deltePos.y / blockSize.y);
+            uint32_t h = floor(deltePos.z / blockSize.z);
+            return h * blockNum.x * blockNum.y + r * blockNum.x + c;
         }
 
         void ParticleSystem3d::updateBlockInfo()
@@ -123,7 +124,7 @@ namespace FluidSimulation
                       });
 
 
-            mBlockExtens = std::vector<glm::uvec2>(mBlockNum.x * mBlockNum.y * mBlockNum.z, glm::uvec2(0, 0));
+            blockExtens = std::vector<glm::uvec2>(blockNum.x * blockNum.y * blockNum.z, glm::uvec2(0, 0));
             int curBlockId = 0;
             int left = 0;
             int right;
@@ -131,12 +132,12 @@ namespace FluidSimulation
             {
                 if (particles[right].blockId != curBlockId)
                 {
-                    mBlockExtens[curBlockId] = glm::uvec2(left, right);
+                    blockExtens[curBlockId] = glm::uvec2(left, right);
                     left = right;
                     curBlockId = particles[right].blockId;
                 }
             }
-            mBlockExtens[curBlockId] = glm::uvec2(left, right);
+            blockExtens[curBlockId] = glm::uvec2(left, right);
         }
 
     }
