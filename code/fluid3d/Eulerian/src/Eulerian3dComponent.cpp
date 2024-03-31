@@ -19,10 +19,10 @@ namespace FluidSimulation {
 
             grid = new MACGrid3d();
 
-            Glb::Logger::getInstance().addLog("2d MAC gird created. dimension: " + std::to_string(Eulerian3dPara::theDim3d[0]) + "x"
+            Glb::Logger::getInstance().addLog("3d MAC gird created. dimension: " + std::to_string(Eulerian3dPara::theDim3d[0]) + "x"
                 + std::to_string(Eulerian3dPara::theDim3d[1]) + "x"
                 + std::to_string(Eulerian3dPara::theDim3d[2]) + ". cell size:"
-                + std::to_string(Eulerian2dPara::theCellSize2d).substr(0, 3));
+                + std::to_string(Eulerian3dPara::theCellSize3d).substr(0, 3));
 
 
             renderer = new Renderer(*grid);
@@ -36,10 +36,7 @@ namespace FluidSimulation {
 
         GLuint Eulerian3dComponent::getRenderedTexture()
         {
-            if (simulating) { Glb::Timer::getInstance().start(); }
-            renderer->draw();
-            if (simulating) { Glb::Timer::getInstance().recordTime("rendering"); }
-            
+            renderer->draw();          
             return renderer->getTextureID();
         }
 

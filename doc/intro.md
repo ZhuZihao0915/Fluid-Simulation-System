@@ -19,7 +19,7 @@
 
 系统中的重要参数均在`./code/common/src/Configure.cpp`中定义。其中包括流体求解中用到的各种物理参数，可以在文件中更改默认值，也可以通过 UI 中提供的组件在运行中更改。
 
-# 模拟方法组件 Component
+# 模拟流程
 
 每一个模拟方法都有 4 个关键类
 
@@ -81,6 +81,22 @@ void Lagrangian2dComponent::simulate()
 
 3. 求解完成后，ui 通过`Component::getRenderedTexture()`获得渲染结果。
 
+```cpp
+GLuint Lagrangian2dComponent::getRenderedTexture()
+{
+    if (simulating)
+    {
+        Glb::Timer::getInstance().start();
+    }
+    renderer->draw(*ps);
+    if (simulating)
+    {
+        Glb::Timer::getInstance().recordTime("rendering");
+    }
+    return renderer->getRenderedTexture();
+}
+```
+
 # 粒子系统 & 网格系统（重要）
 
 求解器的任务就是正确地更新流体的属性，因此同学们应该重点了解该部分内容。
@@ -134,7 +150,7 @@ public:
 };
 ```
 
-欧拉描述下，我们关注将空间划分为网格。、
+欧拉描述下，我们将空间划分为网格。
 
 ```cpp
 class MACGrid2d

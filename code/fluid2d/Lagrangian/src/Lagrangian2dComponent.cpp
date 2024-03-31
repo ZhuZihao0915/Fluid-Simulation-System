@@ -15,7 +15,6 @@ namespace FluidSimulation
 
         void Lagrangian2dComponent::init()
         {
-
             if (renderer != NULL || solver != NULL || ps != NULL)
             {
                 shutDown();
@@ -53,15 +52,7 @@ namespace FluidSimulation
 
         GLuint Lagrangian2dComponent::getRenderedTexture()
         {
-            if (simulating)
-            {
-                Glb::Timer::getInstance().start();
-            }
             renderer->draw(*ps);
-            if (simulating)
-            {
-                Glb::Timer::getInstance().recordTime("rendering");
-            }
             return renderer->getRenderedTexture();
         }
     }

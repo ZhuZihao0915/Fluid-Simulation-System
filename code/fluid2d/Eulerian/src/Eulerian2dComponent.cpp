@@ -35,9 +35,7 @@ namespace FluidSimulation {
 
         GLuint Eulerian2dComponent::getRenderedTexture()
         {
-            if (simulating) { Glb::Timer::getInstance().start(); }
             renderer->draw(*grid);
-            if (simulating) { Glb::Timer::getInstance().recordTime("rendering"); }
             return renderer->getTextureID();
         }
     }

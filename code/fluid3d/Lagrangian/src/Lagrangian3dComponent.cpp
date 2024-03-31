@@ -46,15 +46,7 @@ namespace FluidSimulation
 
         GLuint Lagrangian3dComponent::getRenderedTexture()
         {
-            if (simulating)
-            {
-                Glb::Timer::getInstance().start();
-            }
             renderer->draw(*ps);
-            if (simulating)
-            {
-                Glb::Timer::getInstance().recordTime("rendering");
-            }
             return renderer->getRenderedTexture();
         }
     }
