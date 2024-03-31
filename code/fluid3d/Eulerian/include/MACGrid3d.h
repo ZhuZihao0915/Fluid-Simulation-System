@@ -10,7 +10,6 @@ namespace FluidSimulation
 {
     namespace Eulerian3d
     {
-        using namespace boost::numeric;
 
         class MACGrid3d
         {
