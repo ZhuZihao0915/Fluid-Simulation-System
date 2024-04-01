@@ -78,11 +78,6 @@ namespace FluidSimulation
             // 计算Boussinesq Force
             double getBoussinesqForce(const glm::vec2 &pt);
 
-            // 计算涡度约束力
-            glm::vec2 getConfinementForce(int i, int j);
-            glm::vec2 getVorticityN(int i, int j);
-            glm::vec2 getVorticity(int i, int j);
-
             float cellSize;
             int dim[2];
 

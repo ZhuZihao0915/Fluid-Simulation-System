@@ -112,14 +112,15 @@ namespace FluidSimulation
 				ImGui::PushItemWidth(200);
 				ImGui::SliderFloat("Air Density", &Eulerian2dPara::airDensity, 0.10f, 3.0f);
 				ImGui::SliderFloat("Ambient Temperature", &Eulerian2dPara::ambientTemp, 0.0f, 50.0f);
-				ImGui::SliderFloat("Boussinesq Alpha", &Eulerian2dPara::boussinesqAlpha, 100.0f, 1000.0f);
-				ImGui::SliderFloat("Boussinesq Beta", &Eulerian2dPara::boussinesqBeta, 1000.0f, 5000.0f);
-				ImGui::SliderFloat("Vorticity", &Eulerian2dPara::vorticityConst, 10.0f, 200.0f);
+				ImGui::SliderFloat("Boussinesq Alpha", &Eulerian2dPara::boussinesqAlpha, 0.0f, 1000.0f);
+				ImGui::SliderFloat("Boussinesq Beta", &Eulerian2dPara::boussinesqBeta, 0.0f, 5000.0f);
 				ImGui::PopItemWidth();
 
 				ImGui::Separator();
 
 				ImGui::Text("Solver:");
+				ImGui::InputScalar("Dim.x", ImGuiDataType_S32, &Eulerian2dPara::theDim2d[0], &intStep, NULL);
+				ImGui::InputScalar("Dim.y", ImGuiDataType_S32, &Eulerian2dPara::theDim2d[1], &intStep, NULL);
 				ImGui::SliderFloat("Delta Time", &Eulerian2dPara::dt, 0.0f, 0.1f, "%.5f");
 				ImGui::PushItemWidth(150);
 				ImGui::SliderFloat("Source Velocity", &Eulerian2dPara::sourceVelocity, 0.0f, 5.0f);
@@ -218,6 +219,9 @@ namespace FluidSimulation
 
 				ImGui::Text("Solver:");
 				ImGui::PushItemWidth(150);
+				ImGui::InputScalar("Dim.x", ImGuiDataType_S32, &Eulerian3dPara::theDim3d[0], &intStep, NULL);
+				ImGui::InputScalar("Dim.y", ImGuiDataType_S32, &Eulerian3dPara::theDim3d[1], &intStep, NULL);
+				ImGui::InputScalar("Dim.z", ImGuiDataType_S32, &Eulerian3dPara::theDim3d[2], &intStep, NULL);
 				ImGui::SliderFloat("Delta Time", &Eulerian3dPara::dt, 0.0f, 0.1f, "%.5f");
 				ImGui::SliderFloat("Source Velocity", &Eulerian3dPara::sourceVelocity, 0.0f, 5.0f);
 				ImGui::PopItemWidth();
@@ -227,9 +231,8 @@ namespace FluidSimulation
 				ImGui::Text("Physical Parameters:");
 				ImGui::SliderFloat("Air Density", &Eulerian3dPara::airDensity, 0.10f, 3.0f);
 				ImGui::SliderFloat("Ambient Temperature", &Eulerian3dPara::ambientTemp, 0.0f, 50.0f);
-				ImGui::SliderFloat("Boussinesq Alpha", &Eulerian3dPara::boussinesqAlpha, 100.0f, 1000.0f);
-				ImGui::SliderFloat("Boussinesq Beta", &Eulerian3dPara::boussinesqBeta, 1000.0f, 5000.0f);
-				ImGui::SliderFloat("Vorticity", &Eulerian3dPara::vorticityConst, 10.0f, 200.0f);
+				ImGui::SliderFloat("Boussinesq Alpha", &Eulerian3dPara::boussinesqAlpha, 0.0f, 1000.0f);
+				ImGui::SliderFloat("Boussinesq Beta", &Eulerian3dPara::boussinesqBeta, 0.0f, 5000.0f);
 				break;
 
 			case 4:

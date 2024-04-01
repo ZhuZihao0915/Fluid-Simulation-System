@@ -15,7 +15,6 @@
 
 namespace FluidSimulation {
 	namespace Eulerian2d {
-		using namespace boost::numeric;
 		class Renderer {
 		public:
 			Renderer();

@@ -90,74 +90,18 @@ namespace FluidSimulation
                 }
             }
             mGrid.mW = target.mW;
-
-            
-            
-            Glb::GridData3d forcesX, forcesY, forcesZ;
-            forcesX.initialize();
-            forcesY.initialize();
-            forcesZ.initialize();
-
-            FOR_EACH_CELL
-            {
-                glm::vec3 force = mGrid.getConfinementForce(i, j, k);
-                forcesX(i, j, k) = force[0];
-                forcesY(i, j, k) = force[1];
-                forcesZ(i, j, k) = force[2];
-            }
-
-            FOR_EACH_FACE
-            {
-                if (mGrid.isFace(i, j, k, mGrid.X))
-                {
-                    glm::vec3 pos = mGrid.getBackFace(i, j, k);
-                    double vel = mGrid.mU(i, j, k);
-                    double xforce = 0.2 * (forcesX(i, j, k) - forcesX(i - 1, j, k));
-                    vel = vel + Eulerian3dPara::dt * xforce;
-                    target.mU(i, j, k) = vel;
-                }
-
-                if (mGrid.isFace(i, j, k, mGrid.Y))
-                {
-                    glm::vec3 pos = mGrid.getLeftFace(i, j, k);
-                    double yforce = 0.2 * (forcesY(i, j, k) - forcesY(i, j - 1, k));
-                    double vel = mGrid.mV(i, j, k);
-                    vel = vel + Eulerian3dPara::dt * yforce;
-                    target.mV(i, j, k) = vel;
-                }
-
-                if (mGrid.isFace(i, j, k, mGrid.Z))
-                {
-                    glm::vec3 pos = mGrid.getBottomFace(i, j, k);
-                    double zforce = 0.2 * (forcesZ(i, j, k) - forcesZ(i, j, k - 1));
-                    double vel = mGrid.mW(i, j, k);
-                    vel = vel + Eulerian3dPara::dt * zforce;
-                    target.mW(i, j, k) = vel;
-                }
-            }
-
-            mGrid.mU = target.mU;
-            mGrid.mV = target.mV;
-            mGrid.mW = target.mW;
-
         }
 
         void Solver::project()
         {
             // Solve Ax = b for pressure
 
-            // https://yangwc.com/2019/08/03/MakingFluidImcompressible/
-
             constructB(numCells);
-            ublas::vector<double> p(numCells); // = conjugateGradient(A, b, precon);
+            ublas::vector<double> p(numCells);
 
             Glb::cg_psolve3d(A, precon, b, p, 500, 0.005);
-            //
-            // Glb::cg_solve3d(A, b, p, 500, 0.005);
 
-            // Subtract pressure from our velocity and save in target
-            // u_new = u - dt*(1/theAirPressure)*((p_i+1-p_i)/theCellSize)
-            double scaleConstant = Eulerian3dPara::dt / Eulerian3dPara::airDensity;
+            double scaleConstant = Eulerian3dPara::dt / Eulerian3dPara::airDensity ;
             double pressureChange;
 
             FOR_EACH_FACE
@@ -247,7 +191,6 @@ namespace FluidSimulation
 
         void Solver::constructA()
         {
-            unsigned int numCells = mGrid.mSolid.data().size();
             A.resize(numCells, numCells, false);
 
             for (unsigned int row = 0; row < numCells; row++)

@@ -27,7 +27,6 @@ namespace Eulerian2dPara
     float ambientTemp = 0.0;        // 环境温度
     float boussinesqAlpha = 500.0;  // Boussinesq Force 公式中的 alpha 参数
     float boussinesqBeta = 2500.0;  // Boussinesq Force 公式中的 beta 参数
-    float vorticityConst = 100.0;   // 调整涡度约束力的强度
 }
 
 namespace Eulerian3dPara
@@ -39,9 +38,9 @@ namespace Eulerian3dPara
     // renderer settings
     float contrast = 1;
     bool oneSheet = true;
-    float distanceX = 0.52;
-    float distanceY = 0.52;
-    float distanceZ = 0.52;
+    float distanceX = 0.51;
+    float distanceY = 0.51;
+    float distanceZ = 0.985;
     bool xySheetsON = false;
     bool yzSheetsON = true;
     bool xzSheetsON = false;
@@ -60,8 +59,6 @@ namespace Eulerian3dPara
     float ambientTemp = 0.0;
     float boussinesqAlpha = 500.0;
     float boussinesqBeta = 2500.0;
-    float vorticityConst = 100.0;
-
 }
 
 namespace Lagrangian2dPara
@@ -78,7 +75,7 @@ namespace Lagrangian2dPara
     float eps = 1e-5;                   // 一个极小的距离，用于边界检测，防止粒子脱离容器
 
     // particle system
-    float supportRadius = 0.04;     // 在此半径内的其他粒子会对该粒子产生影响
+    float supportRadius = 0.04;     // 在此半径内的其他粒子会对当前粒子产生影响
     float particleRadius = 0.01;    // 粒子的半径
     float particleDiameter = particleRadius * 2.0;
     float gravityX = 0.0f;          // x轴上的重力
@@ -117,5 +114,5 @@ namespace Lagrangian3dPara
 // stores system's all simulation method components
 std::vector<Glb::Component *> methodComponents;
 
-std::string shaderPath = "../../../../code/resources/shaders";
-std::string picturePath = "../../../../code/resources/pictures";
+std::string shaderPath = "./resources/shaders";
+std::string picturePath = "./resources/pictures";

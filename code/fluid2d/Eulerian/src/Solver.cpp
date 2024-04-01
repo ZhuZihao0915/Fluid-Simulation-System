@@ -170,41 +170,6 @@ namespace FluidSimulation
                 }
             }
             mGrid.mV = target.mV;
-            
-            Glb::GridData2d forcesX, forcesY;
-            forcesX.initialize();
-            forcesY.initialize();
-
-            FOR_EACH_CELL
-            {
-                glm::vec2 force = mGrid.getConfinementForce(i, j);
-                forcesX(i, j) = force[0];
-                forcesY(i, j) = force[1];
-            }
-
-
-            FOR_EACH_LINE
-            {
-                if (mGrid.isFace(i, j, mGrid.X))
-                {
-                    glm::vec2 pos = mGrid.getLeftLine(i, j);
-                    double vel = mGrid.mU(i, j);
-                    double xforce = 0.5 * (forcesX(i, j) - forcesX(i - 1, j));
-                    vel = vel + Eulerian2dPara::dt * xforce;
-                    target.mU(i, j) = vel;
-                }
-
-                if (mGrid.isFace(i, j, mGrid.Y))
-                {
-                    glm::vec2 pos = mGrid.getBottomLine(i, j);
-                    double yforce = 0.5 * (forcesY(i, j) - forcesY(i, j - 1));
-                    double vel = mGrid.mV(i, j);
-                    vel = vel + Eulerian2dPara::dt * yforce;
-                    target.mV(i, j) = vel;
-                }
-            }
-            mGrid.mU = target.mU;
-            mGrid.mV = target.mV;
         }
 
         void Solver::project()

@@ -26,7 +26,7 @@ namespace FluidSimulation {
 			void drawOneSheetXY();
 			void drawOneSheetYZ();
 			void drawOneSheetXZ();
-			void drawXYSheets();	// 平行于XY面的切面
+			void drawXYSheets();
 			void drawYZSheets();
 			void drawXZSheets();
 

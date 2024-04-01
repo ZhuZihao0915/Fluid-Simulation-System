@@ -12,14 +12,15 @@
      |- Eulerian        # 欧拉描述
      |- Lagrangian      # 拉格朗日描述
   |- third_party    # 第三方库, boost, glfw, glm, imgui, stb_image, glad等
+  |- resources      # shader代码
   |- ui        # imgui搭建的ui系统
 ```
 
 # 参数说明
 
-系统中的重要参数均在`./code/common/src/Configure.cpp`中定义。其中包括流体求解中用到的各种物理参数，可以在文件中更改默认值，也可以通过 UI 中提供的组件在运行中更改。
+系统中的重要参数均在`./code/common/src/Configure.cpp`中定义。其中包括流体求解中用到的各种重要物理参数。包括：dt、密度、粘度、环境温度、网格大小等。具体的参数说明可见文件注释。
 
-# 模拟流程
+# 关键类
 
 每一个模拟方法都有 4 个关键类
 
@@ -28,80 +29,11 @@
 3. Solver: 求解 dt 时间内，流体的变化
 4. Component: 组织上述 3 者，完成模拟任务
 
-下面我们以二维场景下拉格朗日描述的流体模拟为例，讲解模拟过程：
-
-1. 当我们选择一个模拟方法后，将调用`Component::init()`函数进行初始化。
-
-```cpp
-void Lagrangian2dComponent::init()
-{
-    if (renderer != NULL || solver != NULL || ps != NULL)
-    {
-        shutDown();
-    }
-
-    Glb::Timer::getInstance().clear();
-
-    // initialize renderer
-    renderer = new Renderer();
-    renderer->init();
-
-    // initialize particle system
-    // set the container's size
-    ps = new ParticleSystem2d();
-    ps->setContainerSize(glm::vec2(-1.0f, -1.0f), glm::vec2(2.0f, 2.0f));
-
-    // add a fluid block
-    ps->addFluidBlock(glm::vec2(-0.4, -0.4), glm::vec2(0.8, 0.8), glm::vec2(-0.0f, -0.0f), 0.02f);
-
-    ps->updateBlockInfo();
-
-    Glb::Logger::getInstance().addLog("2d Particle System initialized. particle num: " + std::to_string(ps->particles.size()));
-
-    solver = new Solver(*ps);
-}
-```
-
-上述代码初始化了渲染器，设置了粒子系统的容器大小，并添加了流体块。最后将粒子系统传递给求解器。
-
-2. 每当系统需要渲染出新的一帧，它都会调用`Component::simulate()`函数。
-
-```cpp
-void Lagrangian2dComponent::simulate()
-{
-    for (int i = 0; i < Lagrangian2dPara::substep; i++)
-    {
-        ps->updateBlockInfo();
-        solver->solve();
-    }
-}
-```
-
-粒子系统更新了 Block 信息（用于临近搜索加速），求解器进行求解。
-
-3. 求解完成后，ui 通过`Component::getRenderedTexture()`获得渲染结果。
-
-```cpp
-GLuint Lagrangian2dComponent::getRenderedTexture()
-{
-    if (simulating)
-    {
-        Glb::Timer::getInstance().start();
-    }
-    renderer->draw(*ps);
-    if (simulating)
-    {
-        Glb::Timer::getInstance().recordTime("rendering");
-    }
-    return renderer->getRenderedTexture();
-}
-```
-
 # 粒子系统 & 网格系统（重要）
 
-求解器的任务就是正确地更新流体的属性，因此同学们应该重点了解该部分内容。
+求解器的任务就是正确地更新流体的属性，因此同学们应该重点了解该部分代码内容。
 
-拉格朗日描述下，我们用大量的粒子来形容流体。
+拉格朗日描述下，我们用大量的粒子来描述流体。
 
 ```cpp
 struct ParticleInfo2d
@@ -150,7 +82,12 @@ public:
 };
 ```
 
-欧拉描述下，我们将空间划分为网格。
+其中我们会用到 Block 结构将容器划分成多个 Block，当我们要查询某个粒子的相邻粒子时，可以直接在相邻的 Block 里进行查找，从而节约时间。以二维场景举例：
+
+- blockIdOffs: 存储着当前 block 与相邻的 9 个 block 的索引之差
+- blockExtens: 为一个二维向量(a, b)。blockExtens[i] = (a, b)表示，particles[a]到 particles[b]的粒子均处于第 i 个 block 中（粒子已根据 blockId 排序）。
+
+欧拉描述下，我们将空间划分为网格，关注网格上的属性。
 
 ```cpp
 class MACGrid2d
@@ -233,13 +170,15 @@ public:
     Glb::CubicGridData2d mD;    // density
     Glb::CubicGridData2d mT;    // temperature
 
-    Glb::GridData2d mSolid;     // solid
+    Glb::GridData2d mSolid;     // solid(optional)
 };
 ```
 
-# 求解器的实现
+MAC 网格中，由于速度存储在边上，而密度、温度存储在网格中，因此我们用不同的类进行存储。具体表现为 GridData2dX 多了一行，GridData2dY 多了一列，密度、温度则与 MAC 网格大小相等。
 
-拉格朗日描述下，同学们在`Solver::solve()`中需要实现的可能有：
+# 关于求解器的实现
+
+拉格朗日描述下，同学们需要实现的可能有：
 
 1. 计算密度与压强
 2. 计算加速度
@@ -248,7 +187,7 @@ public:
 5. 更新 Block 信息
 6. ...
 
-欧拉描述下，同学们在`Solver::solve()`中需要实现的可能有：
+欧拉描述下，同学们在需要实现的可能有：
 
 1. 对流（advect）
 2. 计算外部力
@@ -278,3 +217,9 @@ void Solver::solve(){
 
 }
 ```
+
+# 关于渲染
+
+- 拉格朗日描述下，系统将密度为 1000 的粒子渲染为蓝色，并通过粒子颜色的变化来表示密度变化。
+
+- 三维场景下欧拉描述的烟雾，其渲染的结果为切面，同学们可以通过 UI 控制切面的方向与位置从而来观察烟雾的运动。

@@ -70,9 +70,6 @@ namespace FluidSimulation
             bool checkDivergence();
 
             double getBoussinesqForce(const glm::vec3 &pt);
-            glm::vec3 getVorticityN(int i, int j, int k);
-            glm::vec3 getVorticity(int i, int j, int k);
-            glm::vec3 getConfinementForce(int i, int j, int k);
 
             float cellSize;
             int dim[3];
