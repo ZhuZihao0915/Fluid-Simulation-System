@@ -12,7 +12,7 @@
      |- Eulerian        # 欧拉描述
      |- Lagrangian      # 拉格朗日描述
   |- third_party    # 第三方库, boost, glfw, glm, imgui, stb_image, glad等
-  |- resources      # shader代码
+  |- resources      # shader代码等
   |- ui        # imgui搭建的ui系统
 ```
 
@@ -25,7 +25,7 @@
 每一个模拟方法都有 4 个关键类
 
 1. Particle System / MAC grid: 用来描述流体
-2. Renderer: 根据粒子的位置、或网格的密度来渲染流体
+2. Renderer: 根据粒子、或网格的信息来渲染流体
 3. Solver: 求解 dt 时间内，流体的变化
 4. Component: 组织上述 3 者，完成模拟任务
 
@@ -82,7 +82,7 @@ public:
 };
 ```
 
-其中我们会用到 Block 结构将容器划分成多个 Block，当我们要查询某个粒子的相邻粒子时，可以直接在相邻的 Block 里进行查找，从而节约时间。以二维场景举例：
+其中我们会用到 Block 结构将容器划分成多个 Block，当我们要查询某个粒子的相邻粒子时，可以直接在相邻的 Block 里进行查找，从而节约时间。以二维场景举例，主要成员变量有：
 
 - blockIdOffs: 存储着当前 block 与相邻的 9 个 block 的索引之差
 - blockExtens: 为一个二维向量(a, b)。blockExtens[i] = (a, b)表示，particles[a]到 particles[b]的粒子均处于第 i 个 block 中（粒子已根据 blockId 排序）。
@@ -174,7 +174,7 @@ public:
 };
 ```
 
-MAC 网格中，由于速度存储在边上，而密度、温度存储在网格中，因此我们用不同的类进行存储。具体表现为 GridData2dX 多了一行，GridData2dY 多了一列，密度、温度则与 MAC 网格大小相等。
+MAC 网格类中已经实现了同学们可能用到的一些函数，包括 Boussinesq 力的计算、散度计算等。如果同学们对 MAC 网格并不熟悉，可以利用网络多加学习。
 
 # 关于求解器的实现
 
