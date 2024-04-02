@@ -36,6 +36,7 @@ namespace FluidSimulation
             void updateBlockInfo();
 
         public:
+
             // 粒子参数
             float supportRadius = Lagrangian3dPara::supportRadius;
             float supportRadius2 = supportRadius * supportRadius;
@@ -50,6 +51,7 @@ namespace FluidSimulation
             glm::vec3 lowerBound = glm::vec3(FLT_MAX);
             glm::vec3 upperBound = glm::vec3(-FLT_MAX);
             glm::vec3 containerCenter = glm::vec3(0.0f);
+            float scale = Lagrangian3dPara::scale;
 
             // Block结构（加速临近搜索）
             glm::uvec3 blockNum = glm::uvec3(0);

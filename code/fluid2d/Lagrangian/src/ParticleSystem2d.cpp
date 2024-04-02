@@ -17,15 +17,16 @@ namespace FluidSimulation
         }
 
 
-        void ParticleSystem2d::setContainerSize(glm::vec2 corner = glm::vec2(-1.0f, -1.0f), glm::vec2 size = glm::vec2(2.0f, 2.0f))
+        void ParticleSystem2d::setContainerSize(glm::vec2 lower = glm::vec2(-1.0f, -1.0f), glm::vec2 upper = glm::vec2(1.0f, 1.0f))
         {
-            corner *=  Lagrangian2dPara::scale;
-            size *= Lagrangian2dPara::scale;
+            lower *=  Lagrangian2dPara::scale;
+            upper *= Lagrangian2dPara::scale;
 
-            lowerBound = corner - supportRadius + particleDiameter;
-            upperBound = corner + size + supportRadius - particleDiameter;
+            lowerBound = lower - supportRadius + particleDiameter;
+            upperBound = upper + supportRadius - particleDiameter;
             containerCenter = (lowerBound + upperBound) / 2.0f;
-            size = upperBound - lowerBound;
+
+            glm::vec2 size = upperBound - lowerBound;
 
             blockNum.x = floor(size.x / supportRadius);
             blockNum.y = floor(size.y / supportRadius);
@@ -47,19 +48,18 @@ namespace FluidSimulation
         }
 
 
-        int ParticleSystem2d::addFluidBlock(glm::vec2 corner, glm::vec2 size, glm::vec2 v0, float particleSpace)
+        int ParticleSystem2d::addFluidBlock(glm::vec2 lowerCorner, glm::vec2 upperCorner, glm::vec2 v0, float particleSpace)
         {
 
-            corner *= Lagrangian2dPara::scale;
-            size *= Lagrangian2dPara::scale;
+            lowerCorner *= Lagrangian2dPara::scale;
+            upperCorner *= Lagrangian2dPara::scale;
 
-            glm::vec2 blockLowerBound = corner;
-            glm::vec2 blockUpperBound = corner + size;
+            glm::vec2 size = upperCorner - lowerCorner;
 
-            if (blockLowerBound.x < lowerBound.x ||
-                blockLowerBound.y < lowerBound.y ||
-                blockUpperBound.x > upperBound.x ||
-                blockUpperBound.y > upperBound.y)
+            if (lowerCorner.x < lowerBound.x ||
+                lowerCorner.y < lowerBound.y ||
+                upperCorner.x > upperBound.x ||
+                upperCorner.y > upperBound.y)
             {
                 return 0;
             }
@@ -76,7 +76,7 @@ namespace FluidSimulation
                     float x = (idX + rand.GetUniformRandom()) * particleSpace;
                     float y = (idY + rand.GetUniformRandom()) * particleSpace;
 
-                    tempParticles[p].position = corner + glm::vec2(x, y);
+                    tempParticles[p].position = lowerCorner + glm::vec2(x, y);
                     tempParticles[p].blockId = getBlockIdByPosition(tempParticles[p].position);
                     tempParticles[p].density = Lagrangian2dPara::density;
                     tempParticles[p].velocity = v0;

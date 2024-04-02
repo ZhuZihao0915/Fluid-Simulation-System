@@ -15,14 +15,12 @@ namespace FluidSimulation {
 
 		ImGui::BeginChild("ScrollingRegion", ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 
-		// 显示日志消息
 		for (const auto& message : Glb::Logger::getInstance().getLog()) {
 			ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 1.0f, 1.0f));
 			ImGui::TextWrapped("%s", message.c_str());
 			ImGui::PopStyleColor();
 		}
 
-		// 滚动到底部
 		if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
 			ImGui::SetScrollHereY(1.0f);
 

@@ -8,12 +8,6 @@ namespace FluidSimulation
 	{
 		Solver::Solver(ParticleSystem3d &ps) : mPs(ps), mW(ps.supportRadius)
 		{
-
-		}
-
-		Solver::~Solver()
-		{
-
 		}
 
 		void Solver::solve()

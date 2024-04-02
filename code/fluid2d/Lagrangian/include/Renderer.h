@@ -12,6 +12,7 @@
 
 #include "ParticleSystem2d.h"
 #include "Configure.h"
+#include <Logger.h>
 
 namespace FluidSimulation
 {

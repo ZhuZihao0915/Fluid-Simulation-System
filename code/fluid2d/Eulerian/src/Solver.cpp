@@ -135,18 +135,18 @@ namespace FluidSimulation
             FOR_EACH_LINE
             {
                 // advect u
-                if (mGrid.isFace(i, j, mGrid.X))
+                if (mGrid.isValid(i, j, mGrid.X))
                 {
-                    glm::vec2 pos = mGrid.getLeftLine(i, j);                     
-                    glm::vec2 newpos = mGrid.traceBack(pos, Eulerian2dPara::dt);
+                    glm::vec2 pos = mGrid.getLeft(i, j);                     
+                    glm::vec2 newpos = mGrid.semiLagrangian(pos, Eulerian2dPara::dt);
                     glm::vec2 newvel = mGrid.getVelocity(newpos);                
                     target.mU(i, j) = newvel[mGrid.X];                       
                 }
                 // advect v
-                if (mGrid.isFace(i, j, mGrid.Y))
+                if (mGrid.isValid(i, j, mGrid.Y))
                 {
-                    glm::vec2 pos = mGrid.getBottomLine(i, j);
-                    glm::vec2 newpos = mGrid.traceBack(pos, Eulerian2dPara::dt);
+                    glm::vec2 pos = mGrid.getBottom(i, j);
+                    glm::vec2 newpos = mGrid.semiLagrangian(pos, Eulerian2dPara::dt);
                     glm::vec2 newvel = mGrid.getVelocity(newpos);
                     target.mV(i, j) = newvel[mGrid.Y];
                 }
@@ -160,9 +160,9 @@ namespace FluidSimulation
         {
             FOR_EACH_LINE
             {
-                if (mGrid.isFace(i, j, mGrid.Y))
+                if (mGrid.isValid(i, j, mGrid.Y))
                 {
-                    glm::vec2 pos = mGrid.getBottomLine(i, j);
+                    glm::vec2 pos = mGrid.getBottom(i, j);
                     double yforce = mGrid.getBoussinesqForce(pos);
                     double vel = mGrid.mV(i, j);
                     vel = vel + Eulerian2dPara::dt * yforce;
@@ -187,7 +187,7 @@ namespace FluidSimulation
 
             FOR_EACH_LINE
             {
-                if (mGrid.isFace(i, j, mGrid.X))
+                if (mGrid.isValid(i, j, mGrid.X))
                 {
                     if (mGrid.isSolidFace(i, j, mGrid.X))
                     {
@@ -203,7 +203,7 @@ namespace FluidSimulation
                         target.mU(i, j) = vel;
                     }
                 }
-                if (mGrid.isFace(i, j, mGrid.Y))
+                if (mGrid.isValid(i, j, mGrid.Y))
                 {
                     // Hard-code boundary condition for now
                     if (mGrid.isSolidFace(i, j, mGrid.Y))
@@ -232,7 +232,7 @@ namespace FluidSimulation
             FOR_EACH_CELL
             {
                 glm::vec2 pos = mGrid.getCenter(i, j);
-                glm::vec2 newpos = mGrid.traceBack(pos, Eulerian2dPara::dt);
+                glm::vec2 newpos = mGrid.semiLagrangian(pos, Eulerian2dPara::dt);
                 double newt = mGrid.getTemperature(newpos);
                 target.mT(i, j) = newt;
             }
@@ -244,7 +244,7 @@ namespace FluidSimulation
             FOR_EACH_CELL
             {
                 glm::vec2 pos = mGrid.getCenter(i, j);
-                glm::vec2 newpos = mGrid.traceBack(pos, Eulerian2dPara::dt);
+                glm::vec2 newpos = mGrid.semiLagrangian(pos, Eulerian2dPara::dt);
                 double newd = mGrid.getDensity(newpos);
                 target.mD(i, j) = newd;
             }

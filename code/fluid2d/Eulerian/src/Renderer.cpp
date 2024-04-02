@@ -52,7 +52,7 @@ namespace FluidSimulation
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			{
-				std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
+				Glb::Logger::getInstance().addLog("Error: Framebuffer is not complete!");
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -87,7 +87,7 @@ namespace FluidSimulation
 			}
 			else
 			{
-				std::cout << "Failed to load texture" << std::endl;
+				Glb::Logger::getInstance().addLog("Error: Failed to load texture!");
 			}
 			stbi_image_free(data);
 		}
@@ -103,13 +103,20 @@ namespace FluidSimulation
 				{
 					for (int i = 1; i <= imageWidth; i++)
 					{
-						float pt_x = i * mGrid.mU.mMax[0] / (imageWidth);
-						float pt_y = j * mGrid.mU.mMax[1] / (imageHeight);
+						float pt_x = i * mGrid.mD.mMax[0] / (imageWidth);
+						float pt_y = j * mGrid.mD.mMax[1] / (imageHeight);
 						glm::vec2 pt(pt_x, pt_y);
-						glm::vec4 color = mGrid.getRenderColor(pt);
-						imageData.push_back(color.x * Eulerian2dPara::contrast);
-						imageData.push_back(color.y * Eulerian2dPara::contrast);
-						imageData.push_back(color.z * Eulerian2dPara::contrast);
+						if (mGrid.inSolid(pt)) {
+							imageData.push_back(0);
+							imageData.push_back(1);
+							imageData.push_back(0);
+						}
+						else {
+							glm::vec4 color = mGrid.getRenderColor(pt);
+							imageData.push_back(color.x * Eulerian2dPara::contrast);
+							imageData.push_back(color.y * Eulerian2dPara::contrast);
+							imageData.push_back(color.z * Eulerian2dPara::contrast);
+						}
 					}
 				}
 
@@ -137,8 +144,8 @@ namespace FluidSimulation
 				{
 					for (int i = Eulerian2dPara::gridNum; i >= 1; i--)
 					{
-						float pt_x = i * mGrid.mU.mMax[0] / (Eulerian2dPara::gridNum);
-						float pt_y = j * mGrid.mU.mMax[1] / (Eulerian2dPara::gridNum);
+						float pt_x = i * mGrid.mD.mMax[0] / (Eulerian2dPara::gridNum);
+						float pt_y = j * mGrid.mD.mMax[1] / (Eulerian2dPara::gridNum);
 
 						vertices[0] = pt_x - dt_x / 2;
 						vertices[1] = pt_y - dt_y / 2;

@@ -143,7 +143,7 @@ namespace FluidSimulation
 			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
 			if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			{
-				std::cout << "ERROR: Framebuffer is not complete!" << std::endl;
+				Glb::Logger::getInstance().addLog("Error: Framebuffer is not complete!");
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
@@ -212,19 +212,19 @@ namespace FluidSimulation
 		{
 			if (Eulerian3dPara::drawModel == 0)
 			{
-				for (int j = 1; j <= pixelY; j++)
+				for (int i = 1; i <= pixelX; i++)
 				{
-					for (int i = 1; i <= pixelX; i++)
+					for (int j = 1; j <= pixelY; j++)
 					{
-						float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
-						float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
-						float pt_z = Eulerian3dPara::distanceZ * mGrid.mW.mMax[2];
+						float pt_x = i * mGrid.mD.mMax[0] / (pixelX);
+						float pt_y = j * mGrid.mD.mMax[1] / (pixelY);
+						float pt_z = Eulerian3dPara::distanceZ * mGrid.mD.mMax[2];
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
-						dataXY[4 * ((j - 1) * pixelX + (i - 1))] = color.r;
-						dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 1] = color.g;
-						dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 2] = color.b;
-						dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 3] = color.a;
+						dataXY[4 * ((pixelY - j) * pixelX + (i - 1))] = color.r;
+						dataXY[4 * ((pixelY - j) * pixelX + (i - 1)) + 1] = color.g;
+						dataXY[4 * ((pixelY - j) * pixelX + (i - 1)) + 2] = color.b;
+						dataXY[4 * ((pixelY - j) * pixelX + (i - 1)) + 3] = color.a;
 					}
 				}
 
@@ -336,9 +336,9 @@ namespace FluidSimulation
 				{
 					for (int i = pixelX; i >= 1; i--)
 					{
-						float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
-						float pt_y = Eulerian3dPara::distanceY * mGrid.mV.mMax[1];
-						float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
+						float pt_x = i * mGrid.mD.mMax[0] / (pixelX);
+						float pt_y = Eulerian3dPara::distanceY * mGrid.mD.mMax[1];
+						float pt_z = k * mGrid.mD.mMax[2] / (pixelZ);
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
 						dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i))] = color.r;
@@ -457,9 +457,9 @@ namespace FluidSimulation
 				{
 					for (int j = 1; j <= pixelY; j++)
 					{
-						float pt_x = Eulerian3dPara::distanceX * mGrid.mU.mMax[0];
-						float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
-						float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
+						float pt_x = Eulerian3dPara::distanceX * mGrid.mD.mMax[0];
+						float pt_y = j * mGrid.mD.mMax[1] / (pixelY);
+						float pt_z = k * mGrid.mD.mMax[2] / (pixelZ);
 						glm::vec3 pt(pt_x, pt_y, pt_z);
 						glm::vec4 color = mGrid.getRenderColor(pt);
 						dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1))] = color.r;
@@ -490,7 +490,7 @@ namespace FluidSimulation
 				glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 				glm::mat4 model = glm::mat4(1.0f);
-				model = glm::translate(model, glm::vec3((Eulerian3dPara::distanceX * mGrid.mU.mMax[0] / mGrid.mW.mMax[2]), 0.0f, 0.0f));
+				model = glm::translate(model, glm::vec3((Eulerian3dPara::distanceX * mGrid.mD.mMax[0] / mGrid.mD.mMax[2]), 0.0f, 0.0f));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 				glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -591,7 +591,7 @@ namespace FluidSimulation
 			}
 			else
 			{
-				std::cout << "Failed to load texture" << std::endl;
+				Glb::Logger::getInstance().addLog("Error: Failed to load texture!");
 			}
 			stbi_image_free(data);
 		}
@@ -601,22 +601,22 @@ namespace FluidSimulation
 			if (Eulerian3dPara::drawModel == 0)
 			{
 
-				for (float k = eps; k <= mGrid.mW.mMax[2]; k += (mGrid.mW.mMax[2] - 2 * eps) / (Eulerian3dPara::xySheetsNum - 1))
+				for (float k = eps; k <= mGrid.mD.mMax[2]; k += (mGrid.mD.mMax[2] - 2 * eps) / (Eulerian3dPara::xySheetsNum - 1))
 				{
 
-					for (int j = 1; j <= pixelY; j++)
+					for (int i = 1; i <= pixelX; i++)
 					{
-						for (int i = 1; i <= pixelX; i++)
+						for (int j = 1; j <= pixelY; j++)
 						{
-							float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
-							float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
+							float pt_x = i * mGrid.mD.mMax[0] / (pixelX);
+							float pt_y = j * mGrid.mD.mMax[1] / (pixelY);
 							float pt_z = k;
 							glm::vec3 pt(pt_x, pt_y, pt_z);
 							glm::vec4 color = mGrid.getRenderColor(pt);
-							dataXY[4 * ((j - 1) * pixelX + (i - 1))] = color.r;
-							dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 1] = color.g;
-							dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 2] = color.b;
-							dataXY[4 * ((j - 1) * pixelX + (i - 1)) + 3] = color.a;
+							dataXY[4 * ((pixelY - j) * pixelX + (i - 1))] = color.r;
+							dataXY[4 * ((pixelY - j) * pixelX + (i - 1)) + 1] = color.g;
+							dataXY[4 * ((pixelY - j) * pixelX + (i - 1)) + 2] = color.b;
+							dataXY[4 * ((pixelY - j) * pixelX + (i - 1)) + 3] = color.a;
 						}
 					}
 
@@ -641,7 +641,7 @@ namespace FluidSimulation
 					glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 					glm::mat4 model = glm::mat4(1.0f);
-					model = glm::translate(model, glm::vec3(0.0f, 0.0f, k / mGrid.mW.mMax[2]));
+					model = glm::translate(model, glm::vec3(0.0f, 0.0f, k / mGrid.mD.mMax[2]));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -728,15 +728,15 @@ namespace FluidSimulation
 		{
 			if (Eulerian3dPara::drawModel == 0)
 			{
-				for (float i = eps; i <= mGrid.mU.mMax[0]; i += (mGrid.mU.mMax[0] - 2 * eps) / (Eulerian3dPara::yzSheetsNum - 1))
+				for (float i = eps; i <= mGrid.mD.mMax[0]; i += (mGrid.mD.mMax[0] - 2 * eps) / (Eulerian3dPara::yzSheetsNum - 1))
 				{
 					for (int k = pixelZ; k >= 1; k--)
 					{
 						for (int j = 1; j <= pixelY; j++)
 						{
 							float pt_x = i;
-							float pt_y = j * mGrid.mV.mMax[1] / (pixelY);
-							float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
+							float pt_y = j * mGrid.mD.mMax[1] / (pixelY);
+							float pt_z = k * mGrid.mD.mMax[2] / (pixelZ);
 							glm::vec3 pt(pt_x, pt_y, pt_z);
 							glm::vec4 color = mGrid.getRenderColor(pt);
 							dataYZ[4 * ((pixelZ - k) * pixelY + (j - 1))] = color.r;
@@ -767,7 +767,7 @@ namespace FluidSimulation
 					glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 					glm::mat4 model = glm::mat4(1.0f);
-					model = glm::translate(model, glm::vec3(i / mGrid.mU.mMax[2], 0.0f, 0.0f));
+					model = glm::translate(model, glm::vec3(i / mGrid.mD.mMax[2], 0.0f, 0.0f));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -856,15 +856,15 @@ namespace FluidSimulation
 			if (Eulerian3dPara::drawModel == 0)
 			{
 
-				for (float j = eps; j <= mGrid.mV.mMax[1]; j += (mGrid.mV.mMax[1] - 2 * eps) / (Eulerian3dPara::xzSheetsNum - 1))
+				for (float j = eps; j <= mGrid.mD.mMax[1]; j += (mGrid.mD.mMax[1] - 2 * eps) / (Eulerian3dPara::xzSheetsNum - 1))
 				{
 					for (int k = pixelZ; k >= 1; k--)
 					{
 						for (int i = pixelX; i >= 1; i--)
 						{
-							float pt_x = i * mGrid.mU.mMax[0] / (pixelX);
+							float pt_x = i * mGrid.mD.mMax[0] / (pixelX);
 							float pt_y = j;
-							float pt_z = k * mGrid.mW.mMax[2] / (pixelZ);
+							float pt_z = k * mGrid.mD.mMax[2] / (pixelZ);
 							glm::vec3 pt(pt_x, pt_y, pt_z);
 							glm::vec4 color = mGrid.getRenderColor(pt);
 							dataXZ[4 * ((pixelZ - k) * pixelX + (pixelX - i))] = color.r;
@@ -895,7 +895,7 @@ namespace FluidSimulation
 					glm::mat4 projection = Glb::Camera::getInstance().GetProjection();
 
 					glm::mat4 model = glm::mat4(1.0f);
-					model = glm::translate(model, glm::vec3(0.0f, j / mGrid.mV.mMax[1], 0.0f));
+					model = glm::translate(model, glm::vec3(0.0f, j / mGrid.mD.mMax[1], 0.0f));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "view"), 1, GL_FALSE, glm::value_ptr(view));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 					glUniformMatrix4fv(glGetUniformLocation(pixelShader->getId(), "model"), 1, GL_FALSE, glm::value_ptr(model));

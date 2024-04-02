@@ -6,7 +6,6 @@
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/io.hpp>
 #include <boost/numeric/ublas/matrix_sparse.hpp>
-
 #include "MACGrid3d.h"
 #include "Configure.h"
 

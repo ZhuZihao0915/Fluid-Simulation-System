@@ -17,7 +17,6 @@ namespace FluidSimulation
         {
         public:
             Solver(ParticleSystem3d &ps);
-            ~Solver();
 
             void solve();
 

@@ -2,7 +2,6 @@
 #ifndef __EULERIAN_3D_RENDERER_H__
 #define __EULERIAN_3D_RENDERER_H__
 
-
 #include "glm/glm.hpp"
 #include <glad/glad.h>
 #include <glfw3.h>
@@ -11,7 +10,7 @@
 #include "MACGrid3d.h"
 #include "Camera.h"
 #include "Configure.h"
-
+#include <Logger.h>
 
 namespace FluidSimulation {
 	namespace Eulerian3d {

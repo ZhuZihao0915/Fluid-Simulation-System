@@ -10,7 +10,6 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-#include "HierarchyView.h"
 #include "SceneView.h"
 #include "InspectorView.h"
 #include "ProjectView.h"
@@ -24,7 +23,6 @@
 
 namespace FluidSimulation
 {
-	class HierarchyView;
 	class SceneView;
 	class InspectorView;
 	class ProjectView;
@@ -40,7 +38,6 @@ namespace FluidSimulation
 		void displayViews();
 		void displayToolBar();
 
-		HierarchyView* getHierachyView() const { return hierarchyView; };
 		SceneView* getSceneView() const { return sceneView; };
 		InspectorView* getInspectorView() const { return inspectorView; };
 		ProjectView* getProjectView() const { return projectView; };
@@ -52,7 +49,6 @@ namespace FluidSimulation
 
 		Manager() {
 			window = NULL;
-			hierarchyView = NULL;
 			sceneView = NULL;
 			inspectorView = NULL;
 			projectView = NULL;
@@ -63,7 +59,6 @@ namespace FluidSimulation
 		Manager& operator=(const Manager&) = delete;
 		
 		GLFWwindow* window;
-		HierarchyView* hierarchyView;
 		SceneView* sceneView;
 		InspectorView* inspectorView;
 		ProjectView* projectView;

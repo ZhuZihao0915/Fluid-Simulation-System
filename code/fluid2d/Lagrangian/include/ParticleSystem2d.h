@@ -52,6 +52,7 @@ namespace FluidSimulation
             glm::vec2 lowerBound = glm::vec2(FLT_MAX);
             glm::vec2 upperBound = glm::vec2(-FLT_MAX);
             glm::vec2 containerCenter = glm::vec2(0.0f);
+            float scale = Lagrangian2dPara::scale;
             
             // Block结构（加速临近搜索）
             glm::uvec2 blockNum = glm::uvec2(0);

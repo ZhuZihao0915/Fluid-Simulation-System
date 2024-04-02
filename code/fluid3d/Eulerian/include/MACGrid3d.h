@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <glm/glm.hpp>
 #include "GridData3d.h"
+#include <Logger.h>
 
 namespace FluidSimulation
 {
@@ -30,7 +31,7 @@ namespace FluidSimulation
             void initialize();
             void createSolids();
 
-            glm::vec3 traceBack(const glm::vec3 &pt, double dt);
+            glm::vec3 semiLagrangian(const glm::vec3 &pt, double dt);
             glm::vec3 getVelocity(const glm::vec3 &pt);
             double getVelocityX(const glm::vec3 &pt);
             double getVelocityY(const glm::vec3 &pt);
@@ -46,17 +47,17 @@ namespace FluidSimulation
             };
 
             glm::vec3 getCenter(int i, int j, int k);
-            glm::vec3 getLeftFace(int i, int j, int k);
-            glm::vec3 getRightFace(int i, int j, int k);
-            glm::vec3 getTopFace(int i, int j, int k);
-            glm::vec3 getBottomFace(int i, int j, int k);
-            glm::vec3 getFrontFace(int i, int j, int k);
-            glm::vec3 getBackFace(int i, int j, int k);
+            glm::vec3 getLeft(int i, int j, int k);
+            glm::vec3 getRight(int i, int j, int k);
+            glm::vec3 getTop(int i, int j, int k);
+            glm::vec3 getBottom(int i, int j, int k);
+            glm::vec3 getFront(int i, int j, int k);
+            glm::vec3 getBack(int i, int j, int k);
 
             void getCell(int index, int &i, int &j, int &k);
             int getIndex(int i, int j, int k);
             bool isNeighbor(int i0, int j0, int k0, int i1, int j1, int k1);
-            bool isFace(int i, int j, int k, Direction d);
+            bool isValid(int i, int j, int k, Direction d);
             int isSolidCell(int i, int j, int k);
             int isSolidFace(int i, int j, int k, Direction d);
             bool inSolid(const glm::vec3 &pt);

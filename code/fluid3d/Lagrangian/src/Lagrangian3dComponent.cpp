@@ -26,8 +26,11 @@ namespace FluidSimulation
 
             ps = new ParticleSystem3d();
             ps->setContainerSize(glm::vec3(0.0, 0.0, 0.0), glm::vec3(1, 1, 1));
-            ps->addFluidBlock(glm::vec3(0.05, 0.05, 0.3 ), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -1.0), 0.02);
-            ps->addFluidBlock(glm::vec3(0.45, 0.45, 0.3), glm::vec3(0.4, 0.4, 0.4), glm::vec3(0.0, 0.0, -1.0), 0.02);
+            
+            for (int i = 0; i < Lagrangian3dPara::fluidBlocks.size(); i++) {
+                ps->addFluidBlock(Lagrangian3dPara::fluidBlocks[i].lowerCorner, Lagrangian3dPara::fluidBlocks[i].upperCorner,
+                    Lagrangian3dPara::fluidBlocks[i].initVel, Lagrangian3dPara::fluidBlocks[i].particleSpace);
+            }
 
             ps->updateBlockInfo();
             Glb::Logger::getInstance().addLog("3d Particle System initialized. particle num: " + std::to_string(ps->particles.size()));

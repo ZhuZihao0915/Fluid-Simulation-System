@@ -50,21 +50,20 @@ namespace FluidSimulation
             particles.clear();
         }
 
-        int32_t ParticleSystem3d::addFluidBlock(glm::vec3 corner, glm::vec3 size, glm::vec3 v0, float particleSpace)
+        int32_t ParticleSystem3d::addFluidBlock(glm::vec3 lowerCorner, glm::vec3 upperCorner, glm::vec3 v0, float particleSpace)
         {
 
-            corner *= Lagrangian3dPara::scale;
-            size *= Lagrangian3dPara::scale;
+            lowerCorner *= Lagrangian3dPara::scale;
+            upperCorner *= Lagrangian3dPara::scale;
 
-            glm::vec3 blockLowerBound = corner;
-            glm::vec3 blockUpperBound = corner + size;
+            glm::vec3 size = upperCorner - lowerCorner;
 
-            if (blockLowerBound.x < lowerBound.x ||
-                blockLowerBound.y < lowerBound.y ||
-                blockLowerBound.z < lowerBound.z ||
-                blockUpperBound.x > upperBound.x ||
-                blockUpperBound.y > upperBound.y ||
-                blockUpperBound.z > upperBound.z)
+            if (lowerCorner.x < lowerBound.x ||
+                lowerCorner.y < lowerBound.y ||
+                lowerCorner.z < lowerBound.z ||
+                upperCorner.x > upperBound.x ||
+                upperCorner.y > upperBound.y ||
+                upperCorner.z > upperBound.z)
             {
                 return 0;
             }
@@ -83,7 +82,7 @@ namespace FluidSimulation
                         float x = (idX + rand.GetUniformRandom()) * particleSpace;
                         float y = (idY + rand.GetUniformRandom()) * particleSpace;
                         float z = (idZ + rand.GetUniformRandom()) * particleSpace;
-                        tempParticles[p].position = corner + glm::vec3(x, y, z);
+                        tempParticles[p].position = lowerCorner + glm::vec3(x, y, z);
                         tempParticles[p].blockId = getBlockIdByPosition(tempParticles[p].position);
                         tempParticles[p].density = Lagrangian3dPara::density;
                         tempParticles[p].velocity = v0;

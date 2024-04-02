@@ -60,7 +60,7 @@ namespace FluidSimulation
             glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
             if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
             {
-                std::cout << "ERROR: SDF Framebuffer is not complete!" << std::endl;
+                Glb::Logger::getInstance().addLog("Error: Framebuffer is not complete!");
             }
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             // end fbo
@@ -100,7 +100,7 @@ namespace FluidSimulation
 
             glBindVertexArray(VAO); // VAO
             shader->use();           // shader
-            shader->setFloat("scale", Lagrangian2dPara::scale);
+            shader->setFloat("scale", ps.scale);
 
             glEnable(GL_PROGRAM_POINT_SIZE);
 

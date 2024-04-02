@@ -8,6 +8,7 @@
 #include "Configure.h"
 #include "glm/glm.hpp"
 #include "Shader.h"
+#include <Logger.h>
 
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION

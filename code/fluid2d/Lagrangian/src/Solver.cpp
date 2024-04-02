@@ -12,9 +12,6 @@ namespace FluidSimulation
         {
         }
 
-        Solver::~Solver()
-        {
-        }
 
         void Solver::solve()
         {

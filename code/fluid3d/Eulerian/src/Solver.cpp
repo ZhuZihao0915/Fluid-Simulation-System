@@ -48,24 +48,24 @@ namespace FluidSimulation
         {
             FOR_EACH_FACE
             {
-                if (mGrid.isFace(i, j, k, mGrid.X))
+                if (mGrid.isValid(i, j, k, mGrid.X))
                 {
-                    glm::vec3 pos = mGrid.getBackFace(i, j, k);
-                    glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
+                    glm::vec3 pos = mGrid.getBack(i, j, k);
+                    glm::vec3 newpos = mGrid.semiLagrangian(pos, Eulerian3dPara::dt);
                     glm::vec3 newvel = mGrid.getVelocity(newpos);
                     target.mU(i, j, k) = newvel[mGrid.X];
                 }
-                if (mGrid.isFace(i, j, k, mGrid.Y))
+                if (mGrid.isValid(i, j, k, mGrid.Y))
                 {
-                    glm::vec3 pos = mGrid.getLeftFace(i, j, k);
-                    glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
+                    glm::vec3 pos = mGrid.getLeft(i, j, k);
+                    glm::vec3 newpos = mGrid.semiLagrangian(pos, Eulerian3dPara::dt);
                     glm::vec3 newvel = mGrid.getVelocity(newpos);
                     target.mV(i, j, k) = newvel[mGrid.Y];
                 }
-                if (mGrid.isFace(i, j, k, mGrid.Z))
+                if (mGrid.isValid(i, j, k, mGrid.Z))
                 {
-                    glm::vec3 pos = mGrid.getBottomFace(i, j, k);
-                    glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
+                    glm::vec3 pos = mGrid.getBottom(i, j, k);
+                    glm::vec3 newpos = mGrid.semiLagrangian(pos, Eulerian3dPara::dt);
                     glm::vec3 newvel = mGrid.getVelocity(newpos);
                     target.mW(i, j, k) = newvel[mGrid.Z];
                 }
@@ -80,9 +80,9 @@ namespace FluidSimulation
         {
             FOR_EACH_FACE
             {
-                if (mGrid.isFace(i, j, k, mGrid.Z))
+                if (mGrid.isValid(i, j, k, mGrid.Z))
                 {
-                    glm::vec3 pos = mGrid.getBottomFace(i, j, k);
+                    glm::vec3 pos = mGrid.getBottom(i, j, k);
                     double zforce = mGrid.getBoussinesqForce(pos);
                     double vel = mGrid.mW(i, j, k);
                     vel = vel + Eulerian3dPara::dt * zforce;
@@ -106,7 +106,7 @@ namespace FluidSimulation
 
             FOR_EACH_FACE
             {
-                if (mGrid.isFace(i, j, k, mGrid.X))
+                if (mGrid.isValid(i, j, k, mGrid.X))
                 {
                     if (mGrid.isSolidFace(i, j, k, mGrid.X))
                     {
@@ -122,7 +122,7 @@ namespace FluidSimulation
                         target.mU(i, j, k) = vel;
                     }
                 }
-                if (mGrid.isFace(i, j, k, mGrid.Y))
+                if (mGrid.isValid(i, j, k, mGrid.Y))
                 {
                     // Hard-code boundary condition for now
                     if (mGrid.isSolidFace(i, j, k, mGrid.Y))
@@ -140,7 +140,7 @@ namespace FluidSimulation
                     }
                 }
 
-                if (mGrid.isFace(i, j, k, mGrid.Z))
+                if (mGrid.isValid(i, j, k, mGrid.Z))
                 {
                     // Hard-code boundary condition for now
                     if (mGrid.isSolidFace(i, j, k, mGrid.Z))
@@ -170,7 +170,7 @@ namespace FluidSimulation
             FOR_EACH_CELL
             {
                 glm::vec3 pos = mGrid.getCenter(i, j, k);
-                glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
+                glm::vec3 newpos = mGrid.semiLagrangian(pos, Eulerian3dPara::dt);
                 double newt = mGrid.getTemperature(newpos);
                 target.mT(i, j, k) = newt;
             }
@@ -182,7 +182,7 @@ namespace FluidSimulation
             FOR_EACH_CELL
             {
                 glm::vec3 pos = mGrid.getCenter(i, j, k);
-                glm::vec3 newpos = mGrid.traceBack(pos, Eulerian3dPara::dt);
+                glm::vec3 newpos = mGrid.semiLagrangian(pos, Eulerian3dPara::dt);
                 double newd = mGrid.getDensity(newpos);
                 target.mD(i, j, k) = newd;
             }

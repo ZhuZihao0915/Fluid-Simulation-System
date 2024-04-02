@@ -4,7 +4,6 @@
 
 #include "ParticleSystem2d.h"
 #include "CubicSpline.h"
-
 #include "Configure.h"
 
 namespace FluidSimulation
@@ -16,7 +15,6 @@ namespace FluidSimulation
         {
         public:
             Solver(ParticleSystem2d &ps);
-            ~Solver();
 
             void solve();
 

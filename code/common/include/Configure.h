@@ -18,12 +18,26 @@
 extern int imageWidth;
 extern int imageHeight;
 
+extern int windowWidth;
+extern int windowHeight;
+
+extern float fontSize;
+
 extern bool simulating;
 
 namespace Eulerian2dPara
 {
+    struct SourceSmoke {
+        glm::ivec2 position = glm::ivec2(0);
+        glm::vec2 velocity = glm::vec2(0.0f);
+        float density = 0.0f;
+        float temp = 0.0f;
+    };
+
     extern int theDim2d[];
+    extern std::vector<SourceSmoke> source;
     extern float theCellSize2d;
+    extern bool addSolid;
 
     extern float dt;
 
@@ -31,7 +45,7 @@ namespace Eulerian2dPara
     extern int drawModel;
     extern int gridNum;
 
-    extern float sourceVelocity;
+
     extern float airDensity;
     extern float ambientTemp;
     extern float boussinesqAlpha;
@@ -41,8 +55,17 @@ namespace Eulerian2dPara
 
 namespace Eulerian3dPara
 {
+    struct SourceSmoke {
+        glm::ivec3 position = glm::ivec3(0);
+        glm::vec3 velocity = glm::vec3(0.0f);
+        float density = 0.0f;
+        float temp = 0.0f;
+    };
+
     extern int theDim3d[];
     extern float theCellSize3d;
+    extern std::vector<SourceSmoke> source;
+    extern bool addSolid;
 
     extern float contrast;
     extern bool oneSheet;
@@ -62,7 +85,6 @@ namespace Eulerian3dPara
 
     extern float dt;
 
-    extern float sourceVelocity;
     extern float airDensity;
     extern float ambientTemp;
     extern float boussinesqAlpha;
@@ -73,7 +95,16 @@ namespace Eulerian3dPara
 
 namespace Lagrangian2dPara
 {
+    struct FluidBlock {
+        glm::vec2 lowerCorner = glm::vec2(0.0f, 0.0f);
+        glm::vec2 upperCorner = glm::vec2(0.0f, 0.0f);
+        glm::vec2 initVel = glm::vec2(0.0f, 0.0f);
+        float particleSpace = 0.02f;
+    };
+
     extern float scale;
+    extern std::vector<FluidBlock> fluidBlocks;
+
     extern float dt;
     extern int substep;
     extern float maxVelocity;
@@ -93,7 +124,18 @@ namespace Lagrangian2dPara
 
 namespace Lagrangian3dPara
 {
+
+    struct FluidBlock {
+        glm::vec3 lowerCorner = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 upperCorner = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 initVel = glm::vec3(0.0f, 0.0f, 0.0f);
+        float particleSpace = 0.02f;
+    };
+
     extern float scale;
+    extern std::vector<FluidBlock> fluidBlocks;
+
+
     extern float dt;
     extern int substep;
     extern float maxVelocity;

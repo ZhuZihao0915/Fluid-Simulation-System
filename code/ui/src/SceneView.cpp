@@ -14,7 +14,6 @@ namespace FluidSimulation {
 
 	void SceneView::display() {
 
-        //ImGui::SetNextWindowSizeConstraints(ImVec2(900, 900), ImVec2(1200, 1200));
 		ImGui::Begin("Scene", NULL, ImGuiWindowFlags_NoCollapse);
 
         ImVec2 windowSize = ImGui::GetWindowSize();
@@ -47,17 +46,12 @@ namespace FluidSimulation {
             ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y), ImVec2(ImGui::GetItemRectMax().x, ImGui::GetItemRectMax().y),
             ImVec2(0, 1), ImVec2(1, 0));
 
-
-        // œÏ”¶ Û±Í
         if (ImGui::IsItemHovered() && Manager::getInstance().getMethod() != NULL) {
 
-            // ªÒ»° Û±Í◊¥Ã¨
             glfwGetCursorPos(window, &mouseX, &mouseY);
 
-            // ºÏ≤‚πˆ¬÷
             Glb::Camera::getInstance().ProcessScale(static_cast<float>(ImGui::GetIO().MouseWheel));
 
-            // ºÏ≤‚ Û±Í◊Ûº¸Õœ∂Ø
             if (ImGui::IsMouseDragging(0, 0.0f)) {
                 if (!isLeftMouseDragging) {
                     isLeftMouseDragging = true;
@@ -76,7 +70,6 @@ namespace FluidSimulation {
                 isLeftMouseDragging = false;
             }
 
-            // ºÏ≤‚ Û±Í”“º¸Õœ∂Ø
             if (ImGui::IsMouseDragging(1, 0.0f)) {
                 if (!isRightMouseDragging) {
                     isRightMouseDragging = true;
@@ -95,7 +88,6 @@ namespace FluidSimulation {
                 isRightMouseDragging = false;
             }
         }
-
 
 		ImGui::End();
 	}

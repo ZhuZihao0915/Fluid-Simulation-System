@@ -13,7 +13,7 @@
 #include "Global.h"
 
 #include "Configure.h"
-
+#include <Logger.h>
 #include "ParticleSystem3d.h"
 
 namespace FluidSimulation

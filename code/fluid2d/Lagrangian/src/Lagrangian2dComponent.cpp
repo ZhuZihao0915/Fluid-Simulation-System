@@ -29,10 +29,13 @@ namespace FluidSimulation
             // initialize particle system
             // set the container's size
             ps = new ParticleSystem2d();
-            ps->setContainerSize(glm::vec2(-1.0f, -1.0f), glm::vec2(2.0f, 2.0f));
+            ps->setContainerSize(glm::vec2(-1.0f, -1.0f), glm::vec2(1.0f, 1.0f));
 
             // add a fluid block
-            ps->addFluidBlock(glm::vec2(-0.4, -0.4), glm::vec2(0.8, 0.8), glm::vec2(-0.0f, -0.0f), 0.02f);
+            for (int i = 0; i < Lagrangian2dPara::fluidBlocks.size(); i++) {
+                ps->addFluidBlock(Lagrangian2dPara::fluidBlocks[i].lowerCorner, Lagrangian2dPara::fluidBlocks[i].upperCorner, 
+                    Lagrangian2dPara::fluidBlocks[i].initVel, Lagrangian2dPara::fluidBlocks[i].particleSpace);
+            }
 
             ps->updateBlockInfo();
 

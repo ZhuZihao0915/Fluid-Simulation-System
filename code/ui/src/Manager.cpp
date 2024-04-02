@@ -5,7 +5,6 @@ namespace FluidSimulation
 
     void Manager::init(GLFWwindow* window) {
         this->window = window;
-        hierarchyView = new HierarchyView(window);
         inspectorView = new InspectorView(window);
         projectView =  new ProjectView(window);
         sceneView = new SceneView(window);
@@ -34,7 +33,6 @@ namespace FluidSimulation
         ImGui::PushStyleColor(ImGuiCol_TitleBgActive, ImVec4(0.3f, 0.3f, 0.3f, 1.0f));
 
         // display all views
-        // hierarchyView->display();
         sceneView->display();
         inspectorView->display();
         projectView->display();

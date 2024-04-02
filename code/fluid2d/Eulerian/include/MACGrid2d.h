@@ -5,6 +5,7 @@
 #include <windows.h>
 #include <glm/glm.hpp>
 #include "GridData2d.h"
+#include <Logger.h>
 
 namespace FluidSimulation
 {
@@ -30,7 +31,7 @@ namespace FluidSimulation
             void updateSources();
 
             // advect
-            glm::vec2 traceBack(const glm::vec2 &pt, double dt);
+            glm::vec2 semiLagrangian(const glm::vec2 &pt, double dt);
 
             // get value
             glm::vec2 getVelocity(const glm::vec2 &pt);
@@ -47,15 +48,15 @@ namespace FluidSimulation
 
             // get point
             glm::vec2 getCenter(int i, int j);
-            glm::vec2 getLeftLine(int i, int j);
-            glm::vec2 getRightLine(int i, int j);
-            glm::vec2 getTopLine(int i, int j);
-            glm::vec2 getBottomLine(int i, int j);
+            glm::vec2 getLeft(int i, int j);
+            glm::vec2 getRight(int i, int j);
+            glm::vec2 getTop(int i, int j);
+            glm::vec2 getBottom(int i, int j);
 
             void getCell(int index, int &i, int &j);
             int getIndex(int i, int j);
             bool isNeighbor(int i0, int j0, int i1, int j1);
-            bool isFace(int i, int j, Direction d);
+            bool isValid(int i, int j, Direction d);
 
             int isSolidCell(int i, int j);              // Returns 1 if true, else otherwise
             int isSolidFace(int i, int j, Direction d); // Returns 1 if true, else otherwise

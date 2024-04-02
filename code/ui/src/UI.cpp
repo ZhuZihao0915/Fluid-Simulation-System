@@ -15,7 +15,7 @@ namespace FluidSimulation {
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         (void)io;
-        io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\consola.ttf", 18.0f);
+        io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\consola.ttf", fontSize);
         
 
         // initialize glfw
@@ -29,7 +29,7 @@ namespace FluidSimulation {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         // create window
-        GLFWwindow* window = glfwCreateWindow(1440, 1150, "Fluid Simulation System", NULL, NULL);
+        GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Fluid Simulation System", NULL, NULL);
         if (!window) {
             Glb::Logger::getInstance().addLog("Fail to create window.");
             glfwTerminate();
@@ -56,7 +56,7 @@ namespace FluidSimulation {
 
         // init manager
         Manager::getInstance().init(window);
-        Glb::Logger::getInstance().addLog("Start Main Render Loop.");
+        Glb::Logger::getInstance().addLog("Start Main Render Loop...");
 
         // main render loop
         while (!glfwWindowShouldClose(window)) {
