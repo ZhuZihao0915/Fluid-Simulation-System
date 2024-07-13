@@ -31,9 +31,7 @@
 
 # 粒子系统 & 网格系统（重要）
 
-求解器的任务就是正确地更新流体的属性，因此同学们应该重点了解该部分代码内容。
-
-拉格朗日描述下，我们用大量的粒子来描述流体。
+拉格朗日描述下，用大量的粒子来描述流体。
 
 ```cpp
 struct ParticleInfo2d
@@ -82,12 +80,12 @@ public:
 };
 ```
 
-其中我们会用到 Block 结构将容器划分成多个 Block，当我们要查询某个粒子的相邻粒子时，可以直接在相邻的 Block 里进行查找，从而节约时间。以二维场景举例，主要成员变量有：
+其中 Block 结构将容器划分成多个 Block，当查询某个粒子的相邻粒子时，可以直接在相邻的 Block 里进行查找，从而节约时间。以二维场景举例，主要成员变量有：
 
 - blockIdOffs: 存储着当前 block 与相邻的 9 个 block 的索引之差
 - blockExtens: 为一个二维向量(a, b)。blockExtens[i] = (a, b)表示，particles[a]到 particles[b]的粒子均处于第 i 个 block 中（粒子已根据 blockId 排序）。
 
-欧拉描述下，我们将空间划分为网格，关注网格上的属性。
+欧拉描述下，将空间划分为网格，关注网格上的属性。
 
 ```cpp
 class MACGrid2d
@@ -174,11 +172,10 @@ public:
 };
 ```
 
-MAC 网格类中已经实现了同学们可能用到的一些函数，包括 Boussinesq 力的计算、散度计算等。如果同学们对 MAC 网格并不熟悉，可以利用网络多加学习。
 
 # 关于求解器的实现
 
-拉格朗日描述下，同学们需要实现的可能有：
+拉格朗日描述下：
 
 1. 计算密度与压强
 2. 计算加速度
@@ -187,39 +184,16 @@ MAC 网格类中已经实现了同学们可能用到的一些函数，包括 Bou
 5. 更新 Block 信息
 6. ...
 
-欧拉描述下，同学们在需要实现的可能有：
+欧拉描述下：
 
 1. 对流（advect）
 2. 计算外部力
 3. 投影（project）
 4. ...
 
-# 计时（可选）
-
-通过以下形式，将需要计时的阶段放在`recordTime("name")`之前。系统会统计各个阶段占所有计时的百分比并输出。
-
-```cpp
-void Solver::solve(){
-
-    Glb::Timer::getInstance().start();
-
-    advect();
-
-    Glb::Timer::getInstance().recordTime("advect");
-
-    addExternalForces();
-
-    Glb::Timer::getInstance().recordTime("external forces");
-
-    project();
-
-    Glb::Timer::getInstance().recordTime("project");
-
-}
-```
 
 # 关于渲染
 
 - 拉格朗日描述下，系统将密度为 1000 的粒子渲染为蓝色，并通过粒子颜色的变化来表示密度变化。
 
-- 三维场景下欧拉描述的烟雾，其渲染的结果为切面，同学们可以通过 UI 控制切面的方向与位置从而来观察烟雾的运动。
+- 三维场景下欧拉描述的烟雾，其渲染的结果为切面，可以通过 UI 控制切面的方向与位置从而来观察烟雾的运动。
