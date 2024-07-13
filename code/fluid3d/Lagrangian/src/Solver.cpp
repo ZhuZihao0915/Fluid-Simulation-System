@@ -165,10 +165,10 @@ namespace FluidSimulation
 			{
 				for (int k = 0; k < mPs.blockIdOffs.size(); k++)
 				{ // for all neighbor block
-					int bIdj = mPs.particles[i].blockId + mPs.blockIdOffs[k];
-					if (bIdj >= 0 && bIdj < mPs.blockExtens.size())
+					int bId = mPs.particles[i].blockId + mPs.blockIdOffs[k];
+					if (bId >= 0 && bId < mPs.blockExtens.size())
 					{
-						for (int j = mPs.blockExtens[bIdj].x; j < mPs.blockExtens[bIdj].y; j++)
+						for (int j = mPs.blockExtens[bId].x; j < mPs.blockExtens[bId].y; j++)
 						{ // for all neighbor particles
 							glm::vec3 radiusIj = mPs.particles[i].position - mPs.particles[j].position;
 							float diatanceIj = length(radiusIj);

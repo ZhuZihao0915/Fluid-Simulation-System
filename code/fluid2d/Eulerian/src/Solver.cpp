@@ -139,6 +139,7 @@ namespace FluidSimulation
                 {
                     glm::vec2 pos = mGrid.getLeft(i, j);                     
                     glm::vec2 newpos = mGrid.semiLagrangian(pos, Eulerian2dPara::dt);
+                    //if(mGrid.inSolid(newpos)){ Glb::Logger::getInstance().addLog(std::to_string(1)); }
                     glm::vec2 newvel = mGrid.getVelocity(newpos);                
                     target.mU(i, j) = newvel[mGrid.X];                       
                 }

@@ -36,7 +36,6 @@ namespace FluidSimulation
 
 		void init(GLFWwindow* window);
 		void displayViews();
-		void displayToolBar();
 
 		SceneView* getSceneView() const { return sceneView; };
 		InspectorView* getInspectorView() const { return inspectorView; };

@@ -37,8 +37,4 @@ namespace FluidSimulation
         inspectorView->display();
         projectView->display();
 	}
-
-    void Manager::displayToolBar() {
-
-    }
 }

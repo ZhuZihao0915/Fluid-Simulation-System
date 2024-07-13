@@ -148,5 +148,5 @@ namespace Lagrangian3dPara
 // stores system's all simulation method components
 std::vector<Glb::Component *> methodComponents;
 
-std::string shaderPath = "./resources/shaders";
-std::string picturePath = "./resources/pictures";
+std::string shaderPath = "../../../../code/resources/shaders";
+std::string picturePath = "../../../../code/resources/pictures";
